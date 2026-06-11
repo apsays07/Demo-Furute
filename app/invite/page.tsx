@@ -316,6 +316,7 @@ export default function InviteSpeakerPage() {
                     onChange={updateField}
                     placeholder="Annual leadership summit"
                     required
+                    icon={TargetIcon}
                   />
                   <FormInput
                     label="Event Date"
@@ -324,6 +325,7 @@ export default function InviteSpeakerPage() {
                     value={formData.eventDate}
                     onChange={updateField}
                     required
+                    icon={CalendarIcon}
                   />
                   <FormInput
                     label="Location / Venue"
@@ -332,6 +334,7 @@ export default function InviteSpeakerPage() {
                     onChange={updateField}
                     placeholder="Pune, Maharashtra or virtual"
                     required
+                    icon={MapPinIcon}
                   />
                   <FormInput
                     label="Expected Audience"
@@ -340,6 +343,7 @@ export default function InviteSpeakerPage() {
                     value={formData.audienceSize}
                     onChange={updateField}
                     placeholder="150"
+                    icon={UsersIcon}
                   />
                 </div>
 
@@ -378,6 +382,7 @@ export default function InviteSpeakerPage() {
                     onChange={updateField}
                     placeholder="Your name"
                     required
+                    icon={UserIcon}
                   />
                   <FormInput
                     label="Organization"
@@ -386,6 +391,7 @@ export default function InviteSpeakerPage() {
                     onChange={updateField}
                     placeholder="Company or institution"
                     required
+                    icon={BuildingIcon}
                   />
                   <FormInput
                     label="Email"
@@ -395,6 +401,7 @@ export default function InviteSpeakerPage() {
                     onChange={updateField}
                     placeholder="name@example.com"
                     required
+                    icon={MailIcon}
                   />
                   <FormInput
                     label="Phone"
@@ -404,6 +411,7 @@ export default function InviteSpeakerPage() {
                     onChange={updateField}
                     placeholder="9822600521"
                     required
+                    icon={PhoneIcon}
                   />
                 </div>
               </fieldset>
@@ -412,15 +420,20 @@ export default function InviteSpeakerPage() {
                 <legend className={styles.legend}>Speaking Brief</legend>
                 <div className={styles["field-group"]}>
                   <label htmlFor="brief">Audience context and objective</label>
-                  <textarea
-                    id="brief"
-                    name="brief"
-                    rows={5}
-                    value={formData.brief}
-                    onChange={updateField}
-                    className={styles.input}
-                    placeholder="Tell us about the audience, event theme, session duration, and what outcome you want."
-                  />
+                  <div className={styles.inputWrapper}>
+                    <span className={styles.inputIcon} style={{ top: "16px", transform: "none" }} aria-hidden="true">
+                      <MessageSquareIcon />
+                    </span>
+                    <textarea
+                      id="brief"
+                      name="brief"
+                      rows={5}
+                      value={formData.brief}
+                      onChange={updateField}
+                      className={styles.textareaWithIcon}
+                      placeholder="Tell us about the audience, event theme, session duration, and what outcome you want."
+                    />
+                  </div>
                 </div>
               </fieldset>
 
@@ -532,6 +545,7 @@ function FormInput({
   type = "text",
   placeholder,
   required,
+  icon: Icon,
 }: {
   label: string;
   name: string;
@@ -540,6 +554,7 @@ function FormInput({
   type?: string;
   placeholder?: string;
   required?: boolean;
+  icon?: React.ComponentType<any>;
 }) {
   return (
     <div className={styles["field-group"]}>
@@ -547,16 +562,23 @@ function FormInput({
         {label}
         {required ? " *" : ""}
       </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        value={value}
-        required={required}
-        onChange={onChange}
-        className={styles.input}
-        placeholder={placeholder}
-      />
+      <div className={styles.inputWrapper}>
+        {Icon && (
+          <span className={styles.inputIcon} aria-hidden="true">
+            <Icon />
+          </span>
+        )}
+        <input
+          id={name}
+          name={name}
+          type={type}
+          value={value}
+          required={required}
+          onChange={onChange}
+          className={Icon ? styles.inputWithIcon : styles.input}
+          placeholder={placeholder}
+        />
+      </div>
     </div>
   );
 }
@@ -665,6 +687,72 @@ function ZapIcon(props: IconProps) {
   return (
     <SvgIcon {...props}>
       <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </SvgIcon>
+  );
+}
+
+function CalendarIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </SvgIcon>
+  );
+}
+
+function MapPinIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </SvgIcon>
+  );
+}
+
+function UserIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </SvgIcon>
+  );
+}
+
+function BuildingIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
+      <line x1="9" y1="22" x2="9" y2="16" />
+      <line x1="15" y1="22" x2="15" y2="16" />
+      <line x1="9" y1="16" x2="15" y2="16" />
+      <path d="M8 6h2v2H8V6zm0 4h2v2H8v-2zm8-4h2v2h-2V6zm0 4h2v2h-2v-2z" />
+    </SvgIcon>
+  );
+}
+
+function MailIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <rect width="20" height="16" x="2" y="4" rx="2" />
+      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+    </SvgIcon>
+  );
+}
+
+function PhoneIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+    </SvgIcon>
+  );
+}
+
+function MessageSquareIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
     </SvgIcon>
   );
 }

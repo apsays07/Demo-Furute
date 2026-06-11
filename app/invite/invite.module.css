@@ -752,11 +752,25 @@
 /* Form Card Styles */
 .form-card {
   padding: clamp(24px, 4vw, 42px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--border-radius-sm);
-  background: #ffffff;
-  box-shadow: var(--shadow-premium);
+  border: 1px solid rgba(8, 127, 140, 0.15);
+  border-radius: var(--border-radius-md);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+  box-shadow: 
+    0 24px 64px rgba(16, 27, 53, 0.06),
+    0 8px 16px rgba(16, 27, 53, 0.02),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
   position: relative;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.form-card:hover {
+  border-color: rgba(8, 127, 140, 0.3);
+  box-shadow: 
+    0 32px 80px rgba(8, 127, 140, 0.12),
+    0 12px 24px rgba(16, 27, 53, 0.04),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8);
 }
 
 .form-card fieldset {
@@ -803,39 +817,92 @@
 }
 
 /* Inputs & Focus Animations */
-.input {
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.inputIcon svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.2;
+}
+
+.inputWithIcon {
   width: 100%;
   min-height: 52px;
-  padding: 0 15px;
+  padding: 0 16px 0 48px !important;
   border: 1px solid rgba(16, 27, 53, 0.14);
   border-radius: var(--border-radius-sm);
-  background: #fbfdfe;
+  background: rgba(255, 255, 255, 0.8);
   color: var(--ink);
   font-size: 15px;
   font-weight: 500;
   outline: none;
-  transition: all 0.2s ease;
+  box-shadow: inset 0 2px 4px rgba(16, 27, 53, 0.02);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
 }
 
-textarea.input {
-  min-height: 130px;
-  padding: 14px 15px;
+.textareaWithIcon {
+  width: 100%;
+  padding: 14px 16px 14px 48px !important;
+  border: 1px solid rgba(16, 27, 53, 0.14);
+  border-radius: var(--border-radius-sm);
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 500;
+  outline: none;
+  line-height: 1.5;
   resize: vertical;
+  box-shadow: inset 0 2px 4px rgba(16, 27, 53, 0.02);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
 }
 
-.input::placeholder {
+.inputWithIcon::placeholder,
+.textareaWithIcon::placeholder {
   color: rgba(16, 27, 53, 0.35);
+  font-weight: 450;
 }
 
-.input:hover {
-  border-color: rgba(16, 27, 53, 0.24);
-  background: #fbfdfe;
+/* Hover & Focus states */
+.inputWithIcon:hover,
+.textareaWithIcon:hover {
+  border-color: rgba(8, 127, 140, 0.35);
 }
 
-.input:focus {
+.inputWithIcon:focus,
+.textareaWithIcon:focus {
   border-color: var(--accent-cyan);
   background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(8, 127, 140, 0.1);
+  box-shadow: 
+    0 0 0 4px rgba(8, 127, 140, 0.14),
+    0 8px 24px rgba(8, 127, 140, 0.06),
+    inset 0 2px 4px rgba(16, 27, 53, 0.02);
+  transform: translateY(-1px);
+}
+
+.inputWithIcon:focus + .inputIcon,
+.textareaWithIcon:focus + .inputIcon,
+.inputWrapper:focus-within .inputIcon {
+  color: var(--accent-cyan);
 }
 
 /* Segmented Control UI */

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import SiteFooter from "@/components/SiteFooter";
 import styles from "./contact.module.css";
@@ -42,14 +43,38 @@ const faqs = [
   },
 ];
 
-export default function ContactUsPage() {
+const validSubjects = [
+  "General Inquiry",
+  "Business Mentoring",
+  "Life Coaching",
+  "Organization Training",
+  "Branding & Consultancy",
+  "Other",
+];
+
+function getInitialSubject(subjectParam: string | null) {
+  if (!subjectParam) {
+    return "General Inquiry";
+  }
+
+  const decodedSubject = decodeURIComponent(subjectParam);
+  return validSubjects.includes(decodedSubject)
+    ? decodedSubject
+    : "General Inquiry";
+}
+
+function ContactForm() {
+  const searchParams = useSearchParams();
+  const subjectParam = searchParams.get("subject");
+  const initialSubject = getInitialSubject(subjectParam);
+
   // 1. FORM STATE MANAGEMENT
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     phone: "",
     organization: "",
-    subject: "General Inquiry",
+    subject: initialSubject,
     message: "",
   });
 
@@ -233,96 +258,116 @@ export default function ContactUsPage() {
                   <div className={styles["form-grid"]}>
                     <div className={styles["field-group"]}>
                       <label htmlFor="fullName">Full Name *</label>
-                      <input
-                        id="fullName"
-                        name="fullName"
-                        type="text"
-                        value={formData.fullName}
-                        onChange={updateField}
-                        required
-                        className={styles.input}
-                        placeholder="e.g. Ashay Shah"
-                      />
+                      <div className={styles.inputWrapper}>
+                        <span className={styles.inputIcon} aria-hidden="true"><UserIcon /></span>
+                        <input
+                          id="fullName"
+                          name="fullName"
+                          type="text"
+                          value={formData.fullName}
+                          onChange={updateField}
+                          required
+                          className={styles.inputWithIcon}
+                          placeholder="e.g. Ashay Shah"
+                        />
+                      </div>
                     </div>
 
                     <div className={styles["field-group"]}>
                       <label htmlFor="email">Email Address *</label>
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={updateField}
-                        required
-                        className={styles.input}
-                        placeholder="e.g. name@example.com"
-                      />
+                      <div className={styles.inputWrapper}>
+                        <span className={styles.inputIcon} aria-hidden="true"><MailIcon /></span>
+                        <input
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={updateField}
+                          required
+                          className={styles.inputWithIcon}
+                          placeholder="e.g. name@example.com"
+                        />
+                      </div>
                     </div>
 
                     <div className={styles["field-group"]}>
                       <label htmlFor="phone">Phone Number *</label>
-                      <input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        value={formData.phone}
-                        onChange={updateField}
-                        required
-                        className={styles.input}
-                        placeholder="e.g. 9822600521"
-                      />
+                      <div className={styles.inputWrapper}>
+                        <span className={styles.inputIcon} aria-hidden="true"><PhoneIcon /></span>
+                        <input
+                          id="phone"
+                          name="phone"
+                          type="tel"
+                          value={formData.phone}
+                          onChange={updateField}
+                          required
+                          className={styles.inputWithIcon}
+                          placeholder="e.g. 9822600521"
+                        />
+                      </div>
                     </div>
 
                     <div className={styles["field-group"]}>
                       <label htmlFor="organization">Organization (Optional)</label>
-                      <input
-                        id="organization"
-                        name="organization"
-                        type="text"
-                        value={formData.organization}
-                        onChange={updateField}
-                        className={styles.input}
-                        placeholder="e.g. Company or Institution"
-                      />
+                      <div className={styles.inputWrapper}>
+                        <span className={styles.inputIcon} aria-hidden="true"><BuildingIcon /></span>
+                        <input
+                          id="organization"
+                          name="organization"
+                          type="text"
+                          value={formData.organization}
+                          onChange={updateField}
+                          className={styles.inputWithIcon}
+                          placeholder="e.g. Company or Institution"
+                        />
+                      </div>
                     </div>
                   </div>
 
                   <div className={styles["field-group"]} style={{ marginTop: "20px" }}>
                     <label htmlFor="subject">What are you looking for? *</label>
-                    <select
-                      id="subject"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={updateField}
-                      required
-                      className={styles.input}
-                      style={{ appearance: "auto" }}
-                    >
-                      <option value="General Inquiry">General Inquiry</option>
-                      <option value="Business Mentoring">Business Mentoring</option>
-                      <option value="Life Coaching">Life Coaching</option>
-                      <option value="Organization Training">
-                        Organization Training
-                      </option>
-                      <option value="Branding & Consultancy">
-                        Branding & Consultancy
-                      </option>
-                      <option value="Other">Other</option>
-                    </select>
+                    <div className={styles.inputWrapper}>
+                      <span className={styles.inputIcon} aria-hidden="true"><BookOpenIcon /></span>
+                      <select
+                        id="subject"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={updateField}
+                        required
+                        className={styles.selectWithIcon}
+                      >
+                        <option value="General Inquiry">General Inquiry</option>
+                        <option value="Business Mentoring">Business Mentoring</option>
+                        <option value="Life Coaching">Life Coaching</option>
+                        <option value="Organization Training">
+                          Organization Training
+                        </option>
+                        <option value="Branding & Consultancy">
+                          Branding & Consultancy
+                        </option>
+                        <option value="Other">Other</option>
+                      </select>
+                      <span className={styles.selectChevron} aria-hidden="true">˅</span>
+                    </div>
                   </div>
 
                   <div className={styles["field-group"]} style={{ marginTop: "20px" }}>
                     <label htmlFor="message">Your Message *</label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows={6}
-                      value={formData.message}
-                      onChange={updateField}
-                      required
-                      className={styles.input}
-                      placeholder="Tell us about what you want to achieve, how we can help, or any details about your organization."
-                    />
+                    <div className={styles.inputWrapper}>
+                      <span className={styles.inputIcon} style={{ top: "16px", transform: "none" }} aria-hidden="true">
+                        <MessageSquareIcon />
+                      </span>
+                      <textarea
+                        id="message"
+                        name="message"
+                        rows={6}
+                        value={formData.message}
+                        onChange={updateField}
+                        required
+                        className={styles.textareaWithIcon}
+                        placeholder="Tell us about what you want to achieve, how we can help, or any details about your organization."
+                      />
+                    </div>
                   </div>
 
                   <button
@@ -490,6 +535,37 @@ export default function ContactUsPage() {
   );
 }
 
+export default function ContactUsPage() {
+  return (
+    <Suspense fallback={
+      <div style={{
+        display: "grid",
+        placeItems: "center",
+        minHeight: "100vh",
+        background: "#f7fbff",
+        color: "#101b35",
+        fontFamily: "sans-serif"
+      }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{
+            width: "40px",
+            height: "40px",
+            border: "3px solid rgba(8, 127, 140, 0.2)",
+            borderTopColor: "#087f8c",
+            borderRadius: "50%",
+            animation: "spin 1s linear infinite",
+            margin: "0 auto 16px"
+          }} />
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          <p style={{ fontWeight: 600 }}>Loading inquiry form...</p>
+        </div>
+      </div>
+    }>
+      <ContactForm />
+    </Suspense>
+  );
+}
+
 // -------------------------------------------------------------
 // INLINE REUSABLE ICONS
 // -------------------------------------------------------------
@@ -610,5 +686,43 @@ function YouTubeIcon() {
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ width: "16px", height: "16px" }}>
       <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.7 4.6 12 4.6 12 4.6s-5.7 0-7.5.5a3 3 0 0 0-2.1 2.1C2 9 2 12 2 12s0 3 .4 4.8a3 3 0 0 0 2.1 2.1c1.8.5 7.5.5 7.5.5s5.7 0 7.5-.5a3 3 0 0 0 2.1-2.1C22 15 22 12 22 12s0-3-.4-4.8ZM10 15.4V8.6l5.8 3.4-5.8 3.4Z" />
     </svg>
+  );
+}
+
+function UserIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </SvgIcon>
+  );
+}
+
+function BuildingIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
+      <line x1="9" y1="22" x2="9" y2="16" />
+      <line x1="15" y1="22" x2="15" y2="16" />
+      <line x1="9" y1="16" x2="15" y2="16" />
+      <path d="M8 6h2v2H8V6zm0 4h2v2H8v-2zm8-4h2v2h-2V6zm0 4h2v2h-2v-2z" />
+    </SvgIcon>
+  );
+}
+
+function BookOpenIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+    </SvgIcon>
+  );
+}
+
+function MessageSquareIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </SvgIcon>
   );
 }
