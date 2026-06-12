@@ -5,8 +5,9 @@ import {
   ArrowLeft, ArrowRight, Compass, Clock, Users, ShieldCheck, 
   Sparkles, Trees, Palmtree, Mountain, Award, HeartHandshake, HelpCircle 
 } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import SiteFooter from "@/components/SiteFooter";
+import Navbar from "@/components/layout/Navbar";
+import SiteFooter from "@/components/layout/SiteFooter";
+import { CheckIcon } from "@/components/ui/Icons";
 import styles from "./relationship-tourism.module.css";
 
 export default function RelationshipTourismPage() {
@@ -274,10 +275,4 @@ export default function RelationshipTourismPage() {
   );
 }
 
-function CheckIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ width: "12px", height: "12px" }}>
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  );
-}
+

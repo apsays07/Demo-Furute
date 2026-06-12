@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./Navbar.module.css";
 
-const menuItems = [
+const menuItems: string[] = [
   "Home",
   "About Us",
   "Programs",
@@ -15,7 +15,24 @@ const menuItems = [
   "Contact Us",
 ];
 
-const programDropdown = {
+interface ProgramItem {
+  label: string;
+  path: string;
+}
+
+interface Subcategory {
+  label: string;
+  path?: string;
+  items?: ProgramItem[];
+  isLeaf?: boolean;
+}
+
+interface ProgramDropdown {
+  label: string;
+  subcategories: Subcategory[];
+}
+
+const programDropdown: ProgramDropdown = {
   label: "Programs",
   subcategories: [
     {
@@ -47,15 +64,15 @@ const programDropdown = {
   ]
 };
 
-function getSectionId(item) {
+function getSectionId(item: string): string {
   return item.toLowerCase().replace(/\s+/g, "-");
 }
 
 export default function Navbar() {
-  const [activeItem, setActiveItem] = useState("Home");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isProgramsExpanded, setIsProgramsExpanded] = useState(false);
-  const [expandedSubcat, setExpandedSubcat] = useState(null);
+  const [activeItem, setActiveItem] = useState<string>("Home");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [isProgramsExpanded, setIsProgramsExpanded] = useState<boolean>(false);
+  const [expandedSubcat, setExpandedSubcat] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -86,14 +103,14 @@ export default function Navbar() {
     }
   }, []);
 
-  const handleLinkClick = (item) => {
+  const handleLinkClick = (item: string) => {
     setActiveItem(item);
     setIsMobileMenuOpen(false);
     setIsProgramsExpanded(false);
     setExpandedSubcat(null);
   };
 
-  const handleProgramsClick = (e) => {
+  const handleProgramsClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (window.innerWidth <= 980) {
       e.preventDefault();
       setIsProgramsExpanded(!isProgramsExpanded);
@@ -102,7 +119,7 @@ export default function Navbar() {
     }
   };
 
-  const handleSubcatClick = (e, subcatLabel, isLeaf) => {
+  const handleSubcatClick = (e: React.MouseEvent<HTMLSpanElement>, subcatLabel: string, isLeaf?: boolean) => {
     if (window.innerWidth <= 980) {
       e.preventDefault();
       if (!isLeaf) {
@@ -137,7 +154,7 @@ export default function Navbar() {
             return (
               <li key={item} className={styles.dropdown}>
                 <Link
-                  className={`${activeItem === item ? styles.active : undefined} ${styles.dropdownTrigger} ${isProgramsExpanded ? styles.expanded : ""}`}
+                  className={`${activeItem === item ? styles.active : ""} ${styles.dropdownTrigger} ${isProgramsExpanded ? styles.expanded : ""}`}
                   href="/programs"
                   aria-current={activeItem === item ? "page" : undefined}
                   onClick={handleProgramsClick}
@@ -147,7 +164,7 @@ export default function Navbar() {
 
                 <ul className={`${styles.dropdownMenu} ${isProgramsExpanded ? styles.expanded : ""}`}>
                   {programDropdown.subcategories.map((subcat) => {
-                    if (subcat.isLeaf) {
+                    if (subcat.isLeaf && subcat.path) {
                       return (
                         <li key={subcat.label} className={styles.dropdownLeaf}>
                           <Link 
@@ -170,7 +187,7 @@ export default function Navbar() {
                           <span className={styles.subChevron} aria-hidden="true">&gt;</span>
                         </span>
                         <ul className={`${styles.submenuMenu} ${isSubcatExpanded ? styles.expanded : ""}`}>
-                          {subcat.items.map((subitem) => (
+                          {subcat.items?.map((subitem) => (
                             <li key={subitem.label}>
                               <Link 
                                 href={subitem.path} 

@@ -1,4 +1,4 @@
-import ProgramPageLayout from "@/components/ProgramPageLayout";
+import ProgramPageLayout from "@/components/shared/ProgramPageLayout";
 
 export default function LeadershipAndNegotiationPage() {
   return (

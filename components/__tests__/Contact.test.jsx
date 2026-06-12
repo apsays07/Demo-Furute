@@ -15,10 +15,10 @@ jest.mock("next/navigation", () => ({
 }));
 
 // Mock Navbar
-jest.mock("@/components/Navbar", () => () => <nav>Navbar</nav>);
+jest.mock("@/components/layout/Navbar", () => () => <nav>Navbar</nav>);
 
 // Mock Footer
-jest.mock("@/components/SiteFooter", () => () => <footer>Footer</footer>);
+jest.mock("@/components/layout/SiteFooter", () => () => <footer>Footer</footer>);
 
 // Mock CSS Module
 jest.mock("../../app/contact/contact.module.css", () => ({}));

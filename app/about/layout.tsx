@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About Ashay Shah & Furute | Business Trainer & Life Coach",
-  description:
-    "Learn about Ashay Shah, founder of Furute. Discover his 20-year entrepreneurial journey, leadership DNA, core values, and how he has trained over 8,000 leaders.",
+  title: "Furute",
+  description: "Leadership and Business Coaching",
 };
 
 export default function AboutLayout({

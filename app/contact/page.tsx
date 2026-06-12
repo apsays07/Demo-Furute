@@ -3,8 +3,29 @@
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import Navbar from "@/components/Navbar";
-import SiteFooter from "@/components/SiteFooter";
+import Navbar from "@/components/layout/Navbar";
+import SiteFooter from "@/components/layout/SiteFooter";
+import FormInput from "@/components/ui/FormInput";
+import FormTextarea from "@/components/ui/FormTextarea";
+import FormSelect from "@/components/ui/FormSelect";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  CheckIcon,
+  MailIcon,
+  PhoneIcon,
+  MapPinIcon,
+  ClockIcon,
+  ChevronDownIcon,
+  FacebookIcon,
+  XIcon,
+  LinkedInIcon,
+  YouTubeIcon,
+  UserIcon,
+  BuildingIcon,
+  BookOpenIcon,
+  MessageSquareIcon,
+} from "@/components/ui/Icons";
 import styles from "./contact.module.css";
 
 // -------------------------------------------------------------
@@ -256,119 +277,76 @@ function ContactForm() {
                   <legend style={{ display: "none" }}>Contact Form</legend>
 
                   <div className={styles["form-grid"]}>
-                    <div className={styles["field-group"]}>
-                      <label htmlFor="fullName">Full Name *</label>
-                      <div className={styles.inputWrapper}>
-                        <span className={styles.inputIcon} aria-hidden="true"><UserIcon /></span>
-                        <input
-                          id="fullName"
-                          name="fullName"
-                          type="text"
-                          value={formData.fullName}
-                          onChange={updateField}
-                          required
-                          className={styles.inputWithIcon}
-                          placeholder="e.g. Ashay Shah"
-                        />
-                      </div>
-                    </div>
+                    <FormInput
+                      label="Full Name"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={updateField}
+                      required
+                      placeholder="e.g. Ashay Shah"
+                      icon={UserIcon}
+                      styles={styles}
+                    />
 
-                    <div className={styles["field-group"]}>
-                      <label htmlFor="email">Email Address *</label>
-                      <div className={styles.inputWrapper}>
-                        <span className={styles.inputIcon} aria-hidden="true"><MailIcon /></span>
-                        <input
-                          id="email"
-                          name="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={updateField}
-                          required
-                          className={styles.inputWithIcon}
-                          placeholder="e.g. name@example.com"
-                        />
-                      </div>
-                    </div>
+                    <FormInput
+                      label="Email Address"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={updateField}
+                      required
+                      placeholder="e.g. name@example.com"
+                      icon={MailIcon}
+                      styles={styles}
+                    />
 
-                    <div className={styles["field-group"]}>
-                      <label htmlFor="phone">Phone Number *</label>
-                      <div className={styles.inputWrapper}>
-                        <span className={styles.inputIcon} aria-hidden="true"><PhoneIcon /></span>
-                        <input
-                          id="phone"
-                          name="phone"
-                          type="tel"
-                          value={formData.phone}
-                          onChange={updateField}
-                          required
-                          className={styles.inputWithIcon}
-                          placeholder="e.g. 9822600521"
-                        />
-                      </div>
-                    </div>
+                    <FormInput
+                      label="Phone Number"
+                      name="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={updateField}
+                      required
+                      placeholder="e.g. 9822600521"
+                      icon={PhoneIcon}
+                      styles={styles}
+                    />
 
-                    <div className={styles["field-group"]}>
-                      <label htmlFor="organization">Organization (Optional)</label>
-                      <div className={styles.inputWrapper}>
-                        <span className={styles.inputIcon} aria-hidden="true"><BuildingIcon /></span>
-                        <input
-                          id="organization"
-                          name="organization"
-                          type="text"
-                          value={formData.organization}
-                          onChange={updateField}
-                          className={styles.inputWithIcon}
-                          placeholder="e.g. Company or Institution"
-                        />
-                      </div>
-                    </div>
+                    <FormInput
+                      label="Organization (Optional)"
+                      name="organization"
+                      value={formData.organization}
+                      onChange={updateField}
+                      placeholder="e.g. Company or Institution"
+                      icon={BuildingIcon}
+                      styles={styles}
+                    />
                   </div>
 
-                  <div className={styles["field-group"]} style={{ marginTop: "20px" }}>
-                    <label htmlFor="subject">What are you looking for? *</label>
-                    <div className={styles.inputWrapper}>
-                      <span className={styles.inputIcon} aria-hidden="true"><BookOpenIcon /></span>
-                      <select
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={updateField}
-                        required
-                        className={styles.selectWithIcon}
-                      >
-                        <option value="General Inquiry">General Inquiry</option>
-                        <option value="Business Mentoring">Business Mentoring</option>
-                        <option value="Life Coaching">Life Coaching</option>
-                        <option value="Organization Training">
-                          Organization Training
-                        </option>
-                        <option value="Branding & Consultancy">
-                          Branding & Consultancy
-                        </option>
-                        <option value="Other">Other</option>
-                      </select>
-                      <span className={styles.selectChevron} aria-hidden="true">˅</span>
-                    </div>
-                  </div>
+                  <FormSelect
+                    label="What are you looking for?"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={updateField}
+                    required
+                    options={validSubjects}
+                    icon={BookOpenIcon}
+                    styles={styles}
+                    style={{ marginTop: "20px" }}
+                  />
 
-                  <div className={styles["field-group"]} style={{ marginTop: "20px" }}>
-                    <label htmlFor="message">Your Message *</label>
-                    <div className={styles.inputWrapper}>
-                      <span className={styles.inputIcon} style={{ top: "16px", transform: "none" }} aria-hidden="true">
-                        <MessageSquareIcon />
-                      </span>
-                      <textarea
-                        id="message"
-                        name="message"
-                        rows={6}
-                        value={formData.message}
-                        onChange={updateField}
-                        required
-                        className={styles.textareaWithIcon}
-                        placeholder="Tell us about what you want to achieve, how we can help, or any details about your organization."
-                      />
-                    </div>
-                  </div>
+                  <FormTextarea
+                    label="Your Message"
+                    name="message"
+                    rows={6}
+                    value={formData.message}
+                    onChange={updateField}
+                    required
+                    placeholder="Tell us about what you want to achieve, how we can help, or any details about your organization."
+                    icon={MessageSquareIcon}
+                    styles={styles}
+                    style={{ marginTop: "20px" }}
+                  />
 
                   <button
                     type="submit"
@@ -566,163 +544,4 @@ export default function ContactUsPage() {
   );
 }
 
-// -------------------------------------------------------------
-// INLINE REUSABLE ICONS
-// -------------------------------------------------------------
 
-function SvgIcon({
-  className,
-  children,
-}: IconProps & { children: React.ReactNode }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      {children}
-    </svg>
-  );
-}
-
-function ArrowLeftIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="m15 18-6-6 6-6" />
-    </SvgIcon>
-  );
-}
-
-function ArrowRightIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M5 12h14" />
-      <path d="m13 6 6 6-6 6" />
-    </SvgIcon>
-  );
-}
-
-function CheckIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M20 6 9 17l-5-5" />
-    </SvgIcon>
-  );
-}
-
-function MailIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <rect width="20" height="16" x="2" y="4" rx="2" />
-      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-    </SvgIcon>
-  );
-}
-
-function PhoneIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-    </SvgIcon>
-  );
-}
-
-function MapPinIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-      <circle cx="12" cy="10" r="3" />
-    </SvgIcon>
-  );
-}
-
-function ClockIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 14" />
-    </SvgIcon>
-  );
-}
-
-function ChevronDownIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="m6 9 6 6 6-6" />
-    </SvgIcon>
-  );
-}
-
-function FacebookIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ width: "16px", height: "16px" }}>
-      <path d="M14 8.8V7.2c0-.7.5-1.2 1.2-1.2H17V3h-2.6C11.7 3 10 4.7 10 7.4v1.4H7.5V12H10v9h3.5v-9h2.8l.5-3.2H14Z" />
-    </svg>
-  );
-}
-
-function XIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ width: "16px", height: "16px" }}>
-      <path d="M13.7 10.7 20.3 3h-1.6L13 9.7 8.4 3H3l6.9 10.1L3 21h1.6l6-6.9 4.8 6.9H21l-7.3-10.3Zm-2.1 2.4-.7-1L5.3 4.2h2.3l4.5 6.4.7 1 5.9 8.3h-2.3l-4.8-6.8Z" />
-    </svg>
-  );
-}
-
-function LinkedInIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ width: "16px", height: "16px" }}>
-      <path d="M6.7 8.8H3.4V21h3.3V8.8ZM5.1 3A1.9 1.9 0 1 0 5 6.8 1.9 1.9 0 0 0 5.1 3Zm8.4 5.8h-3.2V21h3.2v-6.4c0-1.7.8-2.7 2.1-2.7 1.2 0 1.8.9 1.8 2.7V21h3.2v-7.1c0-3.5-1.8-5.4-4.5-5.4-1.3 0-2.3.6-2.9 1.5h-.1l.4-1.2Z" />
-    </svg>
-  );
-}
-
-function YouTubeIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ width: "16px", height: "16px" }}>
-      <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.7 4.6 12 4.6 12 4.6s-5.7 0-7.5.5a3 3 0 0 0-2.1 2.1C2 9 2 12 2 12s0 3 .4 4.8a3 3 0 0 0 2.1 2.1c1.8.5 7.5.5 7.5.5s5.7 0 7.5-.5a3 3 0 0 0 2.1-2.1C22 15 22 12 22 12s0-3-.4-4.8ZM10 15.4V8.6l5.8 3.4-5.8 3.4Z" />
-    </svg>
-  );
-}
-
-function UserIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </SvgIcon>
-  );
-}
-
-function BuildingIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
-      <line x1="9" y1="22" x2="9" y2="16" />
-      <line x1="15" y1="22" x2="15" y2="16" />
-      <line x1="9" y1="16" x2="15" y2="16" />
-      <path d="M8 6h2v2H8V6zm0 4h2v2H8v-2zm8-4h2v2h-2V6zm0 4h2v2h-2v-2z" />
-    </SvgIcon>
-  );
-}
-
-function BookOpenIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-    </SvgIcon>
-  );
-}
-
-function MessageSquareIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-    </SvgIcon>
-  );
-}

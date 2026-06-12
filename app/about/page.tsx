@@ -2,8 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
-import SiteFooter from "@/components/SiteFooter";
+import Navbar from "@/components/layout/Navbar";
+import SiteFooter from "@/components/layout/SiteFooter";
+import {
+  ArrowLeftIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  HelpingHandsIcon,
+  TrophyIcon,
+  CompassIcon,
+  SmartWorkIcon,
+} from "@/components/ui/Icons";
 import styles from "./about.module.css";
 
 // -------------------------------------------------------------
@@ -351,93 +360,4 @@ export default function AboutUsPage() {
   );
 }
 
-// -------------------------------------------------------------
-// INLINE REUSABLE ICONS
-// -------------------------------------------------------------
 
-function SvgIcon({
-  className,
-  children,
-}: IconProps & { children: React.ReactNode }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      {children}
-    </svg>
-  );
-}
-
-function ArrowLeftIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="m15 18-6-6 6-6" />
-    </SvgIcon>
-  );
-}
-
-function ShieldCheckIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      <path d="m9 11 2 2 4-4" />
-    </SvgIcon>
-  );
-}
-
-function SparklesIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-    </SvgIcon>
-  );
-}
-
-function HelpingHandsIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2" />
-      <rect width="12" height="10" x="6" y="6" rx="2" />
-      <path d="M12 2v4" />
-      <path d="m17 8 3-1.2" />
-      <path d="m7 8-3-1.2" />
-    </SvgIcon>
-  );
-}
-
-function TrophyIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
-      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
-      <path d="M4 22h16" />
-      <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34" />
-      <path d="M12 2a6 6 0 0 1 6 6v5a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8a6 6 0 0 1 6-6Z" />
-    </SvgIcon>
-  );
-}
-
-// Fixed SvgIcon strokeWidth override issue in CSS
-function CompassIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <circle cx="12" cy="12" r="10" />
-      <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
-    </SvgIcon>
-  );
-}
-
-function SmartWorkIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1 0-3.12 3 3 0 0 1 0-4.88 2.5 2.5 0 0 1 0-3.12A2.5 2.5 0 0 1 9.5 2Z" />
-      <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 0-3.12 3 3 0 0 0 0-4.88 2.5 2.5 0 0 0 0-3.12A2.5 2.5 0 0 0 14.5 2Z" />
-    </SvgIcon>
-  );
-}

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Navbar from "../Navbar";
+import Navbar from "../layout/Navbar";
 
 // Mock Next.js Link
 jest.mock("next/link", () => {
@@ -10,7 +10,7 @@ jest.mock("next/link", () => {
 });
 
 // Mock CSS Module
-jest.mock("../Navbar.module.css", () => ({}));
+jest.mock("../layout/Navbar.module.css", () => ({}));
 
 describe("Navbar Component", () => {
 

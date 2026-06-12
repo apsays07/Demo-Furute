@@ -1,8 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import Navbar from "@/components/Navbar";
-import SiteFooter from "@/components/SiteFooter";
+import Navbar from "@/components/layout/Navbar";
+import SiteFooter from "@/components/layout/SiteFooter";
+import VideoModal from "@/components/shared/VideoModal";
+import { initials } from "@/lib/utils";
+import {
+  ChartIcon,
+  BasketIcon,
+  MapIcon,
+  TagIcon,
+  MicIcon,
+  ArrowRightIcon as ArrowIcon,
+  PlayIcon,
+} from "@/components/ui/Icons";
 import styles from "./page.module.css";
 
 const programs = [
@@ -150,107 +161,6 @@ function cx(...names: Array<string | false | undefined>) {
     .join(" ");
 }
 
-function initials(value: string) {
-  return value
-    .split(" ")
-    .map((word) => word[0])
-    .join("")
-    .slice(0, 2);
-}
-
-function SvgIcon({
-  className,
-  children,
-}: IconProps & { children: React.ReactNode }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      {children}
-    </svg>
-  );
-}
-
-function ArrowIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M5 12h14" />
-      <path d="m13 6 6 6-6 6" />
-    </SvgIcon>
-  );
-}
-
-function ChartIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M4 19V5" />
-      <path d="M4 19h16" />
-      <path d="m7 15 4-4 3 3 5-7" />
-    </SvgIcon>
-  );
-}
-
-function BasketIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M6 9h12l-1 10H7L6 9Z" />
-      <path d="M9 9a3 3 0 0 1 6 0" />
-    </SvgIcon>
-  );
-}
-
-function MapIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="m9 18-5 2V6l5-2 6 2 5-2v14l-5 2-6-2Z" />
-      <path d="M9 4v14" />
-      <path d="M15 6v14" />
-    </SvgIcon>
-  );
-}
-
-function MicIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z" />
-      <path d="M19 10v1a7 7 0 0 1-14 0v-1" />
-      <path d="M12 18v3" />
-    </SvgIcon>
-  );
-}
-
-function PlayIcon(props: IconProps) {
-  return (
-    <svg className={props.className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M8 5v14l11-7L8 5Z" />
-    </svg>
-  );
-}
-
-function TagIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M20 10 12 2H4v8l8 8 8-8Z" />
-      <path d="M7.5 6.5h.01" />
-    </SvgIcon>
-  );
-}
-
-function CloseIcon(props: IconProps) {
-  return (
-    <SvgIcon {...props}>
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </SvgIcon>
-  );
-}
-
 function ImpactStat({
   value,
   label,
@@ -258,7 +168,7 @@ function ImpactStat({
 }: {
   value: number;
   label: string;
-  icon: (props: IconProps) => React.ReactNode;
+  icon: (props: any) => React.ReactNode;
 }) {
   return (
     <article className={styles["impact-stat"]}>
@@ -496,44 +406,11 @@ export default function Home() {
       <SiteFooter backTo="#home" />
 
       {activeVideo ? (
-        <div
-          className={styles["video-modal"]}
-          role="dialog"
-          aria-modal="true"
-          aria-label={activeVideo.title}
-        >
-          <button
-            type="button"
-            className={styles["video-modal-backdrop"]}
-            aria-label="Close video"
-            onClick={() => setActiveVideo(null)}
-          />
-          <div className={styles["video-modal-panel"]}>
-            <div className={styles["video-modal-header"]}>
-              <div>
-                <span>{activeVideo.label}</span>
-                <h2>{activeVideo.title}</h2>
-              </div>
-              <button
-                type="button"
-                className={styles["video-modal-close"]}
-                aria-label="Close video"
-                onClick={() => setActiveVideo(null)}
-              >
-                <CloseIcon />
-              </button>
-            </div>
-            <div className={styles["video-embed-wrap"]}>
-              <iframe
-                src={`https://www.youtube-nocookie.com/embed/${activeVideo.videoId}?autoplay=1&rel=0`}
-                title={activeVideo.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
-            </div>
-          </div>
-        </div>
+        <VideoModal
+          video={activeVideo}
+          onClose={() => setActiveVideo(null)}
+          styles={styles}
+        />
       ) : null}
     </main>
   );

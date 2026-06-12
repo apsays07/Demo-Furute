@@ -8,7 +8,7 @@ jest.mock("next/link", () => {
 });
 
 // Mock Footer
-jest.mock("@/components/SiteFooter", () => () => <footer>Footer</footer>);
+jest.mock("@/components/layout/SiteFooter", () => () => <footer>Footer</footer>);
 
 // Mock CSS Module
 jest.mock("../../app/invite/invite.module.css", () => ({}));
