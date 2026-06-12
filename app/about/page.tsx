@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Navbar from "@/components/layout/Navbar";
 import SiteFooter from "@/components/layout/SiteFooter";
 import {
@@ -194,10 +195,12 @@ export default function AboutUsPage() {
           <div className={styles.portraitWrapper}>
             <div className={styles.portraitCard}>
               {!imageError ? (
-                <img
+                <Image
                   src="/ashay-shah.png"
                   alt="Ashay Shah"
                   className={styles.portrait}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 400px"
                   onError={() => setImageError(true)}
                 />
               ) : (
@@ -334,7 +337,7 @@ export default function AboutUsPage() {
       <section className={styles.footerCtaSection}>
         <div className={styles.footerCtaGrid}>
           <div className={styles.orgInfo}>
-            <img src="/furute-logo.png" alt="Furute Logo" className={styles.orgLogo} />
+            <Image src="/furute-logo.png" alt="Furute Logo" width={110} height={54} className={styles.orgLogo} />
             <h3>Furute - Kingmakers</h3>
             <p>
               Founded in January 2013 under the leadership of Ashay Shah. Furute is a dedicated business training, branding, and life coaching partner committed to building stable, high-efficiency business operations.

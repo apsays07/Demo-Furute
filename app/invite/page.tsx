@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import SiteFooter from "@/components/layout/SiteFooter";
 import VideoModal from "@/components/shared/VideoModal";
 import { cn as cx } from "@/lib/utils";
@@ -76,6 +77,12 @@ const videos: Video[] = [
     videoId: "wM1VmwrR_Vg",
   },
 ];
+
+const localInviteThumbnails: Record<string, string> = {
+  "BCkejLzRk_Y": "/videos/invite-1.jpg",
+  "ZEZiYQJClzw": "/videos/invite-2.jpg",
+  "wM1VmwrR_Vg": "/videos/invite-3.jpg",
+};
 
 export default function InviteSpeakerPage() {
   // 1. FORM STATE MANAGEMENT
@@ -182,7 +189,7 @@ export default function InviteSpeakerPage() {
 
       <header className={styles.header}>
         <Link href="/" className={styles.logo} aria-label="Go to Furute home">
-          <img src="/furute-logo.png" alt="Furute" />
+          <Image src="/furute-logo.png" alt="Furute" width={138} height={68} priority />
         </Link>
 
         <nav className={styles.nav} aria-label="Invite page navigation">
@@ -218,9 +225,11 @@ export default function InviteSpeakerPage() {
         <aside className={styles["speaker-card"]} aria-label="Ashay Shah profile">
           <div className={styles["portrait-wrap"]}>
             {!imageMissing ? (
-              <img
+              <Image
                 src="/ashay-shah.png"
                 alt="Ashay Shah"
+                width={390}
+                height={430}
                 onError={() => setImageMissing(true)}
               />
             ) : (
@@ -272,10 +281,11 @@ export default function InviteSpeakerPage() {
               aria-label={`Play ${video.title}`}
             >
               <span className={styles["video-frame"]}>
-                <img
-                  src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
+                <Image
+                  src={localInviteThumbnails[video.videoId] || "/videos/invite-1.jpg"}
                   alt=""
-                  loading="lazy"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
                 />
                 <span className={styles["play-badge"]} aria-hidden="true">
                   <PlayIcon />

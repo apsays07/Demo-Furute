@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Navbar from "@/components/layout/Navbar";
 import SiteFooter from "@/components/layout/SiteFooter";
 import VideoModal from "@/components/shared/VideoModal";
@@ -186,6 +187,13 @@ function ImpactStat({
   );
 }
 
+const localThumbnails: Record<string, string> = {
+  "i-Qe4F17hKc": "/videos/video-1.jpg",
+  "Dp65MGhze3I": "/videos/video-2.jpg",
+  "2ofM34EwKJo": "/videos/video-3.jpg",
+  "S9fjt9HVf6Q": "/videos/video-4.jpg",
+};
+
 export default function Home() {
   const [activeVideo, setActiveVideo] = useState<Video | null>(null);
   const [mentorMissing, setMentorMissing] = useState(false);
@@ -298,9 +306,11 @@ export default function Home() {
             aria-label="Ashay Shah"
           >
             {!mentorMissing ? (
-              <img
+              <Image
                 src={mentorImage}
                 alt="Ashay Shah"
+                width={390}
+                height={430}
                 onError={() => setMentorMissing(true)}
               />
             ) : null}
@@ -374,10 +384,11 @@ export default function Home() {
                 aria-label={`Play ${video.title}`}
               >
                 <span className={styles["video-thumb-wrap"]}>
-                  <img
-                    src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
+                  <Image
+                    src={localThumbnails[video.videoId] || "/videos/video-1.jpg"}
                     alt=""
-                    loading="lazy"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
                   />
                   <span className={styles["video-play"]} aria-hidden="true">
                     <PlayIcon />

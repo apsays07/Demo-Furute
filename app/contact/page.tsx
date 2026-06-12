@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import SiteFooter from "@/components/layout/SiteFooter";
 import FormInput from "@/components/ui/FormInput";
@@ -83,6 +84,48 @@ function getInitialSubject(subjectParam: string | null) {
     ? decodedSubject
     : "General Inquiry";
 }
+
+// -------------------------------------------------------------
+// FRAMER MOTION ANIMATION VARIANTS
+// -------------------------------------------------------------
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }
+  }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const slideInLeft = {
+  hidden: { opacity: 0, x: -40 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const }
+  }
+};
+
+const slideInRight = {
+  hidden: { opacity: 0, x: 40 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const }
+  }
+};
 
 function ContactForm() {
   const searchParams = useSearchParams();
@@ -194,7 +237,12 @@ function ContactForm() {
       <Navbar />
 
       {/* Back button and page intro */}
-      <section className={styles.hero}>
+      <motion.section 
+        className={styles.hero}
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+      >
         <div className={styles["hero-copy"]}>
           <Link href="/" className={styles["back-link"]}>
             <ArrowLeftIcon />
@@ -209,37 +257,80 @@ function ContactForm() {
             connect with you shortly.
           </p>
         </div>
-      </section>
+      </motion.section>
+
+      {/* Trust Stats Banner (Restored!) */}
+      <motion.section 
+        className={styles["trust-banner"]}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        variants={fadeInUp}
+      >
+        <div className={styles["trust-banner-inner"]}>
+          <div className={styles["trust-stat"]}>
+            <strong>8,000+</strong>
+            <span>Leaders Trained</span>
+          </div>
+          <div className={styles["trust-stat"]}>
+            <strong>20+ Years</strong>
+            <span>Mentoring Experience</span>
+          </div>
+          <div className={styles["trust-stat"]}>
+            <strong>Pune Hub</strong>
+            <span>Swargate Office</span>
+          </div>
+          <div className={styles["trust-stat"]}>
+            <strong>24 Hours</strong>
+            <span>Inquiry Response</span>
+          </div>
+        </div>
+      </motion.section>
 
       {/* 3-Column Quick Contact Grid */}
-      <section className={styles["quick-contact-section"]}>
+      <motion.section 
+        className={styles["quick-contact-section"]}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        variants={staggerContainer}
+      >
         <div className={styles["quick-grid"]}>
           {/* Card: Email */}
-          <a href="mailto:info@furute.in" className={styles["quick-card"]}>
+          <motion.a 
+            href="mailto:info@furute.in" 
+            className={styles["quick-card"]}
+            variants={fadeInUp}
+          >
             <div className={styles["quick-icon-wrap"]} aria-hidden="true">
               <MailIcon />
             </div>
             <h3>Email Us</h3>
             <span className={styles["quick-value"]}>info@furute.in</span>
             <p>Send an inquiry anytime; we reply within 24 hours.</p>
-          </a>
+          </motion.a>
 
           {/* Card: Phone */}
-          <a href="tel:+919822600521" className={styles["quick-card"]}>
+          <motion.a 
+            href="tel:+919822600521" 
+            className={styles["quick-card"]}
+            variants={fadeInUp}
+          >
             <div className={styles["quick-icon-wrap"]} aria-hidden="true">
               <PhoneIcon />
             </div>
             <h3>Call Us</h3>
             <span className={styles["quick-value"]}>+91 9822600521</span>
             <p>Mon - Sat: 10:00 AM - 7:00 PM IST</p>
-          </a>
+          </motion.a>
 
           {/* Card: Address */}
-          <a 
+          <motion.a 
             href="https://maps.google.com/?q=Mitra+Mandal+Colony+Swargate+Pune" 
             target="_blank" 
             rel="noreferrer" 
             className={styles["quick-card"]}
+            variants={fadeInUp}
           >
             <div className={styles["quick-icon-wrap"]} aria-hidden="true">
               <MapPinIcon />
@@ -247,14 +338,20 @@ function ContactForm() {
             <h3>Visit Us</h3>
             <span className={styles["quick-value"]}>Swargate, Pune</span>
             <p>3rd Floor, Ujjivan Bank, Mitra Mandal Colony, Swargate</p>
-          </a>
+          </motion.a>
         </div>
-      </section>
+      </motion.section>
 
       {/* Balanced Split Section: Form on Left, Maps/Social/Timings on Right */}
       <section className={styles["content-section"]}>
         {/* Left Column: Database-connected Glassmorphism Inquiry Form */}
-        <div className={styles["form-container"]}>
+        <motion.div 
+          className={styles["form-container"]}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={slideInLeft}
+        >
           <div className={styles["form-card"]}>
             <div className={styles["form-header"]}>
               <h2>Send a Message</h2>
@@ -403,11 +500,16 @@ function ContactForm() {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Column: Office Hours, Interactive Google Map & Social Links */}
-        <div className={styles["interactive-column"]}>
-          
+        <motion.div 
+          className={styles["interactive-column"]}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={slideInRight}
+        >
           {/* Card: Office Timings */}
           <div className={styles["info-card"]} style={{ padding: "20px 24px" }}>
             <div className={styles["info-icon-wrap"]} style={{ width: "44px", height: "44px" }} aria-hidden="true">
@@ -463,11 +565,76 @@ function ContactForm() {
               />
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
+      {/* Process Section (Timeline Restored!) */}
+      <motion.section 
+        className={styles["process-section"]}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        variants={staggerContainer}
+      >
+        <div className={styles["process-inner"]}>
+          <p className={styles.eyebrow}>Our Process</p>
+          <h2>What Happens Next?</h2>
+          <p className={styles["process-lead"]}>
+            Here is the step-by-step journey of how we connect, co-create your growth plan, and begin coaching.
+          </p>
+
+          <div className={styles["timeline-grid"]}>
+            <motion.div className={styles["timeline-item"]} variants={fadeInUp}>
+              <div className={styles["timeline-badge"]}>
+                <span>1</span>
+              </div>
+              <div className={styles["timeline-content"]}>
+                <h3>Submit Inquiry</h3>
+                <p>Fill out the form with details on what coaching topics you are interested in.</p>
+              </div>
+            </motion.div>
+
+            <motion.div className={styles["timeline-item"]} variants={fadeInUp}>
+              <div className={styles["timeline-badge"]}>
+                <span>2</span>
+              </div>
+              <div className={styles["timeline-content"]}>
+                <h3>Discovery Call</h3>
+                <p>We connect with you within 24 hours to schedule a brief discovery discussion.</p>
+              </div>
+            </motion.div>
+
+            <motion.div className={styles["timeline-item"]} variants={fadeInUp}>
+              <div className={styles["timeline-badge"]}>
+                <span>3</span>
+              </div>
+              <div className={styles["timeline-content"]}>
+                <h3>Tailored Roadmap</h3>
+                <p>Get a customized plan or program recommendations aligned with your goals.</p>
+              </div>
+            </motion.div>
+
+            <motion.div className={styles["timeline-item"]} variants={fadeInUp}>
+              <div className={styles["timeline-badge"]}>
+                <span>4</span>
+              </div>
+              <div className={styles["timeline-content"]}>
+                <h3>Begin Mentoring</h3>
+                <p>Start your coaching sessions with Ashay Shah and launch your path forward.</p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </motion.section>
+
       {/* Modern interactive FAQ Accordion matching Home Page design elements */}
-      <section className={styles["faq-section"]}>
+      <motion.section 
+        className={styles["faq-section"]}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        variants={fadeInUp}
+      >
         <div className={styles["faq-inner"]}>
           <div className={styles["faq-heading"]}>
             <p className={styles.eyebrow}>FAQ</p>
@@ -506,7 +673,7 @@ function ContactForm() {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       <SiteFooter backTo="/contact#" />
     </main>

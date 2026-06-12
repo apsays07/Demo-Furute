@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./Navbar.module.css";
 
 const menuItems: string[] = [
@@ -64,6 +65,26 @@ const programDropdown: ProgramDropdown = {
   ]
 };
 
+interface ServiceItem {
+  label: string;
+  path: string;
+}
+
+interface ServiceDropdown {
+  label: string;
+  items: ServiceItem[];
+}
+
+const serviceDropdown: ServiceDropdown = {
+  label: "Services",
+  items: [
+    { label: "Branding", path: "/services/branding" },
+    { label: "Mentoring", path: "/services/mentoring" },
+    { label: "Consultancy", path: "/services/consultancy" },
+    { label: "Digital Marketing", path: "/services/digital-marketing" },
+  ]
+};
+
 function getSectionId(item: string): string {
   return item.toLowerCase().replace(/\s+/g, "-");
 }
@@ -72,6 +93,7 @@ export default function Navbar() {
   const [activeItem, setActiveItem] = useState<string>("Home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isProgramsExpanded, setIsProgramsExpanded] = useState<boolean>(false);
+  const [isServicesExpanded, setIsServicesExpanded] = useState<boolean>(false);
   const [expandedSubcat, setExpandedSubcat] = useState<string | null>(null);
 
   useEffect(() => {
@@ -84,6 +106,10 @@ export default function Navbar() {
           setActiveItem("About Us");
         } else if (path.startsWith("/programs")) {
           setActiveItem("Programs");
+        } else if (path.startsWith("/services")) {
+          setActiveItem("Services");
+        } else if (path.startsWith("/events")) {
+          setActiveItem("Events");
         } else {
           const hash = window.location.hash;
           if (hash) {
@@ -107,6 +133,7 @@ export default function Navbar() {
     setActiveItem(item);
     setIsMobileMenuOpen(false);
     setIsProgramsExpanded(false);
+    setIsServicesExpanded(false);
     setExpandedSubcat(null);
   };
 
@@ -116,6 +143,15 @@ export default function Navbar() {
       setIsProgramsExpanded(!isProgramsExpanded);
     } else {
       handleLinkClick("Programs");
+    }
+  };
+
+  const handleServicesClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (window.innerWidth <= 980) {
+      e.preventDefault();
+      setIsServicesExpanded(!isServicesExpanded);
+    } else {
+      handleLinkClick("Services");
     }
   };
 
@@ -132,7 +168,7 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <Link className={styles.navbarLogo} href="/" aria-label="Furute home">
         <span className={styles.logoMark} aria-hidden="true">
-          <img src="/furute-logo.png" alt="Furute Logo" />
+          <Image src="/furute-logo.png" alt="Furute Logo" width={138} height={68} priority />
         </span>
       </Link>
 
@@ -206,6 +242,34 @@ export default function Navbar() {
             );
           }
 
+          if (item === "Services") {
+            return (
+              <li key={item} className={styles.dropdown}>
+                <Link
+                  className={`${activeItem === item ? styles.active : ""} ${styles.dropdownTrigger} ${isServicesExpanded ? styles.expanded : ""}`}
+                  href="/#services"
+                  aria-current={activeItem === item ? "page" : undefined}
+                  onClick={handleServicesClick}
+                >
+                  {item} <span className={styles.chevron} aria-hidden="true">˅</span>
+                </Link>
+
+                <ul className={`${styles.dropdownMenu} ${isServicesExpanded ? styles.expanded : ""}`}>
+                  {serviceDropdown.items.map((subitem) => (
+                    <li key={subitem.label} className={styles.dropdownLeaf}>
+                      <Link 
+                        href={subitem.path} 
+                        onClick={() => handleLinkClick("Services")}
+                      >
+                        {subitem.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            );
+          }
+
           return (
             <li key={item}>
               {item === "Contact Us" ? (
@@ -221,6 +285,15 @@ export default function Navbar() {
                 <Link
                   className={activeItem === item ? styles.active : undefined}
                   href="/about"
+                  aria-current={activeItem === item ? "page" : undefined}
+                  onClick={() => handleLinkClick(item)}
+                >
+                  {item}
+                </Link>
+              ) : item === "Events" ? (
+                <Link
+                  className={activeItem === item ? styles.active : undefined}
+                  href="/events"
                   aria-current={activeItem === item ? "page" : undefined}
                   onClick={() => handleLinkClick(item)}
                 >

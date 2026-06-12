@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./SiteFooter.module.css";
 import {
   FacebookIcon,
@@ -50,7 +51,7 @@ export default function SiteFooter({ backTo = "#home" }: SiteFooterProps) {
     <footer className={styles.footer} id="contact-us">
       <div className={styles.main}>
         <div className={styles.brand}>
-          <img src="/furute-logo.png" alt="Furute" />
+          <Image src="/furute-logo.png" alt="Furute" width={190} height={94} />
           <p>
             Practical business training, mentoring, and life coaching for
             people who want clearer direction and stronger execution.
