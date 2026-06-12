@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import SiteFooter from "@/components/layout/SiteFooter";
-import { ArrowLeftIcon, ArrowRightIcon } from "@/components/ui/Icons";
+import { ArrowLeftIcon, ArrowRightIcon, PhoneIcon } from "@/components/ui/Icons";
 import styles from "./events.module.css";
 
 // -------------------------------------------------------------
@@ -244,8 +244,19 @@ export default function EventsPage() {
 
       {/* Call-to-Action Section */}
       <section className={styles["cta-section"]}>
-        <div className={styles["cta-inner"]}>
-          <h2>Want a customized workshop for your team?</h2>
+        <motion.div 
+          className={styles["cta-inner"]}
+          initial={{ opacity: 0, y: 35 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.65, ease: "easeOut" }}
+        >
+          <div className={styles["cta-eyebrow"]}>
+            <span>Tailored Solutions</span>
+          </div>
+          <h2>
+            Want a <span className={styles["cta-highlight"]}>customized workshop</span> for your team?
+          </h2>
           <p>
             We organize outbound team-building camps, customized marketing insights programs, 
             and goal-setting sessions tailored to target specific growth milestones.
@@ -256,10 +267,11 @@ export default function EventsPage() {
               <ArrowRightIcon />
             </Link>
             <a href="tel:+919822600521" className={styles["secondary-btn"]}>
+              <PhoneIcon />
               Call Support: +91 9822600521
             </a>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       <SiteFooter backTo="/events#" />
