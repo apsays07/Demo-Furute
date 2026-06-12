@@ -1,4 +1,4 @@
-name: Node.js Tests
+name: Next.js CI
 
 on:
   push:
@@ -16,19 +16,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm install
 
-      - name: Run Jest Tests
+      - name: Run Jest tests
         run: npm test
 
-      - name: Build Next.js Project
+      - name: Build project
         run: npm run build
