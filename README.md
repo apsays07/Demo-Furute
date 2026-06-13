@@ -3,7 +3,7 @@
 ## Overview
 A modern Next.js website for Furute featuring programs, events,
 consultancy services, branding, digital marketing, mentoring,
-speaker invitations, and contact forms.
+speaker invitations, and contact forms and much more
 
 ## Tech Stack
 
