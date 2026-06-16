@@ -1,0 +1,95 @@
+.video-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid rgba(16, 27, 53, 0.1);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 18px 44px rgba(16, 27, 53, 0.08);
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.video-card:hover,
+.video-card:focus-visible {
+  transform: translateY(-5px);
+  border-color: rgba(8, 127, 140, 0.24);
+  box-shadow: 0 28px 66px rgba(16, 27, 53, 0.14);
+  outline: none;
+}
+
+.video-thumb-wrap {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: linear-gradient(135deg, #083b52, #101b35); /* teal-dark, ink */
+}
+
+.video-thumb-wrap img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform 0.28s ease, filter 0.28s ease;
+}
+
+.video-thumb-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(16, 27, 53, 0.08), rgba(16, 27, 53, 0.46)),
+    linear-gradient(90deg, rgba(8, 127, 140, 0.22), rgba(242, 165, 26, 0.1));
+}
+
+.video-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #083b52; /* teal-dark */
+  transform: translate(-50%, -50%);
+  box-shadow: 0 16px 34px rgba(16, 27, 53, 0.28);
+  font-size: 18px;
+}
+
+.video-play svg {
+  width: 18px;
+  height: 18px;
+  margin-left: 3px;
+}
+
+.video-card-content {
+  display: grid;
+  gap: 8px;
+  padding: 18px 18px 20px;
+}
+
+.video-card-content span {
+  color: #087f8c; /* teal */
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.video-card-content strong {
+  color: #101b35; /* ink */
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.28;
+}

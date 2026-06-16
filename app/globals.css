@@ -8,8 +8,22 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-plus-jakarta-sans), var(--font-inter), var(--font-geist-sans), sans-serif;
   --font-mono: var(--font-geist-mono);
+  --color-ink: #101b35;
+  --color-ink-light: #1e2d4a;
+  --color-muted: #647086;
+  --color-teal: #087f8c;
+  --color-teal-dark: #075f69;
+  --color-teal-light: rgba(8, 127, 140, 0.08);
+  --color-mint: #4fd7df;
+  --color-gold: #f2a51a;
+  --color-coral: #e45f4f;
+  --color-rose: #c83d73;
+  --color-violet: #6f58c9;
+  --color-brand-red: #c1272d;
+  --color-brand-red-dark: #a31f24;
+  --color-brand-red-light: rgba(193, 39, 45, 0.08);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +36,70 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-plus-jakarta-sans), var(--font-inter), var(--font-geist-sans), sans-serif;
 }
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(8, 127, 140, 0.2);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(8, 127, 140, 0.4);
+}
+
+/* UI Animations */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.2s ease-in-out 2;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 0.95; transform: scale(1.05); }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s infinite ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+

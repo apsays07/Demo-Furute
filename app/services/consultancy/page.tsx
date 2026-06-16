@@ -105,7 +105,7 @@ export default function ConsultancyPage() {
       >
         <div className={styles.heroBg}>
           <Image 
-            src="/services/consultancy_hero_bg.png" 
+            src="/services/consultancy_hero_bg.webp" 
             alt="Consultancy background"
             fill
             priority

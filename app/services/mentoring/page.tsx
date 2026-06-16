@@ -110,7 +110,7 @@ export default function MentoringPage() {
       >
         <div className={styles.heroBg}>
           <Image 
-            src="/services/mentoring.jpg" 
+            src="/services/mentoring.webp" 
             alt="Mentoring background"
             fill
             priority

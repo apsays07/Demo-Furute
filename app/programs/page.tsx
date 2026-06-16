@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import SiteFooter from "@/components/layout/SiteFooter";
@@ -11,9 +12,34 @@ import {
   Flame,
   Calendar,
   CheckCircle2,
+  BookOpen,
+  Clock,
+  Tag,
 } from "lucide-react";
 
+// ─── DB Program type ────────────────────────────────────────
+interface DBProgram {
+  _id: string;
+  title: string;
+  description: string;
+  duration: string;
+  category: string;
+  image?: string;
+  visible: boolean;
+}
+
 export default function ProgramsPage() {
+  const [dbPrograms, setDbPrograms] = useState<DBProgram[]>([]);
+
+  useEffect(() => {
+    fetch("/api/programs?limit=30")
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success && json.data?.length > 0) setDbPrograms(json.data);
+      })
+      .catch(() => {});
+  }, []);
+
   const categories = [
     {
       title: "Training Programs",
@@ -162,6 +188,59 @@ export default function ProgramsPage() {
           ))}
         </div>
       </section>
+
+      {/* ─── DYNAMIC PROGRAMS FROM ADMIN ────────────────── */}
+      {dbPrograms.length > 0 && (
+        <section className={styles.dbProgramsSection} id="admin-programs">
+          <div className={styles.dbProgramsHeader}>
+            <div className={styles.dbProgramsTitle}>
+              <BookOpen size={20} />
+              <h2>New Programs</h2>
+              <span className={styles.liveBadge}>
+                <span className={styles.liveDot} />
+                Live
+              </span>
+            </div>
+          </div>
+          <div className={styles.dbProgramsGrid}>
+            {dbPrograms.map((prog) => (
+              <article key={prog._id} className={styles.dbProgramCard}>
+                {/* Cover image or gradient placeholder */}
+                <div className={styles.dbProgramImageWrap}>
+                  {prog.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={prog.image} alt={prog.title} className={styles.dbProgramImage} />
+                  ) : (
+                    <div className={styles.dbProgramImagePlaceholder}>
+                      <BookOpen size={32} />
+                    </div>
+                  )}
+                </div>
+                <div className={styles.dbProgramBody}>
+                  <div className={styles.dbProgramMeta}>
+                    <span className={styles.dbProgramDuration}>
+                      <Clock size={12} />
+                      {prog.duration}
+                    </span>
+                    <span className={styles.dbProgramCategory}>
+                      <Tag size={12} />
+                      {prog.category}
+                    </span>
+                  </div>
+                  <h3>{prog.title}</h3>
+                  <p>{prog.description}</p>
+                  <Link
+                    href={`/contact?subject=Program Inquiry - ${encodeURIComponent(prog.title)}`}
+                    className={styles.dbProgramCta}
+                  >
+                    Inquire Now <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className={styles.categoriesSection} id="program-list">
         <div className={styles.sectionHeader}>

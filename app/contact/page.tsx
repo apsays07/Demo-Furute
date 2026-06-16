@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import SiteFooter from "@/components/layout/SiteFooter";
 import FormInput from "@/components/ui/FormInput";
@@ -28,14 +28,11 @@ import {
   MessageSquareIcon,
 } from "@/components/ui/Icons";
 import styles from "./contact.module.css";
+import EmailLoginModal from "@/components/shared/EmailLoginModal";
 
 // -------------------------------------------------------------
 // TYPES & DATA DEFINITIONS
 // -------------------------------------------------------------
-
-type IconProps = {
-  className?: string;
-};
 
 const faqs = [
   {
@@ -127,10 +124,20 @@ const slideInRight = {
   }
 };
 
+const loadingStepsList = [
+  "Validating your inquiry details...",
+  "Establishing secure server connection...",
+  "Writing to database...",
+  "Sending email notification to Ashay's team...",
+];
+
 function ContactForm() {
   const searchParams = useSearchParams();
   const subjectParam = searchParams.get("subject");
   const initialSubject = getInitialSubject(subjectParam);
+
+  const [mounted, setMounted] = useState(false);
+  const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null);
 
   // 1. FORM STATE MANAGEMENT
   const [formData, setFormData] = useState({
@@ -141,6 +148,15 @@ function ContactForm() {
     subject: initialSubject,
     message: "",
   });
+
+  useEffect(() => {
+    setMounted(true);
+    const savedEmail = localStorage.getItem("guest_verified_email");
+    if (savedEmail) {
+      setVerifiedEmail(savedEmail);
+      setFormData((prev) => ({ ...prev, email: savedEmail }));
+    }
+  }, []);
 
   // 2. ADDITIONAL STATE FOR DATABASE INTEGRATION
   const [submitted, setSubmitted] = useState(false);
@@ -153,6 +169,20 @@ function ContactForm() {
     email: "",
     subject: "",
   });
+
+  const [loadingStep, setLoadingStep] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isLoading) {
+      interval = setInterval(() => {
+        setLoadingStep((prev) => (prev < loadingStepsList.length - 1 ? prev + 1 : prev));
+      }, 700);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLoading]);
 
   // FAQ state tracking
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
@@ -176,6 +206,7 @@ function ContactForm() {
     event.preventDefault();
 
     console.log("CONTACT FORM SUBMITTED");
+    setLoadingStep(0);
     setIsLoading(true);
     setError(null);
 
@@ -208,7 +239,7 @@ function ContactForm() {
       // RESET FORM after successful submission
       setFormData({
         fullName: "",
-        email: "",
+        email: verifiedEmail || "",
         phone: "",
         organization: "",
         subject: "General Inquiry",
@@ -227,7 +258,16 @@ function ContactForm() {
   };
 
   return (
-    <main className={styles.page}>
+    <>
+      {mounted && !verifiedEmail && (
+        <EmailLoginModal
+          onSuccess={(email) => {
+            setVerifiedEmail(email);
+            setFormData((prev) => ({ ...prev, email }));
+          }}
+        />
+      )}
+      <main className={styles.page}>
       {/* Visual Ambient Background Elements */}
       <div className={styles.blob1} aria-hidden="true" />
       <div className={styles.blob2} aria-hidden="true" />
@@ -353,6 +393,50 @@ function ContactForm() {
           variants={slideInLeft}
         >
           <div className={styles["form-card"]}>
+            {/* Glassmorphic Loading Overlay */}
+            <AnimatePresence>
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className={styles["loading-overlay"]}
+                >
+                  <div className={styles["loading-content"]}>
+                    <div className={styles["loading-spinner-container"]}>
+                      <div className={styles["pulse-ring"]} />
+                      <div className={styles["pulse-ring-inner"]} />
+                      <MailIcon className={styles["loading-icon"]} />
+                    </div>
+                    <h3 className={styles["loading-title"]}>Submitting inquiry...</h3>
+                    <p className={styles["loading-message"]}>
+                      {loadingStepsList[loadingStep]}
+                    </p>
+                    
+                    <div className={styles["progress-bar"]}>
+                      <motion.div
+                        className={styles["progress-fill"]}
+                        initial={{ width: "0%" }}
+                        animate={{ width: `${((loadingStep + 1) / loadingStepsList.length) * 100}%` }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                      />
+                    </div>
+                    
+                    <div className={styles["loading-step-indicators"]}>
+                      {loadingStepsList.map((_, index) => (
+                        <div
+                          key={index}
+                          className={`${styles["step-dot"]} ${
+                            index <= loadingStep ? styles["step-dot-active"] : ""
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div className={styles["form-header"]}>
               <h2>Send a Message</h2>
               <p>Fill out the form below and we will get back to you shortly.</p>
@@ -462,7 +546,13 @@ function ContactForm() {
                 </fieldset>
               </form>
             ) : (
-              <div className={styles.success} role="alert">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className={styles.success}
+                role="alert"
+              >
                 <div className={styles["success-icon-wrap"]} aria-hidden="true">
                   <CheckIcon />
                 </div>
@@ -490,6 +580,31 @@ function ContactForm() {
                   </div>
                 </div>
 
+                <div className={styles["success-timeline"]}>
+                  <h4>What happens next?</h4>
+                  <div className={styles["success-timeline-item"]}>
+                    <div className={styles["success-timeline-icon"]}>1</div>
+                    <div className={styles["success-timeline-text"]}>
+                      <strong>Confirmation Sent</strong>
+                      <span>A verification email has been delivered to {successData.email}.</span>
+                    </div>
+                  </div>
+                  <div className={styles["success-timeline-item"]}>
+                    <div className={styles["success-timeline-icon"]}>2</div>
+                    <div className={styles["success-timeline-text"]}>
+                      <strong>Detail Review</strong>
+                      <span>Our operations team will review your requirement details.</span>
+                    </div>
+                  </div>
+                  <div className={styles["success-timeline-item"]}>
+                    <div className={styles["success-timeline-icon"]}>3</div>
+                    <div className={styles["success-timeline-text"]}>
+                      <strong>Discovery Call</strong>
+                      <span>We will contact you via phone/email within 24 hours.</span>
+                    </div>
+                  </div>
+                </div>
+
                 <button
                   type="button"
                   className={styles["success-btn"]}
@@ -497,7 +612,7 @@ function ContactForm() {
                 >
                   Send Another Message
                 </button>
-              </div>
+              </motion.div>
             )}
           </div>
         </motion.div>
@@ -677,6 +792,7 @@ function ContactForm() {
 
       <SiteFooter backTo="/contact#" />
     </main>
+    </>
   );
 }
 

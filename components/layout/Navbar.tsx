@@ -110,6 +110,8 @@ export default function Navbar() {
           setActiveItem("Services");
         } else if (path.startsWith("/events")) {
           setActiveItem("Events");
+        } else if (path.startsWith("/testimonials")) {
+          setActiveItem("Testimonials");
         } else {
           const hash = window.location.hash;
           if (hash) {
@@ -168,7 +170,7 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <Link className={styles.navbarLogo} href="/" aria-label="Furute home">
         <span className={styles.logoMark} aria-hidden="true">
-          <Image src="/furute-logo.png" alt="Furute Logo" width={138} height={68} priority />
+          <Image src="/furute-logo.webp" alt="Furute Logo" width={138} height={68} priority />
         </span>
       </Link>
 
@@ -179,9 +181,9 @@ export default function Navbar() {
         aria-label="Toggle navigation menu"
         aria-expanded={isMobileMenuOpen}
       >
-        <span className={styles.bar}></span>
-        <span className={styles.bar}></span>
-        <span className={styles.bar}></span>
+        <span className={styles.bar} />
+        <span className={styles.bar} />
+        <span className={styles.bar} />
       </button>
 
       <ul className={`${styles.navbarMenu} ${isMobileMenuOpen ? styles.menuOpen : ""}`}>
@@ -294,6 +296,15 @@ export default function Navbar() {
                 <Link
                   className={activeItem === item ? styles.active : undefined}
                   href="/events"
+                  aria-current={activeItem === item ? "page" : undefined}
+                  onClick={() => handleLinkClick(item)}
+                >
+                  {item}
+                </Link>
+              ) : item === "Testimonials" ? (
+                <Link
+                  className={activeItem === item ? styles.active : undefined}
+                  href="/testimonials"
                   aria-current={activeItem === item ? "page" : undefined}
                   onClick={() => handleLinkClick(item)}
                 >

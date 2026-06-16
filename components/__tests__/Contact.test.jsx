@@ -21,6 +21,7 @@ jest.mock("framer-motion", () => ({
     section: ({ children }) => <section>{children}</section>,
     a: ({ children, href }) => <a href={href}>{children}</a>,
   },
+  AnimatePresence: ({ children }) => <>{children}</>,
 }));
 
 // Mock Navbar
@@ -43,7 +44,7 @@ jest.mock("@/components/ui/FormTextarea", () => (props) => (
 ));
 
 jest.mock("@/components/ui/FormSelect", () => (props) => (
-  <select aria-label={props.label}></select>
+  <select aria-label={props.label} />
 ));
 
 // Mock CSS

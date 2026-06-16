@@ -52,7 +52,7 @@
 .hero {
   background:
     linear-gradient(120deg, rgba(8, 59, 82, 0.97), rgba(8, 59, 82, 0.82)),
-    url("/hero-image.png") center / cover;
+    url("/hero-image.webp") center / cover;
   color: #ffffff;
 }
 

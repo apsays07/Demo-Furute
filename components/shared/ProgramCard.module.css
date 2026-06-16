@@ -1,0 +1,199 @@
+.program-card {
+  position: relative;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  border: 1px solid rgba(16, 27, 53, 0.1);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 16px 36px rgba(16, 27, 53, 0.09);
+  outline: none;
+  isolation: isolate;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.program-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--program-warm);
+}
+
+.program-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    145deg,
+    rgba(16, 27, 53, 0.91),
+    var(--program-overlay)
+  );
+  opacity: 0;
+  transition: opacity 0.24s ease;
+}
+
+.program-visual {
+  min-height: 170px;
+  display: grid;
+  place-items: center;
+  padding: 26px;
+}
+
+.program-image {
+  width: 140px;
+  height: 140px;
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  border-radius: 999px;
+  box-shadow: 0 12px 28px rgba(16, 27, 53, 0.14);
+  object-fit: cover;
+  background: #ffffff;
+  transition: transform 0.24s ease;
+}
+
+.program-card:hover .program-image,
+.program-card:focus-visible .program-image {
+  transform: scale(1.08);
+}
+
+.program-card h3 {
+  min-height: 38px;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 8px 12px;
+  background: var(--program-accent);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  position: relative;
+  z-index: 2;
+  transition: background 0.24s ease;
+}
+
+.program-card p {
+  position: absolute;
+  inset: 0 0 38px;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 20px 24px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.6;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(12px);
+  z-index: 2;
+  pointer-events: none;
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+.program-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--program-accent);
+  box-shadow: 0 24px 58px rgba(16, 27, 53, 0.16);
+}
+
+.program-card:hover::after,
+.program-card:focus-visible::after {
+  opacity: 1;
+}
+
+.program-card:hover p,
+.program-card:focus-visible p {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.program-card:focus-visible {
+  box-shadow: 0 0 0 4px rgba(217, 154, 43, 0.2), 0 16px 36px rgba(20, 33, 61, 0.1);
+}
+
+/* Theme Overrides */
+.theme-insights {
+  --program-warm: #effcff;
+  --program-light: #dff6f3;
+  --program-soft: rgba(8, 127, 140, 0.18);
+  --program-accent: #087f8c;
+  --program-deep: #083b52;
+  --program-overlay: rgba(8, 127, 140, 0.86);
+}
+
+.theme-training {
+  --program-warm: #fff8e8;
+  --program-light: #ffe6aa;
+  --program-soft: rgba(242, 165, 26, 0.2);
+  --program-accent: #f2a51a;
+  --program-deep: #98640a;
+  --program-overlay: rgba(152, 100, 10, 0.86);
+}
+
+.theme-goals {
+  --program-warm: #f0f5ff;
+  --program-light: #dee8ff;
+  --program-soft: rgba(80, 108, 211, 0.16);
+  --program-accent: #506cd3;
+  --program-deep: #26336f;
+  --program-overlay: rgba(80, 108, 211, 0.82);
+}
+
+.theme-branding {
+  --program-warm: #fff1ec;
+  --program-light: #ffd4c8;
+  --program-soft: rgba(228, 95, 79, 0.17);
+  --program-accent: #e45f4f;
+  --program-deep: #91362e;
+  --program-overlay: rgba(228, 95, 79, 0.84);
+}
+
+.theme-consultancy {
+  --program-warm: #f6f3ff;
+  --program-light: #e5dcff;
+  --program-soft: rgba(111, 88, 201, 0.16);
+  --program-accent: #6f58c9;
+  --program-deep: #3e2d82;
+  --program-overlay: rgba(111, 88, 201, 0.84);
+}
+
+.theme-breakthrough {
+  --program-warm: #fff0f7;
+  --program-light: #ffd2e4;
+  --program-soft: rgba(200, 61, 115, 0.15);
+  --program-accent: #c83d73;
+  --program-deep: #842548;
+  --program-overlay: rgba(200, 61, 115, 0.84);
+}
+
+.theme-sarathi {
+  --program-warm: #effaf2;
+  --program-light: #d4f0dc;
+  --program-soft: rgba(49, 164, 117, 0.16);
+  --program-accent: #31a475;
+  --program-deep: #1f604a;
+  --program-overlay: rgba(49, 164, 117, 0.84);
+}
+
+.theme-classroom {
+  --program-warm: #fff7e4;
+  --program-light: #ffe1ad;
+  --program-soft: rgba(215, 125, 41, 0.16);
+  --program-accent: #d77d29;
+  --program-deep: #774312;
+  --program-overlay: rgba(215, 125, 41, 0.85);
+}
+
+.theme-mentoring {
+  --program-warm: #f0f7fc;
+  --program-light: #d5e9f6;
+  --program-soft: rgba(31, 127, 189, 0.16);
+  --program-accent: #1f7fbd;
+  --program-deep: #124c72;
+  --program-overlay: rgba(31, 127, 189, 0.84);
+}
