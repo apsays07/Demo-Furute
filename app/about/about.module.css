@@ -802,3 +802,72 @@
     gap: 16px;
   }
 }
+/* -------------------------------------------------------------
+   GALLERY SECTION
+------------------------------------------------------------- */
+
+.gallerySection {
+  position: relative;
+  z-index: 2;
+  width: min(1160px, calc(100% - 48px));
+  margin: var(--section) auto;
+}
+
+.galleryGrid {
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.galleryCard {
+  overflow: hidden;
+  border-radius: 24px;
+  background: #ffffff;
+  border: 1px solid rgba(16, 27, 51, 0.06);
+  box-shadow: var(--shadow-premium);
+  transition: all 0.3s ease;
+}
+
+.galleryCard:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Image wrapper carries the aspect ratio so next/image "fill" has
+   something stable to fill — this is what keeps mixed landscape /
+   portrait source photos from looking stretched or squashed. */
+.galleryImageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--bg-section-alt);
+}
+
+/* Portrait-shot photos get a taller box instead of being forced
+   into the same 4:3 frame as the landscape shots. */
+.galleryImageWrap.portraitImage {
+  aspect-ratio: 3 / 4;
+}
+
+.galleryImage {
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.galleryCard:hover .galleryImage {
+  transform: scale(1.05);
+}
+
+.galleryCaption {
+  padding: 16px 20px 20px;
+}
+
+.galleryCaption p {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--muted);
+}

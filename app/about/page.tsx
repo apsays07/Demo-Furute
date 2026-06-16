@@ -154,6 +154,42 @@ const signatureFrameworks = [
   }
 ];
 
+// 4. Moments That Define The Journey — real photographs from the field
+const journeyMoments = [
+  {
+    src: "/about/journey-1-cement-wagon.jpg",
+    alt: "Ashay Shah and the team celebrating a cement wagon dispatch with a ceremonial garland",
+    caption: "Marking a cement wagon dispatch milestone with the dealer team",
+  },
+  {
+    src: "/about/journey-2-award.jpg",
+    alt: "Ashay Shah receiving a recognition award on stage at Laxmi Hostel",
+    caption: "Recognised for mentorship impact at Laxmi Hostel",
+  },
+  {
+    src: "/about/journey-3-dealership-milestone.jpg",
+    alt: "Handing over the Shree Cement dealership certificate to Milestone Traders",
+    caption: "Appointing Milestone Traders as an authorised Shree Cement dealer",
+  },
+  {
+    src: "/about/journey-4-dealership-padmavati.jpg",
+    alt: "Handing over the Shree Cement dealership certificate to Shri Padmavati Enterprises",
+    caption: "Appointing Shri Padmavati Enterprises as an authorised dealer",
+    portrait: true,
+  },
+  {
+    src: "/about/journey-5-training-session.jpg",
+    alt: "Ashay Shah leading a training session with a large group of students",
+    caption: "Leading a hands-on training session with young professionals",
+  },
+  {
+    src: "/about/journey-6-plant-visit.jpg",
+    alt: "Ashay Shah on site at a cement manufacturing plant",
+    caption: "On-site at a cement plant during a dealer visit",
+    portrait: true,
+  },
+];
+
 export default function AboutUsPage() {
   const [imageError, setImageError] = useState(false);
 
@@ -236,6 +272,47 @@ export default function AboutUsPage() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Leadership Gallery Section */}
+      <section className={styles.gallerySection}>
+        <div className={styles.sectionHeader}>
+          <span className={styles.sectionTag}>
+            Leadership & Recognition
+          </span>
+
+          <h2>Moments That Define The Journey</h2>
+
+          <p>
+            Real experiences, recognitions, and leadership moments that shaped
+            the vision behind Furute.
+          </p>
+        </div>
+
+        <div className={styles.galleryGrid}>
+          {journeyMoments.map((moment, idx) => (
+            <div key={idx} className={styles.galleryCard}>
+              <div
+                className={
+                  moment.portrait
+                    ? `${styles.galleryImageWrap} ${styles.portraitImage}`
+                    : styles.galleryImageWrap
+                }
+              >
+                <Image
+                  src={moment.src}
+                  alt={moment.alt}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className={styles.galleryImage}
+                />
+              </div>
+              <div className={styles.galleryCaption}>
+                <p>{moment.caption}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -362,5 +439,3 @@ export default function AboutUsPage() {
     </main>
   );
 }
-
-

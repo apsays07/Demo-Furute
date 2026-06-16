@@ -109,8 +109,10 @@ export default function Navbar() {
         } else if (path.startsWith("/services")) {
           setActiveItem("Services");
         } else if (path.startsWith("/events")) {
-          setActiveItem("Events");
-        } else {
+  setActiveItem("Events");
+} else if (path.startsWith("/blog")) {
+  setActiveItem("Blog");
+} else {
           const hash = window.location.hash;
           if (hash) {
             const matched = menuItems.find(
@@ -299,7 +301,16 @@ export default function Navbar() {
                 >
                   {item}
                 </Link>
-              ) : (
+              ) : item === "Blog" ? (
+  <Link
+    className={activeItem === item ? styles.active : undefined}
+    href="/blog"
+    aria-current={activeItem === item ? "page" : undefined}
+    onClick={() => handleLinkClick(item)}
+  >
+    {item}
+  </Link>
+) : (
                 <a
                   className={activeItem === item ? styles.active : undefined}
                   href={`/#${getSectionId(item)}`}

@@ -4,6 +4,14 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: ".",
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "furute.in",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
