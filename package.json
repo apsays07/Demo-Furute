@@ -23,7 +23,7 @@
     "react-hook-form": "^7.79.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.60.0",
+    "@playwright/test": "^1.61.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -39,6 +39,7 @@
     "eslint-config-next": "16.2.6",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
+    "playwright": "^1.61.0",
     "tailwindcss": "^4",
     "ts-jest": "^29.4.11",
     "ts-node": "^10.9.2",
