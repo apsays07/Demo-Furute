@@ -20,10 +20,6 @@ import styles from "./about.module.css";
 // TYPES & DATA DEFINITIONS
 // -------------------------------------------------------------
 
-type IconProps = {
-  className?: string;
-};
-
 // 1. DNA of a Kingmaker Timeline
 const interactiveTimeline = [
   {
@@ -155,7 +151,14 @@ const signatureFrameworks = [
 ];
 
 // 4. Moments That Define The Journey — real photographs from the field
-const journeyMoments = [
+type JourneyMoment = {
+  src: string;
+  alt: string;
+  caption: string;
+  portrait?: boolean;
+};
+
+const journeyMoments: JourneyMoment[] = [
   {
     src: "/about/journey-1-cement-wagon.jpg",
     alt: "Ashay Shah and the team celebrating a cement wagon dispatch with a ceremonial garland",
@@ -175,7 +178,6 @@ const journeyMoments = [
     src: "/about/journey-4-dealership-padmavati.jpg",
     alt: "Handing over the Shree Cement dealership certificate to Shri Padmavati Enterprises",
     caption: "Appointing Shri Padmavati Enterprises as an authorised dealer",
-    portrait: true,
   },
   {
     src: "/about/journey-5-training-session.jpg",
@@ -186,9 +188,12 @@ const journeyMoments = [
     src: "/about/journey-6-plant-visit.jpg",
     alt: "Ashay Shah on site at a cement manufacturing plant",
     caption: "On-site at a cement plant during a dealer visit",
-    portrait: true,
   },
 ];
+
+// The strip is rendered twice back-to-back so the scroll animation
+// can loop seamlessly (see galleryMarquee keyframes in the CSS file).
+const journeyMomentsLooped: JourneyMoment[] = [...journeyMoments, ...journeyMoments];
 
 export default function AboutUsPage() {
   const [imageError, setImageError] = useState(false);
@@ -275,7 +280,7 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      {/* Leadership Gallery Section */}
+      {/* Leadership Gallery Section — continuous auto-scrolling filmstrip */}
       <section className={styles.gallerySection}>
         <div className={styles.sectionHeader}>
           <span className={styles.sectionTag}>
@@ -290,29 +295,29 @@ export default function AboutUsPage() {
           </p>
         </div>
 
-        <div className={styles.galleryGrid}>
-          {journeyMoments.map((moment, idx) => (
-            <div key={idx} className={styles.galleryCard}>
-              <div
-                className={
-                  moment.portrait
-                    ? `${styles.galleryImageWrap} ${styles.portraitImage}`
-                    : styles.galleryImageWrap
-                }
-              >
-                <Image
-                  src={moment.src}
-                  alt={moment.alt}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className={styles.galleryImage}
-                />
+        <div className={styles.galleryViewport}>
+          <div className={styles.galleryTrack}>
+            {journeyMomentsLooped.map((moment, idx) => (
+              <div key={idx} className={styles.galleryCard}>
+                <div className={styles.galleryImageWrap}>
+                  <Image
+                    src={moment.src}
+                    alt={moment.alt}
+                    fill
+                    sizes="(max-width: 640px) 78vw, (max-width: 1024px) 30vw, 340px"
+                    className={
+                      moment.portrait
+                        ? `${styles.galleryImage} ${styles.topAnchor}`
+                        : styles.galleryImage
+                    }
+                  />
+                </div>
+                <div className={styles.galleryCaption}>
+                  <p>{moment.caption}</p>
+                </div>
               </div>
-              <div className={styles.galleryCaption}>
-                <p>{moment.caption}</p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
