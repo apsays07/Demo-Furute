@@ -1,0 +1,231 @@
+.blogPage {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f7fbff 0%, #ffffff 38%, #fff8ec 100%);
+  color: #101b35;
+  font-family: var(--font-plus-jakarta-sans), var(--font-inter), var(--font-geist-sans), sans-serif;
+  padding-bottom: 80px;
+}
+
+.blogHeader {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 130px 24px 30px;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+  color: var(--color-teal);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 42px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-gold), var(--color-coral));
+}
+
+.blogHeader h1 {
+  color: #101b35;
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  font-size: clamp(32px, 4.5vw, 48px);
+  font-weight: 700;
+  line-height: 1.18;
+  margin: 0 0 16px;
+  letter-spacing: 0;
+}
+
+.subSubtitle {
+  color: #647086;
+  font-size: clamp(16px, 1.15vw, 18px);
+  line-height: 1.72;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 32px;
+  max-width: 1120px;
+  margin: 40px auto 0;
+  padding: 0 24px;
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(16, 27, 53, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 12px 34px rgba(16, 27, 53, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--color-teal);
+  z-index: 15;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(8, 127, 140, 0.2);
+  box-shadow: 0 20px 48px rgba(16, 27, 53, 0.08);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background-color: rgba(16, 27, 53, 0.02);
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card:hover .image {
+  transform: scale(1.05);
+}
+
+.cardHeader {
+  padding: 16px 24px 12px;
+  display: flex;
+  align-items: center;
+}
+
+.category {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--color-teal);
+  color: #ffffff;
+  width: fit-content;
+}
+
+.cardBody {
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.date {
+  font-size: 12px;
+  color: #647086;
+  margin: 0 0 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #101b35;
+  margin: 0 0 12px;
+  line-height: 1.4;
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  transition: color 0.22s ease;
+}
+
+.card:hover .title {
+  color: var(--color-teal);
+}
+
+.excerpt {
+  font-size: 14.5px;
+  color: #38445a;
+  line-height: 1.65;
+  margin: 0 0 20px;
+  flex: 1;
+}
+
+.readMore {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--color-teal);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-transform: uppercase;
+  transition: gap 0.2s ease, color 0.2s ease;
+}
+
+.card:hover .readMore {
+  gap: 8px;
+  color: var(--color-teal-dark);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+    margin-top: 30px;
+  }
+
+  .blogHeader {
+    padding: 110px 16px 20px;
+  }
+
+  .blogHeader h1 {
+    font-size: 30px;
+  }
+
+  .subSubtitle {
+    font-size: 15px;
+  }
+}

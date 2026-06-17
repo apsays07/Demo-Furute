@@ -112,6 +112,8 @@ export default function Navbar() {
           setActiveItem("Events");
         } else if (path.startsWith("/testimonials")) {
           setActiveItem("Testimonials");
+        } else if (path.startsWith("/blog")) {
+          setActiveItem("Blog");
         } else {
           const hash = window.location.hash;
           if (hash) {
@@ -305,6 +307,15 @@ export default function Navbar() {
                 <Link
                   className={activeItem === item ? styles.active : undefined}
                   href="/testimonials"
+                  aria-current={activeItem === item ? "page" : undefined}
+                  onClick={() => handleLinkClick(item)}
+                >
+                  {item}
+                </Link>
+              ) : item === "Blog" ? (
+                <Link
+                  className={activeItem === item ? styles.active : undefined}
+                  href="/blog"
                   aria-current={activeItem === item ? "page" : undefined}
                   onClick={() => handleLinkClick(item)}
                 >

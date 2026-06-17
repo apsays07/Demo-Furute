@@ -20,6 +20,7 @@ import {
   ChevronRight,
   Upload,
   FileText,
+  ExternalLink,
 } from "lucide-react";
 
 interface Program {
@@ -76,7 +77,7 @@ function ProgramsContent() {
     formState: { errors },
   } = useForm<ProgramFormData>();
 
-  const categories = ["1-Day Workshops", "Corporate Training", "Personal Mentoring", "Experiential", "Other"];
+  const categories = ["Training Programs", "1 Day Training Programs", "Relationship Tourism"];
 
   // Load programs
   useEffect(() => {
@@ -114,7 +115,7 @@ function ProgramsContent() {
       title: "",
       description: "",
       duration: "",
-      category: "1-Day Workshops",
+      category: "Training Programs",
       visible: true,
     });
     setIsModalOpen(true);
@@ -290,13 +291,24 @@ function ProgramsContent() {
           </select>
         </div>
 
-        <button
-          onClick={openAddModal}
-          className="w-full md:w-auto px-4 py-2.5 bg-teal hover:bg-teal-dark text-white text-xs font-extrabold uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-teal/10 "
-        >
-          <Plus className="w-4 h-4" />
-          Add Program
-        </button>
+        <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+          <a
+            href="/programs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full md:w-auto px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
+          >
+            <ExternalLink className="w-4 h-4 text-slate-500" />
+            Open Website
+          </a>
+          <button
+            onClick={openAddModal}
+            className="w-full md:w-auto px-4 py-2.5 bg-teal hover:bg-teal-dark text-white text-xs font-extrabold uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-teal/10 "
+          >
+            <Plus className="w-4 h-4" />
+            Add Program
+          </button>
+        </div>
       </div>
 
       {/* Grid listing */}
@@ -370,6 +382,15 @@ function ProgramsContent() {
                 </div>
 
                 <div className="flex gap-2">
+                  <a
+                    href="/programs#admin-programs"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-1.5 bg-white hover:bg-teal-light text-gray-650 border border-gray-200 hover:border-teal/20 rounded-lg cursor-pointer flex items-center justify-center"
+                    title="View live on website"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
                   <button
                     onClick={() => openEditModal(item)}
                     className="p-1.5 bg-white hover:bg-teal-light text-gray-600 border border-gray-200 hover:border-teal/20 rounded-lg cursor-pointer"
@@ -496,6 +517,11 @@ function ProgramsContent() {
                         {cat}
                       </option>
                     ))}
+                    {editingItem && !categories.includes(editingItem.category) && (
+                      <option value={editingItem.category}>
+                        {editingItem.category} (Legacy)
+                      </option>
+                    )}
                   </select>
                 </div>
               </div>

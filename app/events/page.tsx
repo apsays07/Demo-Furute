@@ -47,7 +47,7 @@ const staticEvents: EventItem[] = [
     badgeClass: "badge-workshop",
     description: "Experiential personal growth training program focused on mindset development, emotional maturity, consistency, and holistic lifestyle enhancement.",
     image: "/events/wow-life.webp",
-    link: "https://furute.in/wow-life/",
+    link: "/events/wow-life",
   },
   {
     title: "Insights",
@@ -55,7 +55,7 @@ const staticEvents: EventItem[] = [
     badgeClass: "badge-workshop",
     description: "Practical leadership training, market analysis, and self-awareness inputs. Learn the right set of skills and attitude to become a successful entrepreneur.",
     image: "/events/insights.webp",
-    link: "https://furute.in/programs/business-insights-pune-leadership-development-program/",
+    link: "/events/insights",
   },
   {
     title: "WHY?",
@@ -63,7 +63,7 @@ const staticEvents: EventItem[] = [
     badgeClass: "badge-workshop",
     description: "Clarify your core motivation and focus. Discover your business and personal goals to align your actions with your ultimate purpose.",
     image: "/events/why-small.webp",
-    link: "https://furute.in/why/",
+    link: "/events/why",
   },
   {
     title: "MUD ATTACK",
@@ -79,7 +79,7 @@ const staticEvents: EventItem[] = [
     badgeClass: "badge-awards",
     description: "Celebrating entrepreneurship, consistency, and growth results. Recognizing standout individuals who turned business insights into massive growth.",
     image: "/events/awards.webp",
-    link: "https://furute.in/awards/",
+    link: "/events/awards",
   },
   {
     title: "Do's & Don'ts for Start Ups",
@@ -105,7 +105,7 @@ const staticEvents: EventItem[] = [
     badgeClass: "badge-outbound",
     description: "Outbound trek for entrepreneurs and leadership teams. Connect concepts of strategy and resilience with actual wilderness adventure.",
     image: "/events/gap.webp",
-    link: "https://www.facebook.com/furutein",
+    link: "/events/rajgad-trek",
   },
   {
     title: "Be the Trainer",
@@ -206,25 +206,39 @@ export default function EventsPage() {
       {/* Unified Global Navbar */}
       <Navbar />
 
-      {/* Back button and page intro */}
-      <motion.section 
-        className={styles.hero}
-        initial="hidden"
-        animate="visible"
-        variants={fadeInUp}
-      >
-        <Link href="/" className={styles["back-link"]}>
-          <ArrowLeftIcon />
-          Back to home
-        </Link>
+      {/* Large Hero Section matching Homepage */}
+      <section className={styles["hero-section"]} aria-label="Furute events and workshops banner">
+        <Image 
+          src="/events/upcoming-events.jpg" 
+          alt="Furute Events and Workshops background"
+          fill
+          sizes="100vw"
+          priority
+          className={styles.heroBgImage}
+        />
+        <div className={styles["hero-overlay-tint"]} />
 
-        <p className={styles.eyebrow}>Batches & Outbounds</p>
-        <h1>Our Events & Workshops</h1>
-        <p className={styles.lead}>
-          Take a look at our upcoming learning batches, award ceremonies, and outbound 
-          experiential adventure programs built for holistic entrepreneur development.
-        </p>
-      </motion.section>
+        <motion.div 
+          className={styles["hero-overlay"]}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+        >
+          <Link href="/" className={styles["back-link-hero"]}>
+            <ArrowLeftIcon />
+            Back to home
+          </Link>
+
+          <div className={styles.headerRowHero}>
+            <p className={styles.eyebrowHero}>Batches & Outbounds</p>
+          </div>
+          <h1>Our Events & Workshops</h1>
+          <p className={styles.leadHero}>
+            Take a look at our upcoming learning batches, award ceremonies, and outbound 
+            experiential adventure programs built for holistic entrepreneur development.
+          </p>
+        </motion.div>
+      </section>
 
       {/* ===========================
           DYNAMIC EVENTS FROM ADMIN
@@ -249,74 +263,129 @@ export default function EventsPage() {
           <div className={styles["db-events-grid"]}>
             {dbEvents.map((event) => (
               <article key={event._id} className={styles["db-event-card"]}>
-                {/* Image */}
-                <div className={styles["db-event-image"]}>
-                  {event.image ? (
-                    <img src={event.image} alt={event.title} />
-                  ) : (
-                    <div className={styles["db-event-no-image"]}>
-                      <CalendarIcon />
-                    </div>
-                  )}
-                  <span
-                    className={`${styles["db-event-status-badge"]} ${
-                      event.status === "upcoming"
-                        ? styles["status-upcoming"]
-                        : event.status === "active"
-                        ? styles["status-active"]
-                        : styles["status-past"]
-                    }`}
+                {event.registrationLink ? (
+                  <a
+                    href={event.registrationLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles["card-inner-link"]}
                   >
-                    {event.status}
-                  </span>
-                </div>
-
-                {/* Body */}
-                <div className={styles["db-event-body"]}>
-                  <h3>{event.title}</h3>
-
-                  <div className={styles["db-event-meta"]}>
-                    <div className={styles["db-event-meta-row"]}>
-                      <CalendarIcon />
-                      <span>
-                        {new Date(event.date).toLocaleDateString("en-IN", {
-                          weekday: "short",
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
+                    <div className={styles["db-event-image"]}>
+                      {event.image ? (
+                        <img src={event.image} alt={event.title} />
+                      ) : (
+                        <div className={styles["db-event-no-image"]}>
+                          <CalendarIcon />
+                        </div>
+                      )}
+                      <span
+                        className={`${styles["db-event-status-badge"]} ${
+                          event.status === "upcoming"
+                            ? styles["status-upcoming"]
+                            : event.status === "active"
+                            ? styles["status-active"]
+                            : styles["status-past"]
+                        }`}
+                      >
+                        {event.status}
                       </span>
                     </div>
-                    <div className={styles["db-event-meta-row"]}>
-                      <MapPinIcon />
-                      <span>{event.location}</span>
+
+                    <div className={styles["db-event-body"]}>
+                      <h3>{event.title}</h3>
+
+                      <div className={styles["db-event-meta"]}>
+                        <div className={styles["db-event-meta-row"]}>
+                          <CalendarIcon />
+                          <span>
+                            {new Date(event.date).toLocaleDateString("en-IN", {
+                              weekday: "short",
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </div>
+                        <div className={styles["db-event-meta-row"]}>
+                          <MapPinIcon />
+                          <span>{event.location}</span>
+                        </div>
+                      </div>
+
+                      <p className={styles["db-event-desc"]}>{event.description}</p>
+
+                      <div className={styles["db-event-footer"]}>
+                        <span className={styles["db-event-cta"]}>
+                          Register Now
+                          <ArrowRightSmIcon />
+                        </span>
+                        {event.featured && (
+                          <span className={styles["featured-pill"]}>Featured</span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-
-                  <p className={styles["db-event-desc"]}>{event.description}</p>
-
-                  <div className={styles["db-event-footer"]}>
-                    {event.registrationLink ? (
-                      <a
-                        href={event.registrationLink}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={styles["db-event-cta"]}
+                  </a>
+                ) : (
+                  <Link
+                    href={`/contact?subject=Inquiry: ${event.title}`}
+                    className={styles["card-inner-link"]}
+                  >
+                    <div className={styles["db-event-image"]}>
+                      {event.image ? (
+                        <img src={event.image} alt={event.title} />
+                      ) : (
+                        <div className={styles["db-event-no-image"]}>
+                          <CalendarIcon />
+                        </div>
+                      )}
+                      <span
+                        className={`${styles["db-event-status-badge"]} ${
+                          event.status === "upcoming"
+                            ? styles["status-upcoming"]
+                            : event.status === "active"
+                            ? styles["status-active"]
+                            : styles["status-past"]
+                        }`}
                       >
-                        Register Now
-                        <ArrowRightSmIcon />
-                      </a>
-                    ) : (
-                      <Link href="/contact" className={styles["db-event-cta"]}>
-                        Inquire
-                        <ArrowRightSmIcon />
-                      </Link>
-                    )}
-                    {event.featured && (
-                      <span className={styles["featured-pill"]}>Featured</span>
-                    )}
-                  </div>
-                </div>
+                        {event.status}
+                      </span>
+                    </div>
+
+                    <div className={styles["db-event-body"]}>
+                      <h3>{event.title}</h3>
+
+                      <div className={styles["db-event-meta"]}>
+                        <div className={styles["db-event-meta-row"]}>
+                          <CalendarIcon />
+                          <span>
+                            {new Date(event.date).toLocaleDateString("en-IN", {
+                              weekday: "short",
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </div>
+                        <div className={styles["db-event-meta-row"]}>
+                          <MapPinIcon />
+                          <span>{event.location}</span>
+                        </div>
+                      </div>
+
+                      <p className={styles["db-event-desc"]}>{event.description}</p>
+
+                      <div className={styles["db-event-footer"]}>
+                        <span className={styles["db-event-cta"]}>
+                          Inquire
+                          <ArrowRightSmIcon />
+                        </span>
+                        {event.featured && (
+                          <span className={styles["featured-pill"]}>Featured</span>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                )}
               </article>
             ))}
           </div>
@@ -341,68 +410,132 @@ export default function EventsPage() {
         <div className={styles["events-grid"]}>
           {staticEvents.map((event, index) => (
             <motion.article 
-              className={styles["event-card"]} 
+              className={`${styles["event-card"]} ${styles[`card-${event.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")}`] || ""}`} 
               key={index}
               variants={fadeInUp}
             >
-              <div className={styles["badge-header"]}>
-                <span className={`${styles.badge} ${styles[event.badgeClass]}`}>
-                  {event.category}
-                </span>
-              </div>
+              {event.link ? (
+                event.link.startsWith("http") ? (
+                  <a 
+                    href={event.link} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className={styles["card-inner-link"]}
+                  >
+                    <div className={styles["badge-header"]}>
+                      <span className={`${styles.badge} ${styles[event.badgeClass]}`}>
+                        {event.category}
+                      </span>
+                    </div>
 
-              <div className={styles["image-wrap"]}>
-                <Image 
-                  src={event.image} 
-                  alt={event.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-              </div>
+                    <div className={styles["image-wrap"]}>
+                      <Image 
+                        src={event.image} 
+                        alt={event.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                    </div>
 
-              <div className={styles["card-body"]}>
-                <h3>{event.title}</h3>
-                <p>{event.description}</p>
+                    <div className={styles["card-body"]}>
+                      <h3>{event.title}</h3>
+                      <p>{event.description}</p>
 
-                {event.forthcoming && event.timing && (
-                  <div className={styles["forthcoming-box"]}>
-                    <span>Forthcoming Program</span>
-                    <p>{event.timing}</p>
+                      {event.forthcoming && event.timing && (
+                        <div className={styles["forthcoming-box"]}>
+                          <span>Forthcoming Program</span>
+                          <p>{event.timing}</p>
+                        </div>
+                      )}
+
+                      <div className={styles["card-footer"]}>
+                        <span className={styles["card-cta"]}>
+                          View Details
+                          <ArrowRightIcon className={styles["cta-arrow"]} />
+                        </span>
+                      </div>
+                    </div>
+                  </a>
+                ) : (
+                  <Link 
+                    href={event.link} 
+                    className={styles["card-inner-link"]}
+                  >
+                    <div className={styles["badge-header"]}>
+                      <span className={`${styles.badge} ${styles[event.badgeClass]}`}>
+                        {event.category}
+                      </span>
+                    </div>
+
+                    <div className={styles["image-wrap"]}>
+                      <Image 
+                        src={event.image} 
+                        alt={event.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                    </div>
+
+                    <div className={styles["card-body"]}>
+                      <h3>{event.title}</h3>
+                      <p>{event.description}</p>
+
+                      {event.forthcoming && event.timing && (
+                        <div className={styles["forthcoming-box"]}>
+                          <span>Forthcoming Program</span>
+                          <p>{event.timing}</p>
+                        </div>
+                      )}
+
+                      <div className={styles["card-footer"]}>
+                        <span className={styles["card-cta"]}>
+                          View Details
+                          <ArrowRightIcon className={styles["cta-arrow"]} />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              ) : (
+                <Link 
+                  href={`/contact?subject=Inquiry: ${event.title}`}
+                  className={styles["card-inner-link"]}
+                >
+                  <div className={styles["badge-header"]}>
+                    <span className={`${styles.badge} ${styles[event.badgeClass]}`}>
+                      {event.category}
+                    </span>
                   </div>
-                )}
 
-                <div className={styles["card-footer"]}>
-                  {event.link ? (
-                    event.link.startsWith("http") ? (
-                      <a 
-                        href={event.link} 
-                        target="_blank" 
-                        rel="noreferrer" 
-                        className={styles["card-cta"]}
-                      >
-                        View Details
+                  <div className={styles["image-wrap"]}>
+                    <Image 
+                      src={event.image} 
+                      alt={event.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                  </div>
+
+                  <div className={styles["card-body"]}>
+                    <h3>{event.title}</h3>
+                    <p>{event.description}</p>
+
+                    {event.forthcoming && event.timing && (
+                      <div className={styles["forthcoming-box"]}>
+                        <span>Forthcoming Program</span>
+                        <p>{event.timing}</p>
+                      </div>
+                    )}
+
+                    <div className={styles["card-footer"]}>
+                      <span className={styles["card-cta"]}>
+                        Inquire Now
                         <ArrowRightIcon className={styles["cta-arrow"]} />
-                      </a>
-                    ) : (
-                      <Link 
-                        href={event.link} 
-                        className={styles["card-cta"]}
-                      >
-                        View Details
-                        <ArrowRightIcon className={styles["cta-arrow"]} />
-                      </Link>
-                    )
-                  ) : (
-                    <Link 
-                      href="/contact?subject=General Inquiry" 
-                      className={styles["card-cta"]}
-                    >
-                      Inquire Now
-                      <ArrowRightIcon className={styles["cta-arrow"]} />
-                    </Link>
-                  )}
-                </div>
-              </div>
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              )}
             </motion.article>
           ))}
         </div>

@@ -14,27 +14,27 @@
 }
 
 .page {
-  /* Design Tokens */
+  /* Design Tokens - Steel Teal & Slate Gray Theme - Clean Light */
   --bg-base: #ffffff;
   --bg-surface: #ffffff;
   --ink: #101b35;
   --muted: #647086;
   
-  --accent-teal: #087f8c;
-  --accent-teal-dark: #083b52;
-  --accent-gold: #f2a51a;
+  --accent-teal: #0d9488;
+  --accent-teal-dark: #0f766e;
+  --accent-gold: #d97706;
   
   --border-radius-md: 18px;
   --border-radius-lg: 28px;
   
   --shadow-premium: 0 20px 48px rgba(16, 27, 53, 0.07);
-  --shadow-hover: 0 32px 64px rgba(8, 127, 140, 0.12), 0 10px 20px rgba(16, 27, 53, 0.04);
+  --shadow-hover: 0 32px 64px rgba(13, 148, 136, 0.12), 0 10px 20px rgba(16, 27, 53, 0.04);
   
   min-height: 100vh;
   overflow-x: hidden;
   background-color: var(--bg-base);
   background-image: 
-    linear-gradient(180deg, #f7fbff 0%, #ffffff 38%, #fff8ec 100%);
+    linear-gradient(180deg, #f0f7f9 0%, #ffffff 38%, #e9f3f7 100%);
   color: var(--ink);
   font-family: var(--font-inter), "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
   position: relative;
@@ -64,7 +64,7 @@
 .blob1 {
   width: min(500px, 80vw);
   height: min(500px, 80vw);
-  background: radial-gradient(circle, rgba(79, 215, 223, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(13, 148, 136, 0.12) 0%, transparent 70%);
   top: -100px;
   right: -50px;
 }
@@ -72,7 +72,7 @@
 .blob2 {
   width: min(600px, 90vw);
   height: min(600px, 90vw);
-  background: radial-gradient(circle, rgba(242, 165, 26, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(217, 119, 6, 0.06) 0%, transparent 70%);
   bottom: 10%;
   left: -200px;
   animation-delay: -4s;

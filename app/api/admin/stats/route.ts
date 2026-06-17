@@ -7,6 +7,7 @@ import Program from "@/models/Program";
 import Contact, { IContact } from "@/models/Contact";
 import SpeakerRequest, { ISpeakerRequest } from "@/models/SpeakerRequest";
 import ActivityLog from "@/models/ActivityLog";
+import { verifyAuth } from "@/lib/auth/verifyAuth";
 
 export async function GET() {
   try {
@@ -93,6 +94,27 @@ export async function GET() {
     console.error("Stats API Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to gather statistics" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE() {
+  try {
+    const auth = await verifyAuth(["superadmin"]);
+    if (!auth.success) return auth.response!;
+
+    await connectToDatabase();
+    await ActivityLog.deleteMany({});
+
+    return NextResponse.json({
+      success: true,
+      message: "Admin audit logs history cleared successfully.",
+    });
+  } catch (error: unknown) {
+    console.error("Clear logs error:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to clear logs history" },
       { status: 500 }
     );
   }

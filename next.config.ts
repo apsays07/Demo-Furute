@@ -7,6 +7,16 @@ const nextConfig: NextConfig = {
   // Remove the X-Powered-By header for security
   poweredByHeader: false,
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "furute.in",
+        pathname: "/**",
+      },
+    ],
+  },
+
   // Turbopack configuration
   turbopack: {
     root: ".",

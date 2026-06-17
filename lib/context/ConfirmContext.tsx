@@ -131,7 +131,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
                 <h4 className="text-base font-extrabold text-slate-800 tracking-tight leading-none pt-1">
                   {modalTitle}
                 </h4>
-                <p className="text-xs text-slate-550 font-semibold leading-relaxed mt-2 whitespace-pre-line">
+                <p className="text-xs text-slate-500 font-semibold leading-relaxed mt-2 whitespace-pre-line">
                   {modalMessage}
                 </p>
               </div>

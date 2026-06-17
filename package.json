@@ -12,12 +12,14 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@types/nodemailer": "^8.0.1",
     "bcryptjs": "^3.0.3",
     "framer-motion": "^12.40.0",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.17.0",
     "mongoose": "^9.7.0",
     "next": "16.2.6",
+    "nodemailer": "^9.0.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.79.0"

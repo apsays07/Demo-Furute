@@ -40,6 +40,7 @@ export default function LazySection({
 
     // Fallback for browsers without IntersectionObserver
     if (!("IntersectionObserver" in window)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsVisible(true);
       clearTimeout(fallbackTimer);
       return;

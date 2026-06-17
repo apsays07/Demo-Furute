@@ -5,6 +5,8 @@ export interface IUser extends Document {
   email: string;
   password?: string;
   role: string;
+  otpCode?: string;
+  otpExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,6 +35,12 @@ const UserSchema: Schema = new Schema(
       type: String,
       enum: ["superadmin", "admin", "editor"],
       default: "admin",
+    },
+    otpCode: {
+      type: String,
+    },
+    otpExpires: {
+      type: Date,
     },
   },
   {

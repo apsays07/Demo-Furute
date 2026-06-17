@@ -4,12 +4,15 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
-import { KeyRound, User, AlertCircle, Loader2 } from "lucide-react";
+import { KeyRound, User, AlertCircle, Loader2, Check } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState<{ username: string } | null>(null);
 
   const {
     register,
@@ -45,8 +48,12 @@ export default function AdminLoginPage() {
       }
 
       // Successful login
-      router.push("/admin/dashboard");
-      router.refresh();
+      setLoggedInUser(result.user);
+      setIsSuccess(true);
+      setTimeout(() => {
+        router.push("/admin/dashboard");
+        router.refresh();
+      }, 2000);
     } catch (err: unknown) {
       console.error(err);
       setErrorMsg(err instanceof Error ? err.message : "An error occurred");
@@ -178,6 +185,29 @@ export default function AdminLoginPage() {
           </p>
         </div>
       </div>
+
+      {isSuccess && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white border border-slate-100 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl flex flex-col items-center justify-center space-y-4 animate-scale-up">
+            <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500 mb-2 relative">
+              <span className="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping opacity-75" />
+              <Check className="w-8 h-8 relative z-10" />
+            </div>
+            
+            <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
+              Access Granted
+            </h2>
+            <p className="text-sm text-slate-500 leading-relaxed">
+              Welcome back, <span className="font-extrabold text-teal capitalize">{loggedInUser ? loggedInUser.username : "Admin"}</span>! Secure session established.
+            </p>
+            
+            <div className="flex items-center gap-2 text-xs font-bold text-teal mt-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Loading Dashboard...
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

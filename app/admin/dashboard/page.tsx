@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useAdminUser } from "@/lib/context/AdminUserContext";
+import { useConfirm } from "@/lib/context/ConfirmContext";
 import {
   MessageSquare,
   Video,
@@ -85,7 +87,7 @@ const getRoleBadgeStyle = (role: string) => {
     case "admin":
       return "bg-teal-light text-teal border-teal/20";
     default:
-      return "bg-slate-50 text-slate-650 border-slate-200/50";
+      return "bg-slate-50 text-slate-600 border-slate-200/50";
   }
 };
 
@@ -95,8 +97,33 @@ const formatRoleName = (role: string) => {
 };
 
 export default function AdminDashboard() {
+  const { adminUser } = useAdminUser();
+  const { confirm, toast } = useConfirm();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [clearing, setClearing] = useState(false);
+
+  async function handleClearHistory() {
+    const isConfirmed = await confirm("Are you sure you want to clear the entire admin audit logs history? This action cannot be undone.");
+    if (!isConfirmed) return;
+
+    setClearing(true);
+    try {
+      const res = await fetch("/api/admin/stats", { method: "DELETE" });
+      if (res.ok) {
+        toast("Admin audit logs cleared successfully!", "success");
+        setStats(prev => prev ? { ...prev, adminActivities: [] } : null);
+      } else {
+        const data = await res.json();
+        toast(data.error || "Failed to clear logs history", "error");
+      }
+    } catch (err) {
+      console.error(err);
+      toast("An error occurred while clearing history", "error");
+    } finally {
+      setClearing(false);
+    }
+  }
 
   useEffect(() => {
     async function loadStats() {
@@ -173,7 +200,7 @@ export default function AdminDashboard() {
         
         <div className="relative z-10">
           <h2 className="text-2xl font-extrabold text-white">
-            Welcome back, Ashay Shah!
+            Welcome back, {adminUser?.username ? adminUser.username.charAt(0).toUpperCase() + adminUser.username.slice(1) : "Admin"}!
           </h2>
           <p className="text-slate-300 mt-1.5 text-xs md:text-sm">
             Here is a consolidated overview of what has been happening on the Furute platform.
@@ -273,7 +300,7 @@ export default function AdminDashboard() {
                             {activity.title}
                           </span>
                           <span
-                            className="text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider bg-slate-50 text-slate-650 border border-slate-100"
+                            className="text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider bg-slate-50 text-slate-600 border border-slate-100"
                           >
                             {activity.type === "speaker" ? "Speaker Invitation" : "Contact Enquiry"}
                           </span>
@@ -339,7 +366,20 @@ export default function AdminDashboard() {
               <h3 className="text-sm font-extrabold text-slate-800">Admin Audit Logs</h3>
               <p className="text-[10px] text-slate-400 mt-0.5">Recent actions performed in the admin panel</p>
             </div>
-            <History className="w-4 h-4 text-slate-400" />
+            <div className="flex items-center gap-3">
+              {adminUser?.role === "superadmin" && (
+                <button
+                  onClick={handleClearHistory}
+                  disabled={clearing}
+                  className="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider bg-red-50 text-red-600 hover:bg-red-100 border border-red-200/50 rounded-lg transition-all cursor-pointer flex items-center gap-1 disabled:opacity-50"
+                  title="Clear all audit logs"
+                >
+                  <Trash2 className="w-3 h-3" />
+                  Clear Logs
+                </button>
+              )}
+              <History className="w-4 h-4 text-slate-400" />
+            </div>
           </div>
 
           <div className="flow-root">
@@ -375,9 +415,9 @@ export default function AdminDashboard() {
                               {formatRoleName(activity.adminRole)}
                             </span>
                           </div>
-                          <p className="text-xs text-slate-650 mt-1">
+                          <p className="text-xs text-slate-600 mt-1">
                             <span className="font-semibold text-slate-500 capitalize">{activity.action}</span>{" "}
-                            <span className="text-slate-450">{activity.module}:</span>{" "}
+                            <span className="text-slate-400">{activity.module}:</span>{" "}
                             <span className="font-medium text-slate-700">{activity.targetTitle}</span>
                           </p>
                         </div>

@@ -26,18 +26,18 @@ export async function POST(request: Request) {
       console.log("No administrators found. Seeding default super admin account.");
       const hashedPassword = await hashPassword("admin123");
       await User.create({
-        username: "ashayshah",
-        email: "admin@furute.in",
+        username: "ankitgod",
+        email: "anniphapal@gmail.com",
         password: hashedPassword,
         role: "superadmin",
       });
     } else {
-      // Auto-migrate ashayshah to superadmin if it exists and has a different role
-      const ashay = await User.findOne({ username: "ashayshah" });
-      if (ashay && ashay.role !== "superadmin") {
-        ashay.role = "superadmin";
-        await ashay.save();
-        console.log("Auto-migrated ashayshah to superadmin role");
+      // Auto-migrate ankitgod to superadmin if it exists and has a different role
+      const admin = await User.findOne({ username: "ankitgod" });
+      if (admin && admin.role !== "superadmin") {
+        admin.role = "superadmin";
+        await admin.save();
+        console.log("Auto-migrated ankitgod to superadmin role");
       }
     }
 

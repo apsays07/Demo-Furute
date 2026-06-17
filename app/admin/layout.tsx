@@ -10,7 +10,6 @@ import {
   Video,
   Calendar,
   Award,
-  Image as ImageIcon,
   Mail,
   FileText,
   Settings,
@@ -114,6 +113,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   navLinks.push({ name: "Settings", href: "/admin/settings", icon: Settings });
 
   async function handleLogout() {
+    const firstConfirm = window.confirm("Are you sure you want to log out?");
+    if (!firstConfirm) return;
+
+    const secondConfirm = window.confirm("Are you absolutely sure you want to sign out? You will need to enter your password and email OTP to log in again.");
+    if (!secondConfirm) return;
+
     try {
       const res = await fetch("/api/admin/auth/logout", { method: "POST" });
       if (res.ok) {
@@ -165,7 +170,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 className="fixed inset-0 z-20" 
                 onClick={() => setQuickMenuOpen(false)} 
               />
-              <div className="absolute left-0 right-0 mt-2 bg-white border border-slate-150 rounded-xl shadow-2xl z-30 py-1.5 text-slate-750">
+              <div className="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-2xl z-30 py-1.5 text-slate-700">
                 <Link
                   href="/admin/testimonials?openAdd=true"
                   onClick={() => {
@@ -256,7 +261,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100/70 text-red-650 hover:text-red-700 text-xs font-semibold rounded-xl transition-all duration-200 cursor-pointer border border-red-100/50"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100/70 text-red-600 hover:text-red-700 text-xs font-semibold rounded-xl transition-all duration-200 cursor-pointer border border-red-100/50"
         >
           <LogOut className="w-3.5 h-3.5" />
           Logout

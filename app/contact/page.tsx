@@ -136,7 +136,7 @@ function ContactForm() {
   const subjectParam = searchParams.get("subject");
   const initialSubject = getInitialSubject(subjectParam);
 
-  const [mounted, setMounted] = useState(false);
+  const [mounted] = useState(true);
   const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null);
 
   // 1. FORM STATE MANAGEMENT
@@ -150,9 +150,9 @@ function ContactForm() {
   });
 
   useEffect(() => {
-    setMounted(true);
     const savedEmail = localStorage.getItem("guest_verified_email");
     if (savedEmail) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setVerifiedEmail(savedEmail);
       setFormData((prev) => ({ ...prev, email: savedEmail }));
     }
