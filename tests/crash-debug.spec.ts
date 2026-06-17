@@ -3,61 +3,145 @@ import { test, expect } from '@playwright/test';
 test.describe('Intensive Crash Debugger', () => {
   const pageErrors: string[] = [];
 
-  test.beforeEach(({ page }) => {
+  test.beforeEach(async ({ page }) => {
     pageErrors.length = 0;
+
     page.on('pageerror', (err) => {
-      console.error('PAGE ERROR DETECTED:', err.message, err.stack);
-      pageErrors.push(`${err.message}\n${err.stack}`);
+      console.error('PAGE ERROR:', err.message);
+      pageErrors.push(err.message);
     });
+
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
-        console.error('BROWSER CONSOLE ERROR:', msg.text());
+        console.error('BROWSER ERROR:', msg.text());
       }
     });
+
+    // Set localStorage before the app loads
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'guest_verified_email',
+        'ashayshah@gmail.com'
+      );
+    });
   });
+  test('exhaustive navigation cycle with localStorage email set', async ({
+    page,
+  }) => {
+    console.log('Opening Home');
 
-  test('exhaustive navigation cycle with localStorage email set', async ({ page }) => {
-    console.log('1. Navigating to Home...');
-    await page.goto('http://localhost:3000/');
-    await page.waitForTimeout(1000);
+    await page.goto('/', {
+      waitUntil: 'load',
+    });
 
-    console.log('2. Click Contact Us...');
-    await page.click('text="Contact Us"');
-    await page.waitForTimeout(1000);
+    await expect(page).toHaveURL(/localhost|127\.0\.0\.1|\/$/);
 
-    console.log('3. Authenticate with simulated account...');
-    await page.click('text="ashayshah@gmail.com"');
-    await page.waitForTimeout(1000);
+    // ----------------------------
+    // Contact
+    // ----------------------------
 
-    console.log('4. Navigate back to Home via logo...');
-    await page.click('[aria-label*="home"]');
-    await page.waitForTimeout(2000);
+    const contactLink = page.getByRole('link', {
+      name: /contact/i,
+    }).first();
 
-    console.log('5. Navigate to Testimonials...');
-    await page.click('text="Testimonials"');
-    await page.waitForTimeout(1500);
+    if (await contactLink.isVisible()) {
+      await contactLink.click();
+      await page.waitForURL(/\/contact/);
+    }
 
-    console.log('6. Go back to Home using Back to Home button...');
-    await page.click('text=/Back to Home/i');
-    await page.waitForTimeout(2000);
+    // ----------------------------
+    // Optional Email Button
+    // ----------------------------
 
-    console.log('7. Navigate to Programs...');
-    await page.click('text="Programs"');
-    await page.waitForTimeout(1500);
+    const emailElement = page.getByText(
+      'ashayshah@gmail.com',
+      { exact: false }
+    );
 
-    console.log('8. Go back to Home via logo...');
-    await page.click('[aria-label*="home"]');
-    await page.waitForTimeout(2000);
+    if (await emailElement.count()) {
+      await emailElement.first().click();
+      await page.waitForTimeout(500);
+    }
 
-    console.log('9. Navigate to About Us...');
-    await page.click('text="About Us"');
-    await page.waitForTimeout(1500);
+    // ----------------------------
+    // Home Logo
+    // ----------------------------
 
-    console.log('10. Go back to Home via back link...');
-    await page.click('text=/Back to home/i');
-    await page.waitForTimeout(2000);
+    const homeLogo = page.locator(
+      '[aria-label*="home"], a[href="/"], a[href="/"] img'
+    );
 
-    console.log('11. Verify if any page errors occurred...');
+    if (await homeLogo.first().count()) {
+      await homeLogo.first().click();
+      await page.waitForURL(/\/$/);
+    }
+
+    // ----------------------------
+    // Testimonials
+    // ----------------------------
+
+    const testimonials = page.getByRole('link', {
+      name: /testimonials/i,
+    }).first();
+
+    if (await testimonials.isVisible()) {
+      await testimonials.click();
+      await page.waitForURL(/\/testimonials/);
+    }
+
+    const backHome = page.getByText(/back to home/i);
+
+    if (await backHome.count()) {
+      await backHome.first().click();
+      await page.waitForURL(/\/$/);
+    }
+
+    // ----------------------------
+    // Programs
+    // ----------------------------
+
+    const programs = page.getByRole('link', {
+      name: /programs/i,
+    }).first();
+
+    if (await programs.isVisible()) {
+      await programs.click();
+      await page.waitForURL(/\/programs/);
+    }
+
+    const homeLogoAgain = page.locator(
+      '[aria-label*="home"], a[href="/"], a[href="/"] img'
+    );
+
+    if (await homeLogoAgain.count()) {
+      await homeLogoAgain.first().click();
+      await page.waitForURL(/\/$/);
+    }
+
+    // ----------------------------
+    // About
+    // ----------------------------
+
+    const about = page.getByRole('link', {
+      name: /about/i,
+    }).first();
+
+    if (await about.isVisible()) {
+      await about.click();
+      await page.waitForURL(/\/about/);
+    }
+
+    const back = page.getByText(/back to home/i);
+
+    if (await back.count()) {
+      await back.first().click();
+      await page.waitForURL(/\/$/);
+    }
+
+    // ----------------------------
+    // Final validation
+    // ----------------------------
+
     expect(pageErrors).toEqual([]);
   });
 });

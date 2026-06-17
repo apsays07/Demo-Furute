@@ -368,15 +368,25 @@ export default function AdminDashboard() {
             </div>
             <div className="flex items-center gap-3">
               {adminUser?.role === "superadmin" && (
-                <button
-                  onClick={handleClearHistory}
-                  disabled={clearing}
-                  className="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider bg-red-50 text-red-600 hover:bg-red-100 border border-red-200/50 rounded-lg transition-all cursor-pointer flex items-center gap-1 disabled:opacity-50"
-                  title="Clear all audit logs"
-                >
-                  <Trash2 className="w-3 h-3" />
-                  Clear Logs
-                </button>
+                <>
+                  <Link
+                    href="/admin/users#deleted-history"
+                    className="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider bg-teal-50 text-teal hover:bg-teal-light border border-teal-200/50 rounded-lg transition-all flex items-center gap-1"
+                    title="View deleted history"
+                  >
+                    <History className="w-3.5 h-3.5" />
+                    Deleted History
+                  </Link>
+                  <button
+                    onClick={handleClearHistory}
+                    disabled={clearing}
+                    className="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider bg-red-50 text-red-600 hover:bg-red-100 border border-red-200/50 rounded-lg transition-all cursor-pointer flex items-center gap-1 disabled:opacity-50"
+                    title="Clear all audit logs"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    Clear Logs
+                  </button>
+                </>
               )}
               <History className="w-4 h-4 text-slate-400" />
             </div>

@@ -91,7 +91,7 @@ const loadingStepsList = [
 ];
 
 export default function InviteSpeakerPage() {
-  const [mounted] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null);
 
   // 1. FORM STATE MANAGEMENT
@@ -109,6 +109,8 @@ export default function InviteSpeakerPage() {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
     const savedEmail = localStorage.getItem("guest_verified_email");
     if (savedEmail) {
       // eslint-disable-next-line react-hooks/set-state-in-effect

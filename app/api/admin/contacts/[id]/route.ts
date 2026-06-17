@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Contact from "@/models/Contact";
+import { logActivity } from "@/lib/auth/logActivity";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -62,6 +63,8 @@ export async function DELETE(request: Request, { params }: RouteParams) {
         { status: 404 }
       );
     }
+
+    await logActivity("deleted", "contact inquiry", deletedContact.name);
 
     return NextResponse.json({
       success: true,

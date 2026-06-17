@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useAdminUser } from "@/lib/context/AdminUserContext";
-import { Loader2, Trash2, Key, UserPlus, X, User, Mail, Lock, Crown, ShieldCheck, PenTool } from "lucide-react";
+import { Loader2, Trash2, Key, UserPlus, X, User, Mail, Lock, Crown, ShieldCheck, PenTool, History, RefreshCw } from "lucide-react";
 import { useConfirm } from "@/lib/context/ConfirmContext";
 
 interface UserItem {
@@ -19,6 +19,8 @@ export default function UsersManagementPage() {
   const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deletedLogs, setDeletedLogs] = useState<any[]>([]);
+  const [loadingDeleted, setLoadingDeleted] = useState(false);
 
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -52,12 +54,28 @@ export default function UsersManagementPage() {
     }
   }, []);
 
+  const loadDeletedHistory = useCallback(async () => {
+    setLoadingDeleted(true);
+    try {
+      const res = await fetch("/api/admin/deleted-history");
+      const result = await res.json();
+      if (res.ok) {
+        setDeletedLogs(result.data);
+      }
+    } catch (err) {
+      console.error("Failed to load deleted history:", err);
+    } finally {
+      setLoadingDeleted(false);
+    }
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       loadUsers();
+      loadDeletedHistory();
     }, 0);
     return () => clearTimeout(timer);
-  }, [loadUsers]);
+  }, [loadUsers, loadDeletedHistory]);
 
   // Handle create user
   async function handleAddUser(e: React.FormEvent) {
@@ -169,6 +187,7 @@ export default function UsersManagementPage() {
       if (res.ok) {
         toast("User deleted successfully!", "success");
         loadUsers();
+        loadDeletedHistory();
       } else {
         await alert(result.error || "Failed to delete user");
       }
@@ -486,6 +505,81 @@ export default function UsersManagementPage() {
           </div>
         </div>
       )}
+
+      {/* Deleted History Log Section */}
+      <div id="deleted-history" className="bg-white border border-slate-100 rounded-3xl p-6 md:p-8 shadow-[0_4px_24px_rgba(16,27,53,0.015)] space-y-6 mt-8">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div>
+            <h3 className="text-sm font-extrabold text-slate-800 flex items-center gap-2">
+              <History className="w-4.5 h-4.5 text-teal" />
+              Deleted History Log
+            </h3>
+            <p className="text-[10px] text-slate-400 mt-0.5">Audit log of all deleted items (super admin view)</p>
+          </div>
+          <button
+            onClick={loadDeletedHistory}
+            disabled={loadingDeleted}
+            className="p-2 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-655 cursor-pointer border-none bg-transparent transition-all disabled:opacity-50"
+            title="Refresh Log"
+          >
+            <RefreshCw className={`w-4 h-4 ${loadingDeleted ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+
+        <div className="overflow-x-auto">
+          {loadingDeleted && deletedLogs.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10">
+              <Loader2 className="w-6 h-6 text-teal animate-spin mb-2" />
+              <p className="text-slate-450 text-xs font-semibold">Loading history...</p>
+            </div>
+          ) : deletedLogs && deletedLogs.length > 0 ? (
+            <table className="w-full border-collapse text-left text-xs">
+              <thead>
+                <tr className="border-b border-slate-100 bg-slate-50/70 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <th className="px-6 py-3">Admin User</th>
+                  <th className="px-6 py-3">Role</th>
+                  <th className="px-6 py-3">Module</th>
+                  <th className="px-6 py-3">Deleted Item</th>
+                  <th className="px-6 py-3">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-sans">
+                {deletedLogs.map((log: any) => (
+                  <tr key={log._id} className="hover:bg-slate-50/45 transition-all">
+                    <td className="px-6 py-3.5 font-bold text-slate-800">{log.adminName}</td>
+                    <td className="px-6 py-3.5">
+                      <span className={`text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider border ${
+                        log.adminRole.toLowerCase() === 'superadmin' ? 'bg-purple-50/10 text-purple-750 border-purple-200/50' : 'bg-teal-light text-teal border-teal/20'
+                      }`}>
+                        {log.adminRole.toLowerCase() === 'superadmin' ? 'Super Admin' : log.adminRole}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3.5 text-slate-550 font-semibold capitalize">{log.module}</td>
+                    <td className="px-6 py-3.5 text-red-600 font-bold">{log.targetTitle}</td>
+                    <td className="px-6 py-3.5 text-slate-400 font-medium">
+                      {new Date(log.createdAt).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric"
+                      })}
+                      {" · "}
+                      {new Date(log.createdAt).toLocaleTimeString(undefined, {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                      })}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="text-center py-10 border border-dashed border-slate-100 rounded-3xl bg-slate-50/20">
+              <p className="text-xs font-bold text-slate-500">No deleted items found.</p>
+              <p className="text-[10px] text-slate-400 mt-1">Audit logs of deleted testimonials, events, programs, etc. will appear here.</p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
