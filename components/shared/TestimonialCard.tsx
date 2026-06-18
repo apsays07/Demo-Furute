@@ -1,6 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
-"use client";
 
+import Image from "next/image";
 import { initials } from "@/lib/utils";
 import styles from "./TestimonialCard.module.css";
 
@@ -41,9 +40,14 @@ export default function TestimonialCard({
         {/* Avatar: photo if available, else initials */}
         <span className={styles["testimonial-avatar"]} aria-hidden="true">
           {image ? (
-            <img
+            <Image
               src={image}
               alt={name}
+              width={44}
+              height={44}
+              loading="lazy"
+              sizes="44px"
+              quality={75}
               className={styles["testimonial-avatar-img"]}
             />
           ) : (

@@ -1,5 +1,31 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
+
+// Mock MongoDB & Mongoose before importing Home Page to prevent ESM syntax errors
+jest.mock("@/lib/mongodb", () => ({
+  connectToDatabase: jest.fn().mockResolvedValue({}),
+}));
+
+const mockMongooseQuery = {
+  sort: jest.fn().mockReturnThis(),
+  limit: jest.fn().mockReturnThis(),
+  lean: jest.fn().mockResolvedValue([]),
+};
+
+jest.mock("@/models/Testimonial", () => ({
+  __esModule: true,
+  default: {
+    find: jest.fn(() => mockMongooseQuery),
+  },
+}));
+
+jest.mock("@/models/Video", () => ({
+  __esModule: true,
+  default: {
+    find: jest.fn(() => mockMongooseQuery),
+  },
+}));
+
 import Home from "../../app/page";
 
 // Mock fetch API
@@ -34,7 +60,8 @@ jest.mock("../../app/page.module.css", () => ({}));
 
 describe("Home Page", () => {
   test("renders hero heading", async () => {
-    render(<Home />);
+    const jsx = await Home();
+    render(jsx);
 
     await waitFor(() => {
       expect(
@@ -44,7 +71,8 @@ describe("Home Page", () => {
   });
 
   test("renders What We Do section", async () => {
-    render(<Home />);
+    const jsx = await Home();
+    render(jsx);
 
     await waitFor(() => {
       expect(
@@ -54,7 +82,8 @@ describe("Home Page", () => {
   });
 
   test("renders Programs section", async () => {
-    render(<Home />);
+    const jsx = await Home();
+    render(jsx);
 
     await waitFor(() => {
       expect(
@@ -64,7 +93,8 @@ describe("Home Page", () => {
   });
 
   test("renders Meet Ashay Shah section", async () => {
-    render(<Home />);
+    const jsx = await Home();
+    render(jsx);
 
     await waitFor(() => {
       expect(
@@ -74,7 +104,8 @@ describe("Home Page", () => {
   });
 
   test("renders Testimonials heading", async () => {
-    render(<Home />);
+    const jsx = await Home();
+    render(jsx);
 
     await waitFor(() => {
       expect(

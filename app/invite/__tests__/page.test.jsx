@@ -5,7 +5,7 @@ import InviteSpeakerPage from "../page";
 // Mock next/image
 jest.mock("next/image", () => ({
   __esModule: true,
-  default: ({ priority, fill, ...props }) => (
+  default: ({ priority, fill, unoptimized, fetchPriority, ...props }) => (
     <img {...props} alt={props.alt || ""} />
   ),
 }));

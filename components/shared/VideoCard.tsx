@@ -29,9 +29,12 @@ export default function VideoCard({
       <span className={styles["video-thumb-wrap"]}>
         <Image
           src={thumbnail}
-          alt=""
-          fill
-          sizes="(max-width: 768px) 100vw, 33vw"
+          alt={title}
+          width={400}
+          height={225}
+          sizes="(max-width: 768px) 100vw, 400px"
+          loading="lazy"
+          quality={75}
         />
         <span className={styles["video-play"]} aria-hidden="true">
           <PlayIcon />

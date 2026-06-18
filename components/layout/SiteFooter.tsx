@@ -1,4 +1,3 @@
-"use client";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -51,7 +50,7 @@ export default function SiteFooter({ backTo = "#home" }: SiteFooterProps) {
     <footer className={styles.footer} id="contact-us">
       <div className={styles.main}>
         <div className={styles.brand}>
-          <Image src="/furute-logo.webp" alt="Furute" width={190} height={94} />
+          <Image src="/furute-logo.webp" alt="Furute" width={190} height={94} loading="lazy" quality={75} sizes="190px" />
           <p>
             Practical business training, mentoring, and life coaching for
             people who want clearer direction and stronger execution.
@@ -85,7 +84,7 @@ export default function SiteFooter({ backTo = "#home" }: SiteFooterProps) {
 
         <div className={styles.contact}>
           <h2>Contact</h2>
-          <a href="https://www.furute.in" target="_blank" rel="noreferrer">
+          <a href="https://www.furute.in" target="_blank" rel="noopener noreferrer">
             www.furute.in
           </a>
           <a href="mailto:info@furute.in">info@furute.in</a>
@@ -106,16 +105,16 @@ export default function SiteFooter({ backTo = "#home" }: SiteFooterProps) {
         <p>Copyright 2026 Furute. All rights reserved.</p>
 
         <div className={styles.socials} aria-label="Social links">
-          <a href="https://www.facebook.com/furutein" target="_blank" rel="noreferrer" aria-label="Facebook">
+          <a href="https://www.facebook.com/furutein" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
             <FacebookIcon />
           </a>
-          <a href="https://x.com/Furutekingmaker" target="_blank" rel="noreferrer" aria-label="X">
+          <a href="https://x.com/Furutekingmaker" target="_blank" rel="noopener noreferrer" aria-label="X">
             <XIcon />
           </a>
-          <a href="https://www.linkedin.com/company/furute-king-makers" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+          <a href="https://www.linkedin.com/company/furute-king-makers" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
             <LinkedInIcon />
           </a>
-          <a href="https://www.youtube.com/ashayshah" target="_blank" rel="noreferrer" aria-label="YouTube">
+          <a href="https://www.youtube.com/ashayshah" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
             <YouTubeIcon />
           </a>
         </div>

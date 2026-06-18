@@ -107,6 +107,7 @@
 
 @media (max-width: 1180px) {
   .logoMark img {
+    width: auto;
     height: 60px;
     max-width: 124px;
   }
@@ -234,6 +235,7 @@
   }
 
   .logoMark img {
+    width: auto;
     height: 48px;
     max-width: 100px;
   }

@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -272,7 +271,13 @@ export default function EventsPage() {
                   >
                     <div className={styles["db-event-image"]}>
                       {event.image ? (
-                        <img src={event.image} alt={event.title} />
+                        <Image
+                          src={event.image}
+                          alt={event.title}
+                          fill
+                          unoptimized
+                          loading="lazy"
+                        />
                       ) : (
                         <div className={styles["db-event-no-image"]}>
                           <CalendarIcon />
@@ -332,7 +337,13 @@ export default function EventsPage() {
                   >
                     <div className={styles["db-event-image"]}>
                       {event.image ? (
-                        <img src={event.image} alt={event.title} />
+                        <Image
+                          src={event.image}
+                          alt={event.title}
+                          fill
+                          unoptimized
+                          loading="lazy"
+                        />
                       ) : (
                         <div className={styles["db-event-no-image"]}>
                           <CalendarIcon />

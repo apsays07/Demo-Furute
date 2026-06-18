@@ -1,0 +1,47 @@
+.proof-strip {
+  width: min(1120px, calc(100% - 48px));
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin: -58px auto 0;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #087f8c, #f2a51a, #e45f4f);
+  box-shadow: 0 22px 58px rgba(16, 27, 53, 0.16);
+}
+
+.proof-strip div {
+  min-height: 120px;
+  padding: 26px 30px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(245, 253, 252, 0.94));
+}
+
+.proof-strip span {
+  display: block;
+  margin-bottom: 8px;
+  color: #083b52;
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.proof-strip p {
+  margin: 0;
+  color: #647086;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+@media (max-width: 820px) {
+  .proof-strip {
+    grid-template-columns: 1fr;
+    margin-top: 0;
+    width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Navbar from "@/components/layout/Navbar";
 import SiteFooter from "@/components/layout/SiteFooter";
 import styles from "./programs.module.css";
@@ -208,8 +209,15 @@ export default function ProgramsPage() {
                 {/* Cover image or gradient placeholder */}
                 <div className={styles.dbProgramImageWrap}>
                   {prog.image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={prog.image} alt={prog.title} className={styles.dbProgramImage} />
+                    <Image
+                      src={prog.image}
+                      alt={prog.title}
+                      width={400}
+                      height={200}
+                      unoptimized
+                      loading="lazy"
+                      className={styles.dbProgramImage}
+                    />
                   ) : (
                     <div className={styles.dbProgramImagePlaceholder}>
                       <BookOpen size={32} />

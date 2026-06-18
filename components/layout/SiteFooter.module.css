@@ -33,6 +33,7 @@
 
 .brand img {
   width: min(190px, 82%);
+  height: auto;
   display: block;
   margin-bottom: 20px;
   padding: 10px;

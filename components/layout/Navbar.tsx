@@ -173,7 +173,7 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <Link className={styles.navbarLogo} href="/" aria-label="Furute home">
         <span className={styles.logoMark} aria-hidden="true">
-          <Image src="/furute-logo.webp" alt="Furute Logo" width={138} height={68} priority />
+          <Image src="/furute-logo.webp" alt="Furute Logo" width={138} height={68} priority quality={75} sizes="138px" />
         </span>
       </Link>
 
