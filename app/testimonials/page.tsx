@@ -5,6 +5,7 @@ import TestimonialCard from "@/components/shared/TestimonialCard";
 import styles from "./testimonials.module.css";
 import { connectToDatabase } from "@/lib/mongodb";
 import TestimonialModel from "@/models/Testimonial";
+import { testimonials as staticTestimonials } from "@/lib/testimonials";
 
 interface DBTestimonial {
   _id: string;
@@ -37,7 +38,21 @@ async function getTestimonials(): Promise<DBTestimonial[]> {
 export const revalidate = 60; // Re-fetch from DB every 60 seconds
 
 export default async function TestimonialsPage() {
-  const testimonials = await getTestimonials();
+  const dbTestimonials = await getTestimonials();
+  
+  const testimonials = dbTestimonials.length > 0
+    ? dbTestimonials
+    : staticTestimonials.map((t, idx) => ({
+        _id: `static-${idx}`,
+        name: t.name,
+        designation: t.role,
+        company: "",
+        review: t.review,
+        rating: 5,
+        featured: false,
+        visible: true,
+        image: undefined as string | undefined,
+      }));
 
   return (
     <div className={styles.page}>
