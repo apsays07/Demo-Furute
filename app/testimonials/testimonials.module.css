@@ -13,7 +13,7 @@
   overflow-x: hidden;
   background: linear-gradient(180deg, #f7fbff 0%, #ffffff 38%, #fff8ec 100%);
   color: var(--color-ink);
-  padding-top: 120px; /* Accounts for fixed navbar */
+  padding-top: 24px; /* Space below sticky navbar */
 }
 
 .testimonials-section {
@@ -199,6 +199,9 @@
 }
 
 @media (max-width: 980px) {
+  .page {
+    padding-top: 90px; /* Accounts for fixed mobile navbar */
+  }
   .testimonials-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
