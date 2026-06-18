@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -44,7 +45,23 @@ interface AwardCategory {
   winners: Winner[];
 }
 
+interface LightboxState {
+  name: string;
+  detail: string;
+  image: string;
+}
+
 export default function AwardsPage() {
+  const [lightbox, setLightbox] = useState<LightboxState | null>(null);
+
+  const openLightbox = (winner: Winner) => {
+    if (winner.image) {
+      setLightbox({ name: winner.name, detail: winner.detail, image: winner.image });
+    }
+  };
+
+  const closeLightbox = () => setLightbox(null);
+
   const categories: AwardCategory[] = [
     {
       title: "Rising Stars",
@@ -154,6 +171,40 @@ export default function AwardsPage() {
       {/* Global Navbar */}
       <Navbar />
 
+      {/* Lightbox Overlay */}
+      {lightbox && (
+        <div
+          className={styles.lightboxOverlay}
+          onClick={closeLightbox}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Photo of ${lightbox.name}`}
+        >
+          <div
+            className={styles.lightboxContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className={styles.lightboxClose}
+              onClick={closeLightbox}
+              aria-label="Close photo"
+            >
+              ✕
+            </button>
+            <div className={styles.lightboxImageWrap}>
+              <Image
+                src={`/events/awards/${lightbox.image}`}
+                alt={lightbox.name}
+                fill
+                className={styles.topAwardImage}
+              />
+            </div>
+            <p className={styles.lightboxName}>{lightbox.name}</p>
+            <p className={styles.lightboxDetail}>{lightbox.detail}</p>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <motion.section 
         className={styles.hero}
@@ -191,7 +242,15 @@ export default function AwardsPage() {
               <div className={styles.trophyWrap}>
                 <TrophyIcon className={styles.trophyIconLarge} />
               </div>
-              <div className={styles.topAwardImageWrap}>
+              <div
+                className={styles.topAwardImageWrap}
+                onClick={() => openLightbox({ name: "Rohit Pasalkar", detail: "Interior Designer", image: "Rohit-Pasalkar.jpg" })}
+                style={{ cursor: "pointer" }}
+                role="button"
+                tabIndex={0}
+                aria-label="View photo of Rohit Pasalkar"
+                onKeyDown={(e) => e.key === "Enter" && openLightbox({ name: "Rohit Pasalkar", detail: "Interior Designer", image: "Rohit-Pasalkar.jpg" })}
+              >
                 <Image 
                   src="/events/awards/Rohit-Pasalkar.jpg" 
                   alt="Rohit Pasalkar" 
@@ -235,7 +294,14 @@ export default function AwardsPage() {
                   {category.winners.map((winner, idx) => (
                     <div key={idx} className={styles.winnerItem}>
                       {winner.image && (
-                        <div className={styles.winnerAvatar}>
+                        <div
+                          className={styles.winnerAvatar}
+                          onClick={() => openLightbox(winner)}
+                          role="button"
+                          tabIndex={0}
+                          aria-label={`View photo of ${winner.name}`}
+                          onKeyDown={(e) => e.key === "Enter" && openLightbox(winner)}
+                        >
                           <Image
                             src={`/events/awards/${winner.image}`}
                             alt={winner.name}
