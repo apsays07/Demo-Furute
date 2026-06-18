@@ -1,3 +1,4 @@
+
 import { render, screen } from "@testing-library/react";
 import BlogPage from "@/app/blog/page";
 
@@ -13,7 +14,9 @@ jest.mock("next/image", () => ({
 describe("Blog Listing Page", () => {
   it("renders the blog page heading", () => {
     render(<BlogPage />);
-    expect(screen.getByText("Blog")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /our blog/i })
+    ).toBeInTheDocument();
   });
 
   it("renders all 11 blog post cards", () => {
