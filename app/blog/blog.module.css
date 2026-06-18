@@ -10,7 +10,7 @@
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
-  padding: 130px 24px 30px;
+  padding: 48px 24px 30px; /* Reduced top padding since navbar is sticky */
   animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -203,6 +203,9 @@
 }
 
 @media (max-width: 900px) {
+  .blogHeader {
+    padding-top: 110px; /* Accounts for fixed mobile navbar */
+  }
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 24px;
