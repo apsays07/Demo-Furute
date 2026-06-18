@@ -68,7 +68,7 @@ export default function ShareButton() {
   const [canNativeShare, setCanNativeShare] = useState(false);
 
   useEffect(() => {
-    if (typeof navigator !== "undefined" && navigator.share) {
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       setCanNativeShare(true);
     }
   }, []);

@@ -119,7 +119,7 @@ export default function Navbar() {
           const hash = window.location.hash;
           if (hash) {
             const matched = menuItems.find(
-              (item) => `/#${getSectionId(item)}` === `/${hash}` || `#${getSectionId(item)}` === hash
+              (item) => `/#${getSectionId(item)}` === `/${hash}`
             );
             if (matched) setActiveItem(matched);
           } else {
@@ -177,9 +177,8 @@ export default function Navbar() {
         </span>
       </Link>
 
-      {/* Hamburger Toggle Button for Mobile */}
-      <button 
-        className={styles.hamburger} 
+      <button
+        className={styles.hamburger}
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         aria-label="Toggle navigation menu"
         aria-expanded={isMobileMenuOpen}
@@ -200,7 +199,7 @@ export default function Navbar() {
                   aria-current={activeItem === item ? "page" : undefined}
                   onClick={handleProgramsClick}
                 >
-                  {item} <span className={styles.chevron} aria-hidden="true">˅</span>
+                  {item} <span className={styles.chevron} aria-hidden="true">v</span>
                 </Link>
 
                 <ul className={`${styles.dropdownMenu} ${isProgramsExpanded ? styles.expanded : ""}`}>
@@ -208,8 +207,8 @@ export default function Navbar() {
                     if (subcat.isLeaf && subcat.path) {
                       return (
                         <li key={subcat.label} className={styles.dropdownLeaf}>
-                          <Link 
-                            href={subcat.path} 
+                          <Link
+                            href={subcat.path}
                             onClick={() => handleLinkClick("Programs")}
                           >
                             {subcat.label}
@@ -220,7 +219,7 @@ export default function Navbar() {
                     const isSubcatExpanded = expandedSubcat === subcat.label;
                     return (
                       <li key={subcat.label} className={styles.submenu}>
-                        <span 
+                        <span
                           className={`${styles.submenuTrigger} ${isSubcatExpanded ? styles.expanded : ""}`}
                           onClick={(e) => handleSubcatClick(e, subcat.label, false)}
                         >
@@ -230,8 +229,8 @@ export default function Navbar() {
                         <ul className={`${styles.submenuMenu} ${isSubcatExpanded ? styles.expanded : ""}`}>
                           {subcat.items?.map((subitem) => (
                             <li key={subitem.label}>
-                              <Link 
-                                href={subitem.path} 
+                              <Link
+                                href={subitem.path}
                                 onClick={() => handleLinkClick("Programs")}
                               >
                                 {subitem.label}
@@ -256,14 +255,14 @@ export default function Navbar() {
                   aria-current={activeItem === item ? "page" : undefined}
                   onClick={handleServicesClick}
                 >
-                  {item} <span className={styles.chevron} aria-hidden="true">˅</span>
+                  {item} <span className={styles.chevron} aria-hidden="true">v</span>
                 </Link>
 
                 <ul className={`${styles.dropdownMenu} ${isServicesExpanded ? styles.expanded : ""}`}>
                   {serviceDropdown.items.map((subitem) => (
                     <li key={subitem.label} className={styles.dropdownLeaf}>
-                      <Link 
-                        href={subitem.path} 
+                      <Link
+                        href={subitem.path}
                         onClick={() => handleLinkClick("Services")}
                       >
                         {subitem.label}
@@ -323,7 +322,7 @@ export default function Navbar() {
                   {item}
                 </Link>
               ) : (
-                
+                <a
                   className={activeItem === item ? styles.active : undefined}
                   href={`/#${getSectionId(item)}`}
                   aria-current={activeItem === item ? "page" : undefined}
@@ -341,3 +340,8 @@ export default function Navbar() {
     </nav>
   );
 }
+
+
+
+
+
