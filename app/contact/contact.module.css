@@ -69,7 +69,7 @@
   position: relative;
   
   /* Add top padding to account for fixed navbar on subpage */
-  padding-top: 102px;
+  padding-top: 0;
 }
 
 /* Headings font overrides */
@@ -1354,7 +1354,7 @@ select.input {
 
 @media (max-width: 640px) {
   .page {
-    padding-top: 82px; /* Adjusted offset for mobile menu header */
+    padding-top: 0; /* Adjusted offset for mobile menu header */
   }
 
   .hero {

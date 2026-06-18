@@ -56,7 +56,7 @@
   position: relative;
   
   /* Top offset for navigation bar */
-  padding-top: 102px;
+  padding-top: 0;
 }
 
 /* Headings font overrides */
@@ -539,7 +539,7 @@
 
 @media (max-width: 640px) {
   .page {
-    padding-top: 82px;
+    padding-top: 0;
   }
 
   .hero {

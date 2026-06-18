@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./Navbar.module.css";
+import ShareButton from "@/components/shared/ShareButton";
 
 const menuItems: string[] = [
   "Home",
@@ -166,13 +167,15 @@ export default function Navbar() {
     }
   };
 
-  return (
+ return (
     <nav className={styles.navbar}>
       <Link className={styles.navbarLogo} href="/" aria-label="Furute home">
         <span className={styles.logoMark} aria-hidden="true">
           <Image src="/furute-logo.png" alt="Furute Logo" width={138} height={68} priority />
         </span>
       </Link>
+
+      
 
       {/* Hamburger Toggle Button for Mobile */}
       <button 
@@ -324,6 +327,8 @@ export default function Navbar() {
           );
         })}
       </ul>
+
+      <ShareButton />
     </nav>
   );
 }

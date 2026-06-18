@@ -40,7 +40,7 @@
   position: relative;
   
   /* Top offset for navigation bar */
-  padding-top: 102px;
+  padding-top: 0;
 }
 
 .page h1,
@@ -654,7 +654,7 @@
 
 @media (max-width: 640px) {
   .page {
-    padding-top: 80px;
+    padding-top: 0;
   }
   
   .container {

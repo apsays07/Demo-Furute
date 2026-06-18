@@ -9,7 +9,7 @@
   --violet: #6454b7;
   width: 100%;
   min-height: 100vh;
-  padding-top: 86px;
+  padding-top: 0;
   overflow-x: hidden;
   background: #fbfcfb;
   color: var(--ink);
