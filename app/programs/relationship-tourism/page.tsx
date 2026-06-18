@@ -141,6 +141,151 @@ export default function RelationshipTourismPage() {
         </div>
       </section>
 
+      {/* Universal Principle Section: What We Invest Time In, Grows */}
+      <section className={styles.introSection}>
+        <div className={styles.sectionInner}>
+          <div className={styles.centeredHeader}>
+            <span className={styles.tag}>A Universal Principle</span>
+            <h2>What We Invest Time In, Grows</h2>
+            <p>Every meaningful achievement in life is the result of time invested with intention.</p>
+          </div>
+
+          <div className={styles.investGrid}>
+            <div className={styles.investCard}>
+              <div className={styles.investIconWrap}>
+                <Sparkles />
+              </div>
+              <h3>Hobbies & Skills</h3>
+              <p>When we dedicate time to a hobby, our skills improve and our horizons expand.</p>
+            </div>
+            <div className={styles.investCard}>
+              <div className={styles.investIconWrap}>
+                <Mountain />
+              </div>
+              <h3>Sports & Fitness</h3>
+              <p>When we consistently practice, we become stronger, healthier, and more resilient.</p>
+            </div>
+            <div className={styles.investCard}>
+              <div className={styles.investIconWrap}>
+                <Award />
+              </div>
+              <h3>Academics & Study</h3>
+              <p>Students who invest quality time in learning excel academically and build lasting foundations.</p>
+            </div>
+            <div className={styles.investCard}>
+              <div className={styles.investIconWrap}>
+                <Users />
+              </div>
+              <h3>Business & Career</h3>
+              <p>Professionals and entrepreneurs who devote themselves to their work achieve great success.</p>
+            </div>
+          </div>
+
+          <div className={styles.introTransition}>
+            <p>
+              Growth never happens by accident. It happens where attention, effort, and time are invested.
+            </p>
+            <p className={styles.transitionEmphasis}>
+              Yet, while we understand this principle in education, careers, business, and personal ambitions, we often overlook its importance in the area that matters most—<strong>our relationships</strong>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* The Missing Secret & Reflective Questions */}
+      <section className={styles.missingSecretSection}>
+        <div className={styles.sectionInner}>
+          <div className={styles.splitContent}>
+            <div className={styles.splitLeft}>
+              <span className={styles.tag}>The Bottleneck</span>
+              <h2>The Missing Secret in Relationships</h2>
+              <p>
+                Many people struggle with relationships not because they lack love, but because they fail to invest enough quality time in nurturing those bonds.
+              </p>
+              <p>
+                Relationships are living connections. They require attention, understanding, communication, and shared experiences to grow stronger over time.
+              </p>
+            </div>
+            <div className={styles.splitRight}>
+              <div className={styles.factBox}>
+                <h3>The Simple Truth</h3>
+                <p>Relationships thrive where time, care, and meaningful experiences are actively invested.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.questionsContainer}>
+            <h3 className={styles.questionsTitle}>Consider these questions:</h3>
+            <div className={styles.questionsGrid}>
+              <div className={styles.questionCard}>
+                <div className={styles.questionCardIcon}>
+                  <Users />
+                </div>
+                <p>Why do strong family bonds often weaken as life becomes busier?</p>
+              </div>
+              <div className={styles.questionCard}>
+                <div className={styles.questionCardIcon}>
+                  <Compass />
+                </div>
+                <p>Why do children who once depended on their parents gradually drift away?</p>
+              </div>
+              <div className={styles.questionCard}>
+                <div className={styles.questionCardIcon}>
+                  <HeartHandshake />
+                </div>
+                <p>Why do siblings who grew up sharing laughter, challenges, and memories become distant after marriage?</p>
+              </div>
+              <div className={styles.questionCard}>
+                <div className={styles.questionCardIcon}>
+                  <Sparkles />
+                </div>
+                <p>Why do newly married couples often unintentionally neglect older relationships?</p>
+              </div>
+              <div className={styles.questionCard}>
+                <div className={styles.questionCardIcon}>
+                  <Trees />
+                </div>
+                <p>Why do joint families become fragmented into smaller, disconnected units?</p>
+              </div>
+              <div className={styles.questionCard}>
+                <div className={styles.questionCardIcon}>
+                  <ShieldCheck />
+                </div>
+                <p>Why do misunderstandings frequently arise between mothers-in-law and daughters-in-law despite their shared desire for love, respect, and acceptance?</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Reconnecting Section */}
+      <section className={styles.reconnectSection}>
+        <div className={styles.sectionInner}>
+          <div className={styles.reconnectCard}>
+            <span className={styles.tag}>A New Approach</span>
+            <h2>Reconnecting Through Relationship Tourism</h2>
+            <div className={styles.reconnectTextGrid}>
+              <div>
+                <p>
+                  In today&apos;s fast-paced world, we rarely create dedicated time to strengthen our relationships. Vacations are often planned for relaxation, sightseeing, or entertainment—but what if they could also deepen the bonds that matter most?
+                </p>
+                <p>
+                  <strong>Relationship Tourism</strong> is a unique concept designed to help individuals, couples, and families reconnect, rebuild, and strengthen their relationships through meaningful shared experiences.
+                </p>
+              </div>
+              <div>
+                <p>
+                  It is about creating memories, fostering understanding, building trust, and nurturing deeper connections through love, respect, and togetherness.
+                </p>
+                <p>
+                  Whether it is parents and children, siblings, spouses, extended families, or in-laws, every relationship deserves an opportunity to grow stronger.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Core Philosophy Section */}
       <section className={styles.philosophySection}>
         <div className={styles.sectionInner}>
@@ -251,6 +396,36 @@ export default function RelationshipTourismPage() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Make Your Next Vacation Meaningful Section */}
+      <section className={styles.vacationMeaningfulSection}>
+        <div className={styles.sectionInner}>
+          <div className={styles.meaningfulCard}>
+            <span className={styles.tag}>Next Steps</span>
+            <h2>Make Your Next Vacation Meaningful</h2>
+            <p className={styles.meaningfulLead}>
+              Let your next journey be more than just a getaway. Choose an experience that brings hearts closer, strengthens bonds, and creates memories that last a lifetime.
+            </p>
+            <p className={styles.meaningfulSub}>
+              Because relationships, like every valuable part of life, flourish when we invest our time in them.
+            </p>
+            <div className={styles.meaningfulCallouts}>
+              <div className={styles.calloutItem}>
+                <span className={styles.calloutIcon}>💖</span>
+                <span>Invest in relationships</span>
+              </div>
+              <div className={styles.calloutItem}>
+                <span className={styles.calloutIcon}>🤝</span>
+                <span>Invest in connection</span>
+              </div>
+              <div className={styles.calloutItem}>
+                <span className={styles.calloutIcon}>✨</span>
+                <span>Invest in what truly matters</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>

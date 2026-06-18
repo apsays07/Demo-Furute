@@ -637,6 +637,289 @@
   stroke-width: 2.5;
 }
 
+/* Universal Principle Section: What We Invest Time In, Grows */
+.introSection {
+  background: transparent;
+  padding: var(--section-pad) 0;
+}
+
+.investGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.investCard {
+  padding: 32px 24px;
+  background: #ffffff;
+  border: 1px solid rgba(16, 27, 53, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(16, 27, 53, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.investCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 36px rgba(16, 27, 53, 0.06);
+  border-color: rgba(8, 127, 140, 0.15);
+}
+
+.investIconWrap {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(8, 127, 140, 0.06);
+  color: var(--color-teal);
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.investCard:hover .investIconWrap {
+  background: var(--color-teal);
+  color: #ffffff;
+}
+
+.investCard h3 {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.investCard p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.introTransition {
+  max-width: 800px;
+  margin: 56px auto 0;
+  text-align: center;
+}
+
+.introTransition p {
+  font-size: 16.5px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.transitionEmphasis {
+  font-size: 19.5px !important;
+  line-height: 1.6 !important;
+  color: var(--ink) !important;
+  font-weight: 600;
+}
+
+/* The Missing Secret Section & Questions */
+.missingSecretSection {
+  background: linear-gradient(180deg, #f7f9fc 0%, rgba(255, 251, 242, 0.4) 100%);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: var(--section-pad) 0;
+}
+
+.factBox {
+  padding: 30px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #083b52 0%, #101b35 100%);
+  color: #ffffff;
+  box-shadow: 0 16px 36px rgba(16, 27, 53, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.factBox h3 {
+  margin: 0 0 12px;
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--color-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.factBox p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 650;
+}
+
+.questionsContainer {
+  margin-top: 64px;
+}
+
+.questionsTitle {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 28px;
+}
+
+.questionsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.questionCard {
+  background: #ffffff;
+  border: 1px solid rgba(16, 27, 53, 0.05);
+  border-radius: 12px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 8px 24px rgba(16, 27, 53, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.questionCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(16, 27, 53, 0.06);
+  border-color: rgba(242, 165, 26, 0.25);
+}
+
+.questionCardIcon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(242, 165, 26, 0.08);
+  color: var(--color-gold);
+}
+
+.questionCardIcon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.questionCard p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.62;
+  color: #3b465b;
+  font-weight: 650;
+}
+
+/* Reconnecting Section */
+.reconnectSection {
+  padding: var(--section-pad) 0;
+}
+
+.reconnectCard {
+  background: linear-gradient(135deg, #ffffff 0%, rgba(247, 249, 252, 0.6) 100%);
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 16px;
+  padding: 48px;
+  box-shadow: 0 20px 40px rgba(16, 27, 53, 0.03);
+}
+
+.reconnectCard h2 {
+  margin: 8px 0 24px;
+  font-size: clamp(26px, 2.5vw, 36px);
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.reconnectTextGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.reconnectTextGrid p {
+  margin: 0 0 16px;
+  font-size: 15.5px;
+  line-height: 1.68;
+  color: var(--muted);
+}
+
+.reconnectTextGrid p strong {
+  color: var(--color-teal);
+  font-weight: 800;
+}
+
+.reconnectTextGrid p:last-child {
+  margin-bottom: 0;
+}
+
+/* Vacation Meaningful Section */
+.vacationMeaningfulSection {
+  padding: var(--section-pad) 0;
+  background: linear-gradient(180deg, #ffffff 0%, #fffbf2 100%);
+  border-top: 1px solid var(--line);
+}
+
+.meaningfulCard {
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 251, 242, 0.6) 100%);
+  border: 1px solid rgba(242, 165, 26, 0.16);
+  border-radius: 16px;
+  padding: 56px 48px;
+  text-align: center;
+  box-shadow: 0 24px 48px rgba(242, 165, 26, 0.04);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.meaningfulCard h2 {
+  font-size: clamp(28px, 3.2vw, 40px);
+  font-weight: 800;
+  color: var(--ink);
+  margin: 8px 0 20px;
+}
+
+.meaningfulLead {
+  font-size: 18px;
+  line-height: 1.62;
+  color: #3b465b;
+  font-weight: 600;
+  max-width: 760px;
+  margin: 0 auto 16px;
+}
+
+.meaningfulSub {
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--muted);
+  max-width: 680px;
+  margin: 0 auto 32px;
+}
+
+.meaningfulCallouts {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.calloutItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #ffffff;
+  border: 1px solid rgba(242, 165, 26, 0.2);
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(242, 165, 26, 0.05);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-teal-dark);
+}
+
+.calloutIcon {
+  font-size: 16px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 980px) {
   .splitContent {
@@ -658,6 +941,30 @@
   .highlightsArea ul {
     grid-template-columns: 1fr;
   }
+
+  .investGrid,
+  .questionsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .reconnectTextGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .reconnectCard {
+    padding: 32px;
+  }
+
+  .meaningfulCard {
+    padding: 40px 24px;
+  }
+
+  .meaningfulCallouts {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -673,5 +980,10 @@
   
   .page {
     padding-top: 0;
+  }
+
+  .investGrid,
+  .questionsGrid {
+    grid-template-columns: 1fr;
   }
 }
