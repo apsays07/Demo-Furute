@@ -1,6 +1,15 @@
-import mongoose, { Schema, models, model } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-const CommentSchema = new Schema(
+export interface IComment extends Document {
+  postSlug: string;
+  name: string;
+  email: string;
+  website?: string;
+  comment: string;
+  createdAt: Date;
+}
+
+const CommentSchema: Schema = new Schema(
   {
     postSlug: { type: String, required: true },
     name: { type: String, required: true },
@@ -11,4 +20,5 @@ const CommentSchema = new Schema(
   { timestamps: true }
 );
 
-export default models.Comment || model("Comment", CommentSchema);
+export default (mongoose.models.Comment as mongoose.Model<IComment>) ||
+  mongoose.model<IComment>("Comment", CommentSchema);

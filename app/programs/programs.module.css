@@ -18,7 +18,7 @@
 .hero {
   background:
     linear-gradient(115deg, rgba(8, 59, 82, 0.95), rgba(8, 127, 140, 0.9)),
-    url("/hero-image.png") center / cover;
+    url("/hero-image.webp") center / cover;
   color: #ffffff;
 }
 
@@ -468,5 +468,199 @@
 
   .programItemLink {
     min-height: auto;
+  }
+}
+
+/* ─── DB PROGRAMS SECTION ─────────────────────────────────── */
+.dbProgramsSection {
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 48px 0 16px;
+}
+
+.dbProgramsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.dbProgramsTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+}
+
+.dbProgramsTitle svg {
+  color: var(--teal);
+}
+
+.dbProgramsTitle h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.liveBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  background: rgba(8, 127, 140, 0.08);
+  border: 1px solid rgba(8, 127, 140, 0.18);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--teal);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: pulseDot 2s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.7); }
+}
+
+.dbProgramsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.dbProgramCard {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(8, 127, 140, 0.12);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 6px 24px rgba(16, 24, 39, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.dbProgramCard:hover {
+  transform: translateY(-5px);
+  border-color: rgba(8, 127, 140, 0.28);
+  box-shadow: 0 20px 40px rgba(8, 127, 140, 0.10);
+}
+
+.dbProgramImageWrap {
+  width: 100%;
+  aspect-ratio: 16 / 8;
+  overflow: hidden;
+  background: linear-gradient(135deg, #083b52, #087f8c);
+}
+
+.dbProgramImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.dbProgramCard:hover .dbProgramImage {
+  transform: scale(1.05);
+}
+
+.dbProgramImagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.35);
+}
+
+.dbProgramBody {
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.dbProgramMeta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dbProgramDuration,
+.dbProgramCategory {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.dbProgramDuration {
+  background: rgba(8, 127, 140, 0.08);
+  color: var(--teal);
+}
+
+.dbProgramCategory {
+  background: rgba(217, 149, 18, 0.1);
+  color: var(--gold);
+}
+
+.dbProgramBody h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.dbProgramBody p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--muted);
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dbProgramCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--teal);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.dbProgramCta:hover {
+  color: var(--navy);
+}
+
+@media (max-width: 1024px) {
+  .dbProgramsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .dbProgramsGrid {
+    grid-template-columns: 1fr;
   }
 }

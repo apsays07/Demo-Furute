@@ -150,7 +150,7 @@ export default function DigitalMarketingPage() {
       >
         <div className={styles.heroBg}>
           <Image 
-            src="/services/digital-marketing.jpg" 
+            src="/services/digital-marketing.webp" 
             alt="Digital Marketing background"
             fill
             priority
@@ -171,7 +171,7 @@ export default function DigitalMarketingPage() {
           </div>
           <h1 className={styles.heroTitleLight}>Digital Marketing</h1>
           <p className={styles.leadLight}>
-            We don't just do good, we improve all intersections of online marketing. We aim at achieving business outcomes using critical analysis standards and targeted lead-gen campaigns.
+            {"We don't just do good, we improve all intersections of online marketing. We aim at achieving business outcomes using critical analysis standards and targeted lead-gen campaigns."}
           </p>
         </div>
       </motion.section>
@@ -196,7 +196,7 @@ export default function DigitalMarketingPage() {
                   Furute is a Making A Difference (M.A.D.) Digital Marketing Company in Pune. We aim at achieving the business outcomes of our clients, using every possible platform of online marketing combined with our own internal analytical standards.
                 </p>
                 <p>
-                  We never end with doing just "good". Our dedicated team is crazy about improving all intersections of online marketing to ensure your brand stands out, attracts high-intent traffic, and drives consistent lead conversion.
+                  {"We never end with doing just \"good\". Our dedicated team is crazy about improving all intersections of online marketing to ensure your brand stands out, attracts high-intent traffic, and drives consistent lead conversion."}
                 </p>
               </motion.div>
 

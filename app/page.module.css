@@ -39,7 +39,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: url("/hero-image.png") center / cover no-repeat;
+  background: url("/hero-image.webp") center / cover no-repeat;
   filter: brightness(96%) contrast(118%) saturate(108%) sepia(5%);
   transform: scale(1.015) translateZ(0);
   backface-visibility: hidden;
@@ -299,6 +299,22 @@
   font-weight: 900;
   line-height: 1;
   box-shadow: 0 18px 34px rgba(15, 23, 42, 0.16);
+}
+
+.program-image {
+  width: 140px;
+  height: 140px;
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  border-radius: 999px;
+  box-shadow: 0 12px 28px rgba(16, 27, 53, 0.14);
+  object-fit: cover;
+  background: #ffffff;
+  transition: transform 0.24s ease;
+}
+
+.program-card:hover .program-image,
+.program-card:focus-visible .program-image {
+  transform: scale(1.08);
 }
 
 .program-card h3 {
@@ -1001,6 +1017,7 @@
 }
 
 .testimonials-section {
+  font-family: Arial, Helvetica, sans-serif;
   padding: var(--section-pad) 24px;
   background:
     linear-gradient(135deg, rgba(255, 244, 227, 0.95), rgba(223, 246, 243, 0.9)),
@@ -1102,6 +1119,42 @@
   font-weight: 800;
   line-height: 1.35;
   text-transform: uppercase;
+}
+
+.testimonials-toggle {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.testimonials-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  min-height: 52px;
+  padding: 0 32px;
+  border: 1px solid rgba(8, 127, 140, 0.28);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--color-teal-dark);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(8, 59, 82, 0.08);
+  transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease,
+    transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.testimonials-toggle-btn:hover,
+.testimonials-toggle-btn:focus-visible {
+  background: var(--color-teal);
+  color: #ffffff;
+  border-color: var(--color-teal);
+  box-shadow: 0 12px 28px rgba(8, 127, 140, 0.22);
+  transform: translateY(-2px);
+  outline: none;
 }
 
 .site-footer {

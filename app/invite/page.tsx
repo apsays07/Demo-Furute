@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import SiteFooter from "@/components/layout/SiteFooter";
 import VideoModal from "@/components/shared/VideoModal";
 import { cn as cx } from "@/lib/utils";
@@ -26,6 +27,7 @@ import {
   MessageSquareIcon,
 } from "@/components/ui/Icons";
 import styles from "./invite.module.css";
+import EmailLoginModal from "@/components/shared/EmailLoginModal";
 
 // -------------------------------------------------------------
 // TYPES & DATA DEFINITIONS
@@ -34,10 +36,6 @@ import styles from "./invite.module.css";
 type Video = {
   title: string;
   videoId: string;
-};
-
-type IconProps = {
-  className?: string;
 };
 
 const topics = [
@@ -79,12 +77,23 @@ const videos: Video[] = [
 ];
 
 const localInviteThumbnails: Record<string, string> = {
-  "BCkejLzRk_Y": "/videos/invite-1.jpg",
-  "ZEZiYQJClzw": "/videos/invite-2.jpg",
-  "wM1VmwrR_Vg": "/videos/invite-3.jpg",
+  "BCkejLzRk_Y": "/videos/invite-1.webp",
+  "ZEZiYQJClzw": "/videos/invite-2.webp",
+  "wM1VmwrR_Vg": "/videos/invite-3.webp",
 };
 
+const loadingStepsList = [
+  "Checking Ashay's calendar availability...",
+  "Validating event venue and date...",
+  "Establishing secure server connection...",
+  "Saving speaker invitation to database...",
+  "Sending email notification to Ashay's office...",
+];
+
 export default function InviteSpeakerPage() {
+  const [mounted] = useState(true);
+  const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null);
+
   // 1. FORM STATE MANAGEMENT
   const [formData, setFormData] = useState({
     fullName: "",
@@ -99,6 +108,15 @@ export default function InviteSpeakerPage() {
     brief: "",
   });
 
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("guest_verified_email");
+    if (savedEmail) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setVerifiedEmail(savedEmail);
+      setFormData((prev) => ({ ...prev, email: savedEmail }));
+    }
+  }, []);
+
   // 2. ADDITIONAL STATE FOR DATABASE INTEGRATION
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -110,6 +128,20 @@ export default function InviteSpeakerPage() {
     eventName: "",
     email: "",
   });
+
+  const [loadingStep, setLoadingStep] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isLoading) {
+      interval = setInterval(() => {
+        setLoadingStep((prev) => (prev < loadingStepsList.length - 1 ? prev + 1 : prev));
+      }, 600);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLoading]);
 
   const [imageMissing, setImageMissing] = useState(false);
   const [activeVideo, setActiveVideo] = useState<Video | null>(null);
@@ -128,6 +160,7 @@ export default function InviteSpeakerPage() {
 
     // Print "FORM SUBMITTED" first thing in handleSubmit (submitInquiry)
     console.log("FORM SUBMITTED");
+    setLoadingStep(0);
 
     setIsLoading(true);
     setError(null);
@@ -162,7 +195,7 @@ export default function InviteSpeakerPage() {
       setFormData({
         fullName: "",
         organization: "",
-        email: "",
+        email: verifiedEmail || "",
         phone: "",
         eventName: "",
         eventDate: "",
@@ -181,7 +214,16 @@ export default function InviteSpeakerPage() {
   };
 
   return (
-    <main className={styles.page}>
+    <>
+      {mounted && !verifiedEmail && (
+        <EmailLoginModal
+          onSuccess={(email) => {
+            setVerifiedEmail(email);
+            setFormData((prev) => ({ ...prev, email }));
+          }}
+        />
+      )}
+      <main className={styles.page}>
       {/* Visual Ambient Background Elements */}
       <div className={styles.blob1} aria-hidden="true" />
       <div className={styles.blob2} aria-hidden="true" />
@@ -189,7 +231,7 @@ export default function InviteSpeakerPage() {
 
       <header className={styles.header}>
         <Link href="/" className={styles.logo} aria-label="Go to Furute home">
-          <Image src="/furute-logo.png" alt="Furute" width={138} height={68} priority />
+          <Image src="/furute-logo.webp" alt="Furute" width={138} height={68} priority />
         </Link>
 
         <nav className={styles.nav} aria-label="Invite page navigation">
@@ -226,7 +268,7 @@ export default function InviteSpeakerPage() {
           <div className={styles["portrait-wrap"]}>
             {!imageMissing ? (
               <Image
-                src="/ashay-shah.png"
+                src="/ashay-shah.webp"
                 alt="Ashay Shah"
                 width={390}
                 height={430}
@@ -282,7 +324,7 @@ export default function InviteSpeakerPage() {
             >
               <span className={styles["video-frame"]}>
                 <Image
-                  src={localInviteThumbnails[video.videoId] || "/videos/invite-1.jpg"}
+                  src={localInviteThumbnails[video.videoId] || "/videos/invite-1.webp"}
                   alt=""
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
@@ -314,6 +356,50 @@ export default function InviteSpeakerPage() {
         </div>
 
         <div className={styles["form-card"]}>
+          {/* Glassmorphic Loading Overlay */}
+          <AnimatePresence>
+            {isLoading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className={styles["loading-overlay"]}
+              >
+                <div className={styles["loading-content"]}>
+                  <div className={styles["loading-spinner-container"]}>
+                    <div className={styles["pulse-ring"]} />
+                    <div className={styles["pulse-ring-inner"]} />
+                    <MailIcon className={styles["loading-icon"]} />
+                  </div>
+                  <h3 className={styles["loading-title"]}>Submitting inquiry...</h3>
+                  <p className={styles["loading-message"]}>
+                    {loadingStepsList[loadingStep]}
+                  </p>
+                  
+                  <div className={styles["progress-bar"]}>
+                    <motion.div
+                      className={styles["progress-fill"]}
+                      initial={{ width: "0%" }}
+                      animate={{ width: `${((loadingStep + 1) / loadingStepsList.length) * 100}%` }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                    />
+                  </div>
+                  
+                  <div className={styles["loading-step-indicators"]}>
+                    {loadingStepsList.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`${styles["step-dot"]} ${
+                          index <= loadingStep ? styles["step-dot-active"] : ""
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Error Message Display */}
           {error && (
             <div
@@ -485,25 +571,73 @@ export default function InviteSpeakerPage() {
               </button>
             </form>
           ) : (
-            <div className={styles.success} role="alert">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className={styles.success}
+              role="alert"
+            >
               <div className={styles["success-icon-wrap"]} aria-hidden="true">
                 <CheckIcon />
               </div>
-              <h3>Inquiry submitted.</h3>
+              <h3>Inquiry Submitted Successfully!</h3>
               <p>
                 Thank you, <strong>{successData.fullName}</strong>. The Furute
-                team will review your invitation for{" "}
+                team will review your speaking invitation for{" "}
                 <strong>{successData.eventName}</strong> and contact you at{" "}
-                <strong>{successData.email}</strong>.
+                <strong>{successData.email}</strong> shortly.
               </p>
+
+              <div className={styles["success-details"]}>
+                <div className={styles["success-details-row"]}>
+                  <span>Event Name</span>
+                  <span>{successData.eventName}</span>
+                </div>
+                <div className={styles["success-details-row"]}>
+                  <span>Organizer</span>
+                  <span>{successData.fullName}</span>
+                </div>
+                <div className={styles["success-details-row"]}>
+                  <span>Status</span>
+                  <span style={{ color: "#087f8c" }}>Recorded in Database</span>
+                </div>
+              </div>
+
+              <div className={styles["success-timeline"]}>
+                <h4>What happens next?</h4>
+                <div className={styles["success-timeline-item"]}>
+                  <div className={styles["success-timeline-icon"]}>1</div>
+                  <div className={styles["success-timeline-text"]}>
+                    <strong>Confirmation Sent</strong>
+                    <span>A verification email has been delivered to {successData.email}.</span>
+                  </div>
+                </div>
+                <div className={styles["success-timeline-item"]}>
+                  <div className={styles["success-timeline-icon"]}>2</div>
+                  <div className={styles["success-timeline-text"]}>
+                    <strong>Calendar Check</strong>
+                    <span>Ashay&apos;s team verifies schedule feasibility for the date.</span>
+                  </div>
+                </div>
+                <div className={styles["success-timeline-item"]}>
+                  <div className={styles["success-timeline-icon"]}>3</div>
+                  <div className={styles["success-timeline-text"]}>
+                    <strong>Speaking Proposal</strong>
+                    <span>We will send a speaker proposal & quotation within 24-48 hours.</span>
+                  </div>
+                </div>
+              </div>
+
               <button
                 type="button"
                 className={styles["primary-btn"]}
+                style={{ border: "none", cursor: "pointer" }}
                 onClick={() => setSubmitted(false)}
               >
                 Submit Another Inquiry
               </button>
-            </div>
+            </motion.div>
           )}
         </div>
       </section>
@@ -518,6 +652,7 @@ export default function InviteSpeakerPage() {
         />
       ) : null}
     </main>
+    </>
   );
 }
 

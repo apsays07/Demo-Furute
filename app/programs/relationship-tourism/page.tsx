@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { 
   ArrowLeft, ArrowRight, Compass, Clock, Users, ShieldCheck, 
-  Sparkles, Trees, Palmtree, Mountain, Award, HeartHandshake, HelpCircle 
+  Sparkles, Trees, Palmtree, Mountain, Award, HeartHandshake 
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import SiteFooter from "@/components/layout/SiteFooter";

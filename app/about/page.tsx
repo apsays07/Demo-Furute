@@ -1,19 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import Navbar from "@/components/layout/Navbar";
 import SiteFooter from "@/components/layout/SiteFooter";
 import {
-  ArrowLeftIcon,
-  ShieldCheckIcon,
-  SparklesIcon,
-  HelpingHandsIcon,
-  TrophyIcon,
-  CompassIcon,
-  SmartWorkIcon,
+    ArrowLeftIcon,
+    CompassIcon,
+    HelpingHandsIcon,
+    ShieldCheckIcon,
+    SmartWorkIcon,
+    SparklesIcon,
+    TrophyIcon,
 } from "@/components/ui/Icons";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
 import styles from "./about.module.css";
 
 // -------------------------------------------------------------
@@ -237,7 +237,7 @@ export default function AboutUsPage() {
             <div className={styles.portraitCard}>
               {!imageError ? (
                 <Image
-                  src="/ashay-shah.png"
+                  src="/ashay-shah.webp"
                   alt="Ashay Shah"
                   className={styles.portrait}
                   fill
@@ -419,7 +419,7 @@ export default function AboutUsPage() {
       <section className={styles.footerCtaSection}>
         <div className={styles.footerCtaGrid}>
           <div className={styles.orgInfo}>
-            <Image src="/furute-logo.png" alt="Furute Logo" width={110} height={54} className={styles.orgLogo} />
+            <Image src="/furute-logo.webp" alt="Furute Logo" width={110} height={54} className={styles.orgLogo} />
             <h3>Furute - Kingmakers</h3>
             <p>
               Founded in January 2013 under the leadership of Ashay Shah. Furute is a dedicated business training, branding, and life coaching partner committed to building stable, high-efficiency business operations.

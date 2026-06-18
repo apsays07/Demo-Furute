@@ -51,7 +51,7 @@ export default function SiteFooter({ backTo = "#home" }: SiteFooterProps) {
     <footer className={styles.footer} id="contact-us">
       <div className={styles.main}>
         <div className={styles.brand}>
-          <Image src="/furute-logo.png" alt="Furute" width={190} height={94} />
+          <Image src="/furute-logo.webp" alt="Furute" width={190} height={94} />
           <p>
             Practical business training, mentoring, and life coaching for
             people who want clearer direction and stronger execution.

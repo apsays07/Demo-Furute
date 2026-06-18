@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, use, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getPostBySlug } from "@/lib/blogData";
@@ -31,6 +31,17 @@ export default function BlogPostPage({
   const [submitting, setSubmitting] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
 
+  const fetchComments = useCallback(async () => {
+    if (!post) return;
+    try {
+      const res = await fetch(`/api/comments?postSlug=${post.slug}`);
+      const data = await res.json();
+      if (data.success) setComments(data.data);
+    } catch (_err) {
+      console.error("Failed to load comments", _err);
+    }
+  }, [post]);
+
   useEffect(() => {
     if (!post) return;
 
@@ -38,6 +49,7 @@ export default function BlogPostPage({
     const saved = localStorage.getItem("furute_commenter");
     if (saved) {
       const parsed = JSON.parse(saved);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setName(parsed.name || "");
       setEmail(parsed.email || "");
       setWebsite(parsed.website || "");
@@ -45,18 +57,7 @@ export default function BlogPostPage({
     }
 
     fetchComments();
-  }, [post]);
-
-  async function fetchComments() {
-    if (!post) return;
-    try {
-      const res = await fetch(`/api/comments?postSlug=${post.slug}`);
-      const data = await res.json();
-      if (data.success) setComments(data.data);
-    } catch (err) {
-      console.error("Failed to load comments", err);
-    }
-  }
+  }, [post, fetchComments]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -97,7 +98,7 @@ export default function BlogPostPage({
       } else {
         setStatusMsg(data.error || "Something went wrong.");
       }
-    } catch (err) {
+    } catch {
       setStatusMsg("Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
@@ -108,7 +109,9 @@ export default function BlogPostPage({
     return (
       <main className={styles.page}>
         <div className={styles.container}>
-          <Link href="/blog" className={styles.back}>← Back to Blog</Link>
+          <Link href="/blog" className={styles.back}>
+            ← Back to Blog
+          </Link>
           <h1>Post not found</h1>
         </div>
       </main>
@@ -120,63 +123,64 @@ export default function BlogPostPage({
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-
         <Link href="/blog" className={styles.back}>
           ← Back to Blog
         </Link>
-        
 
-        <div className={styles.header}>
-          <span className={styles.category}>{post.category}</span>
-          <h1 className={styles.title}>{post.title}</h1>
-          <p className={styles.date}>{post.date}</p>
-        </div>
+        <div className={styles.articleWrapper}>
+          <div className={styles.header}>
+            <span className={styles.category}>{post.category}</span>
+            <h1 className={styles.title}>{post.title}</h1>
+            <p className={styles.date}>{post.date}</p>
+          </div>
 
-        <div className={styles.imageWrapper}>
-          <Image
-            src={post.image}
-            alt={post.title}
-            fill
-            className={styles.image}
-            priority
-          />
-        </div>
+          <div className={styles.imageWrapper}>
+            <Image
+              src={post.image}
+              alt={post.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 760px"
+              className={styles.image}
+              priority
+            />
+          </div>
 
-        <article className={styles.content}>
-          {paragraphs.map((para, i) => {
-            if (para.startsWith("**") && para.endsWith("**")) {
+          <article className={styles.content}>
+            {paragraphs.map((para, i) => {
+              if (para.startsWith("**") && para.endsWith("**")) {
+                return (
+                  <h3 key={i} className={styles.subheading}>
+                    {para.replace(/\*\*/g, "")}
+                  </h3>
+                );
+              }
+              if (para.startsWith("- ")) {
+                const items = para.split("\n").filter(Boolean);
+                return (
+                  <ul key={i} className={styles.list}>
+                    {items.map((item, j) => (
+                      <li key={j}>{item.replace("- ", "")}</li>
+                    ))}
+                  </ul>
+                );
+              }
+              const withBold = para.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
               return (
-                <h3 key={i} className={styles.subheading}>
-                  {para.replace(/\*\*/g, "")}
-                </h3>
+                <p
+                  key={i}
+                  className={styles.para}
+                  dangerouslySetInnerHTML={{ __html: withBold }}
+                />
               );
-            }
-            if (para.startsWith("- ")) {
-              const items = para.split("\n").filter(Boolean);
-              return (
-                <ul key={i} className={styles.list}>
-                  {items.map((item, j) => (
-                    <li key={j}>{item.replace("- ", "")}</li>
-                  ))}
-                </ul>
-              );
-            }
-            const withBold = para.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-            return (
-              <p
-                key={i}
-                className={styles.para}
-                dangerouslySetInnerHTML={{ __html: withBold }}
-              />
-            );
-          })}
-        </article>
+            })}
+          </article>
 
-        <div className={styles.author}>
-          <div className={styles.authorAvatar}>AS</div>
-          <div>
-            <p className={styles.authorName}>Ashay Shah</p>
-            <p className={styles.authorRole}>Business Trainer · Life Coach · Furute, Pune</p>
+          <div className={styles.author}>
+            <div className={styles.authorAvatar}>AS</div>
+            <div>
+              <p className={styles.authorName}>Ashay Shah</p>
+              <p className={styles.authorRole}>Business Trainer · Life Coach · Furute, Pune</p>
+            </div>
           </div>
         </div>
 
@@ -262,7 +266,6 @@ export default function BlogPostPage({
             </button>
           </form>
         </div>
-
       </div>
     </main>
   );

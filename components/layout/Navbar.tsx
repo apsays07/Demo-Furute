@@ -110,10 +110,12 @@ export default function Navbar() {
         } else if (path.startsWith("/services")) {
           setActiveItem("Services");
         } else if (path.startsWith("/events")) {
-  setActiveItem("Events");
-} else if (path.startsWith("/blog")) {
-  setActiveItem("Blog");
-} else {
+          setActiveItem("Events");
+        } else if (path.startsWith("/testimonials")) {
+          setActiveItem("Testimonials");
+        } else if (path.startsWith("/blog")) {
+          setActiveItem("Blog");
+        } else {
           const hash = window.location.hash;
           if (hash) {
             const matched = menuItems.find(
@@ -167,15 +169,13 @@ export default function Navbar() {
     }
   };
 
- return (
+  return (
     <nav className={styles.navbar}>
       <Link className={styles.navbarLogo} href="/" aria-label="Furute home">
         <span className={styles.logoMark} aria-hidden="true">
-          <Image src="/furute-logo.png" alt="Furute Logo" width={138} height={68} priority />
+          <Image src="/furute-logo.webp" alt="Furute Logo" width={138} height={68} priority />
         </span>
       </Link>
-
-      
 
       {/* Hamburger Toggle Button for Mobile */}
       <button 
@@ -184,9 +184,9 @@ export default function Navbar() {
         aria-label="Toggle navigation menu"
         aria-expanded={isMobileMenuOpen}
       >
-        <span className={styles.bar}></span>
-        <span className={styles.bar}></span>
-        <span className={styles.bar}></span>
+        <span className={styles.bar} />
+        <span className={styles.bar} />
+        <span className={styles.bar} />
       </button>
 
       <ul className={`${styles.navbarMenu} ${isMobileMenuOpen ? styles.menuOpen : ""}`}>
@@ -304,17 +304,26 @@ export default function Navbar() {
                 >
                   {item}
                 </Link>
+              ) : item === "Testimonials" ? (
+                <Link
+                  className={activeItem === item ? styles.active : undefined}
+                  href="/testimonials"
+                  aria-current={activeItem === item ? "page" : undefined}
+                  onClick={() => handleLinkClick(item)}
+                >
+                  {item}
+                </Link>
               ) : item === "Blog" ? (
-  <Link
-    className={activeItem === item ? styles.active : undefined}
-    href="/blog"
-    aria-current={activeItem === item ? "page" : undefined}
-    onClick={() => handleLinkClick(item)}
-  >
-    {item}
-  </Link>
-) : (
-                <a
+                <Link
+                  className={activeItem === item ? styles.active : undefined}
+                  href="/blog"
+                  aria-current={activeItem === item ? "page" : undefined}
+                  onClick={() => handleLinkClick(item)}
+                >
+                  {item}
+                </Link>
+              ) : (
+                
                   className={activeItem === item ? styles.active : undefined}
                   href={`/#${getSectionId(item)}`}
                   aria-current={activeItem === item ? "page" : undefined}

@@ -14,11 +14,11 @@
 }
 
 .page {
-  /* Earth-tone Clay & Mud Design Tokens */
-  --bg-base: #ebdcc5; /* Earthy sand base */
+  /* Earth-tone Clay & Mud Design Tokens - Clean Light */
+  --bg-base: #ffffff;
   --bg-surface: #ffffff;
-  --ink: #3b2218; /* Warm dark brown */
-  --muted: #7d6b63; /* Warm taupe */
+  --ink: #101b35;
+  --muted: #647086;
   
   --accent-teal: #9b614c; /* Terracotta Clay */
   --accent-teal-dark: #4d2b1e; /* Deep Mud Brown */
@@ -28,14 +28,14 @@
   --border-radius-md: 18px;
   --border-radius-lg: 28px;
   
-  --shadow-premium: 0 20px 48px rgba(77, 43, 30, 0.08);
-  --shadow-hover: 0 32px 64px rgba(155, 97, 76, 0.16), 0 10px 20px rgba(77, 43, 30, 0.06);
+  --shadow-premium: 0 20px 48px rgba(16, 27, 53, 0.07);
+  --shadow-hover: 0 32px 64px rgba(155, 97, 76, 0.12), 0 10px 20px rgba(16, 27, 53, 0.04);
   
   min-height: 100vh;
   overflow-x: hidden;
   background-color: var(--bg-base);
   background-image: 
-    linear-gradient(180deg, #f2e9d7 0%, #ebdcb8 45%, #dcc79d 100%); /* Sandy mud theme gradient throughout */
+    linear-gradient(180deg, #faf5ef 0%, #ffffff 38%, #f5ece2 100%); /* Sandy mud theme gradient clean */
   color: var(--ink);
   font-family: var(--font-inter), "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
   position: relative;

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import SiteFooter from "@/components/layout/SiteFooter";
-import { ArrowLeftIcon, ArrowRightIcon, PhoneIcon, ClockIcon, CheckIcon, CalendarIcon } from "@/components/ui/Icons";
+import { ArrowLeftIcon, ArrowRightIcon, PhoneIcon, CheckIcon } from "@/components/ui/Icons";
 import styles from "./mudrush.module.css";
 
 // -------------------------------------------------------------
@@ -91,7 +91,7 @@ export default function MudrushPage() {
               {/* Inclusions & Activities Grid */}
               <motion.div className={styles.twoColGrid} variants={fadeInUp}>
                 <div className={styles.card}>
-                  <h3 className={styles.subHeading}>What's Included</h3>
+                  <h3 className={styles.subHeading}>{"What's Included"}</h3>
                   <ul className={styles.list}>
                     <li>
                       <CheckIcon className={styles.checkIcon} />
@@ -276,10 +276,10 @@ export default function MudrushPage() {
           
           <div className={styles.galleryGrid}>
             {[
-              { src: "/events/mudrush/mudrush-gallery-1.jpg", alt: "Mud Rush Team Crossing Obstacle" },
-              { src: "/events/mudrush/mudrush-gallery-2.jpg", alt: "Mud Rush Group Photo" },
-              { src: "/events/mudrush/mudrush-gallery-3.jpg", alt: "Participants in Mud" },
-              { src: "/events/mudrush/mudrush-gallery-4.png", alt: "Mud Rush Fun Event" }
+              { src: "/events/mudrush/mudrush-gallery-1.webp", alt: "Mud Rush Team Crossing Obstacle" },
+              { src: "/events/mudrush/mudrush-gallery-2.webp", alt: "Mud Rush Group Photo" },
+              { src: "/events/mudrush/mudrush-gallery-3.webp", alt: "Participants in Mud" },
+              { src: "/events/mudrush/mudrush-gallery-4.webp", alt: "Mud Rush Fun Event" }
             ].map((img, idx) => (
               <motion.div 
                 className={styles.galleryItem} 

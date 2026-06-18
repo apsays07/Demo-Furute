@@ -103,7 +103,7 @@ export default function BrandingPage() {
       >
         <div className={styles.heroBg}>
           <Image 
-            src="/services/branding.jpg" 
+            src="/services/branding.webp" 
             alt="Branding background"
             fill
             priority

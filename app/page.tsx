@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Navbar from "@/components/layout/Navbar";
 import SiteFooter from "@/components/layout/SiteFooter";
 import VideoModal from "@/components/shared/VideoModal";
-import { initials } from "@/lib/utils";
+import TestimonialCard from "@/components/shared/TestimonialCard";
+import ProgramCard from "@/components/shared/ProgramCard";
+import VideoCard from "@/components/shared/VideoCard";
+
+import { testimonials as staticTestimonials } from "@/lib/testimonials";
 import {
   ChartIcon,
   BasketIcon,
@@ -13,7 +17,6 @@ import {
   TagIcon,
   MicIcon,
   ArrowRightIcon as ArrowIcon,
-  PlayIcon,
 } from "@/components/ui/Icons";
 import styles from "./page.module.css";
 
@@ -65,7 +68,7 @@ const programs = [
   },
 ];
 
-const mentorImage = "/ashay-shah.png";
+const mentorImage = "/ashay-shah.webp";
 
 const impactStats = [
   {
@@ -90,44 +93,7 @@ const impactStats = [
   },
 ];
 
-const testimonials = [
-  {
-    name: "Lucky Surana",
-    role: "Industrialist & Educationist",
-    review:
-      "The program transformed my mindset. Emotional maturity, consistency, and a positive approach helped me grow personally and professionally.",
-  },
-  {
-    name: "Avant Parmar",
-    role: "Mobile Business Owner",
-    review:
-      "I started with a small mobile repair shop and implemented the lessons learned. My business turnover increased by 25% within a year.",
-  },
-  {
-    name: "Akshat Oswal",
-    role: "Co-Founder, Tech Innovance",
-    review:
-      "I learned team building and smart investment strategies that helped my business grow significantly and strengthen our brand.",
-  },
-  {
-    name: "Khushboo Salunke",
-    role: "Director, Unique Interior",
-    review:
-      "My outlook on life completely changed. I became more positive and confidently started my own interior design firm.",
-  },
-  {
-    name: "Rohit Pasalkar",
-    role: "Owner, Shree Designs",
-    review:
-      "The program helped me understand myself better and improve my business approach. My turnover eventually doubled.",
-  },
-  {
-    name: "Maithili Jadhav",
-    role: "Business Owner",
-    review:
-      "I learned networking and business strategies that resulted in nearly 30% growth within a year.",
-  },
-];
+
 
 const featuredVideos = [
   {
@@ -153,7 +119,7 @@ const featuredVideos = [
 ];
 
 type Video = (typeof featuredVideos)[number];
-type IconProps = { className?: string };
+
 
 function cx(...names: Array<string | false | undefined>) {
   return names
@@ -169,7 +135,7 @@ function ImpactStat({
 }: {
   value: number;
   label: string;
-  icon: (props: any) => React.ReactNode;
+  icon: React.ComponentType<{ className?: string }>;
 }) {
   return (
     <article className={styles["impact-stat"]}>
@@ -188,15 +154,60 @@ function ImpactStat({
 }
 
 const localThumbnails: Record<string, string> = {
-  "i-Qe4F17hKc": "/videos/video-1.jpg",
-  "Dp65MGhze3I": "/videos/video-2.jpg",
-  "2ofM34EwKJo": "/videos/video-3.jpg",
-  "S9fjt9HVf6Q": "/videos/video-4.jpg",
+  "i-Qe4F17hKc": "/videos/video-1.webp",
+  "Dp65MGhze3I": "/videos/video-2.webp",
+  "2ofM34EwKJo": "/videos/video-3.webp",
+  "S9fjt9HVf6Q": "/videos/video-4.webp",
 };
+
+interface DBTestimonial {
+  _id: string;
+  name: string;
+  designation: string;
+  company: string;
+  review: string;
+  image?: string;
+  rating: number;
+}
+
+interface DBVideo {
+  _id: string;
+  title: string;
+  youtubeUrl: string;
+  thumbnail?: string;
+  featured: boolean;
+  visible: boolean;
+}
 
 export default function Home() {
   const [activeVideo, setActiveVideo] = useState<Video | null>(null);
   const [mentorMissing, setMentorMissing] = useState(false);
+  const [dbTestimonials, setDbTestimonials] = useState<DBTestimonial[]>([]);
+  const [testimonialsLoaded, setTestimonialsLoaded] = useState(false);
+  const [dbVideos, setDbVideos] = useState<DBVideo[]>([]);
+
+  // Fetch testimonials (prioritizing featured, backfilling up to 6)
+  useEffect(() => {
+    fetch("/api/testimonials?limit=6")
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success && json.data?.length > 0) {
+          setDbTestimonials(json.data);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setTestimonialsLoaded(true));
+  }, []);
+
+  // Fetch featured videos from DB (up to 4 — newest first)
+  useEffect(() => {
+    fetch("/api/videos?featured=true&limit=4")
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success && json.data?.length > 0) setDbVideos(json.data);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <main className={styles["home-page"]} id="home">
@@ -247,26 +258,19 @@ export default function Home() {
         </div>
       </section>
 
-      <section className={styles["programs-overview"]} id="programs">
+      <section id="programs" className={styles["programs-overview"]} aria-label="Programs And Services">
         <div className={styles["programs-overview-inner"]}>
           <p className={styles["section-eyebrow"]}>Programs And Services</p>
           <h2>Our Programs And Services Overview</h2>
 
           <div className={styles["program-grid"]}>
             {programs.map((program) => (
-              <article
-                className={cx("program-card", `program-card-${program.theme}`)}
+              <ProgramCard
                 key={program.title}
-                tabIndex={0}
-              >
-                <div className={styles["program-visual"]} aria-hidden="true">
-                  <span className={styles["program-symbol"]}>
-                    {initials(program.title)}
-                  </span>
-                </div>
-                <h3>{program.title}</h3>
-                <p>{program.text}</p>
-              </article>
+                title={program.title}
+                text={program.text}
+                theme={program.theme}
+              />
             ))}
           </div>
         </div>
@@ -335,8 +339,8 @@ export default function Home() {
       </section>
 
       <section
-        className={styles["testimonials-section"]}
         id="testimonials"
+        className={styles["testimonials-section"]}
         aria-label="Client testimonials"
       >
         <div className={styles["testimonials-inner"]}>
@@ -346,28 +350,54 @@ export default function Home() {
           </div>
 
           <div className={styles["testimonials-grid"]}>
-            {testimonials.map((testimonial) => (
-              <article className={styles["testimonial-card"]} key={testimonial.name}>
-                <span className={styles["testimonial-quote-mark"]} aria-hidden="true">
-                  &quot;
-                </span>
-                <p className={styles["testimonial-review"]}>{testimonial.review}</p>
-                <div className={styles["testimonial-author"]}>
-                  <span className={styles["testimonial-avatar"]} aria-hidden="true">
-                    {initials(testimonial.name)}
-                  </span>
-                  <div>
-                    <h3>{testimonial.name}</h3>
-                    <p>{testimonial.role}</p>
-                  </div>
-                </div>
-              </article>
-            ))}
+            {(dbTestimonials.length > 0
+              ? dbTestimonials
+              : testimonialsLoaded
+                ? staticTestimonials.slice(0, 6).map((t) => ({
+                    _id: t.name,
+                    name: t.name,
+                    designation: t.role,
+                    company: "",
+                    review: t.review,
+                    rating: 5,
+                  }))
+                : staticTestimonials.slice(0, 6).map((t) => ({
+                    _id: t.name,
+                    name: t.name,
+                    designation: t.role,
+                    company: "",
+                    review: t.review,
+                    rating: 5,
+                  }))
+            ).map((testimonial, idx) => {
+              const accent = idx % 3 === 1 ? "gold" : idx % 3 === 2 ? "blue" : "teal";
+              return (
+                <TestimonialCard
+                  key={testimonial._id}
+                  name={testimonial.name}
+                  role={testimonial.designation}
+                  company={testimonial.company}
+                  review={testimonial.review}
+                  image={(testimonial as DBTestimonial).image}
+                  rating={testimonial.rating}
+                  accent={accent}
+                />
+              );
+            })}
+          </div>
+
+          <div className={styles["testimonials-toggle"]}>
+            <a
+              href="/testimonials"
+              className={styles["testimonials-toggle-btn"]}
+            >
+              Show All Reviews
+            </a>
           </div>
         </div>
       </section>
 
-      <section className={styles["video-section"]} id="events" aria-label="Featured videos">
+      <section id="events" className={styles["video-section"]} aria-label="Featured videos">
         <div className={styles["video-section-inner"]}>
           <div className={styles["video-heading"]}>
             <p className={styles["section-eyebrow"]}>Featured Videos</p>
@@ -375,40 +405,63 @@ export default function Home() {
           </div>
 
           <div className={styles["video-grid"]}>
-            {featuredVideos.map((video) => (
-              <button
-                type="button"
-                className={styles["video-card"]}
+            {(() => {
+              const list: { videoId: string; title: string; label: string; thumbnail: string }[] = [];
+              const addedIds = new Set<string>();
+
+              // 1. Add DB videos (newest first, already sorted by DB)
+              for (const v of dbVideos) {
+                const videoId = v.youtubeUrl.match(
+                  /(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/
+                )?.[1] ?? v.youtubeUrl;
+                if (videoId && !addedIds.has(videoId)) {
+                  addedIds.add(videoId);
+                  list.push({
+                    videoId,
+                    title: v.title,
+                    label: v.title,
+                    thumbnail: v.thumbnail || localThumbnails[videoId] || "/videos/video-1.webp",
+                  });
+                }
+              }
+
+              // 2. Backfill from static featuredVideos to always display exactly 4 videos
+              if (list.length < 4) {
+                for (const fv of featuredVideos) {
+                  if (list.length >= 4) break;
+                  if (!addedIds.has(fv.videoId)) {
+                    addedIds.add(fv.videoId);
+                    list.push({
+                      videoId: fv.videoId,
+                      title: fv.title,
+                      label: fv.label,
+                      thumbnail: localThumbnails[fv.videoId] || "/videos/video-1.webp",
+                    });
+                  }
+                }
+              }
+
+              // Slice to guarantee exactly 4 videos
+              return list.slice(0, 4);
+            })().map((video) => (
+              <VideoCard
                 key={video.videoId}
+                title={video.title}
+                label={video.label}
+                videoId={video.videoId}
+                thumbnail={video.thumbnail}
                 onClick={() => setActiveVideo(video)}
-                aria-label={`Play ${video.title}`}
-              >
-                <span className={styles["video-thumb-wrap"]}>
-                  <Image
-                    src={localThumbnails[video.videoId] || "/videos/video-1.jpg"}
-                    alt=""
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                  <span className={styles["video-play"]} aria-hidden="true">
-                    <PlayIcon />
-                  </span>
-                </span>
-                <span className={styles["video-card-content"]}>
-                  <span>{video.label}</span>
-                  <strong>{video.title}</strong>
-                </span>
-              </button>
+              />
             ))}
           </div>
 
           <div className={styles["video-more-action"]}>
             <a
-              href="https://www.youtube.com/ashayshah"
+              href="https://www.youtube.com/@ashayshah"
               target="_blank"
               rel="noreferrer"
             >
-              View More Testimonials
+              View More Videos
             </a>
           </div>
         </div>
