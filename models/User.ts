@@ -5,6 +5,12 @@ export interface IUser extends Document {
   email: string;
   password?: string;
   role: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  bio?: string;
+  jobTitle?: string;
+  photoUrl?: string;
   otpCode?: string;
   otpExpires?: Date;
   createdAt: Date;
@@ -36,6 +42,12 @@ const UserSchema: Schema = new Schema(
       enum: ["superadmin", "admin", "editor"],
       default: "admin",
     },
+    firstName: { type: String, trim: true },
+    lastName: { type: String, trim: true },
+    phone: { type: String, trim: true },
+    bio: { type: String, trim: true },
+    jobTitle: { type: String, trim: true },
+    photoUrl: { type: String, trim: true },
     otpCode: {
       type: String,
     },

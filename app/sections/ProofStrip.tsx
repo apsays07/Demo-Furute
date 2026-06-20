@@ -4,11 +4,11 @@ export default function ProofStrip() {
   return (
     <section className={styles["proof-strip"]} aria-label="Furute highlights">
       <div>
-        <span>8,000+</span>
+        <span>10,000+</span>
         <p>entrepreneurs and professionals trained</p>
       </div>
       <div>
-        <span>20 Years</span>
+        <span>30+ Years</span>
         <p>of business trend and market insight</p>
       </div>
       <div>

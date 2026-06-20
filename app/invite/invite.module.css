@@ -749,6 +749,67 @@
   outline: none;
 }
 
+/* Stepper Timeline Styles */
+.stepper-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 32px;
+}
+
+.step-item {
+  display: flex;
+  gap: 16px;
+}
+
+.step-number-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  z-index: 2;
+  box-shadow: 0 4px 10px rgba(8, 127, 140, 0.25);
+}
+
+.step-line {
+  width: 2px;
+  flex-grow: 1;
+  background: rgba(8, 127, 140, 0.2);
+  margin: 6px 0;
+  min-height: 40px;
+}
+
+.step-info {
+  padding-bottom: 24px;
+  flex-grow: 1;
+}
+
+.step-info h4 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 750;
+  color: var(--ink);
+}
+
+.step-info p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
 /* Form Card Styles */
 .form-card {
   padding: clamp(24px, 4vw, 42px);

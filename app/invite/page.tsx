@@ -351,8 +351,51 @@ export default function InviteSpeakerPage() {
 
           <div className={styles["contact-card"]}>
             <span>Prefer direct contact?</span>
-            <a href="mailto:info@furute.in">info@furute.in</a>
+            <a href="mailto:ashay@furute.in">ashay@furute.in</a>
             <a href="tel:+919822600521">9822600521</a>
+          </div>
+
+          {/* Stepper Timeline */}
+          <div className={styles["stepper-timeline"]}>
+            <div className={styles["step-item"]}>
+              <div className={styles["step-number-wrap"]}>
+                <span className={styles["step-number"]}>1</span>
+                <div className={styles["step-line"]} />
+              </div>
+              <div className={styles["step-info"]}>
+                <h4>Submit Request</h4>
+                <p>Provide your event details in the form to check schedule compatibility.</p>
+              </div>
+            </div>
+            <div className={styles["step-item"]}>
+              <div className={styles["step-number-wrap"]}>
+                <span className={styles["step-number"]}>2</span>
+                <div className={styles["step-line"]} />
+              </div>
+              <div className={styles["step-info"]}>
+                <h4>Review</h4>
+                <p>Our team reviews details & contacts you for clarification.</p>
+              </div>
+            </div>
+            <div className={styles["step-item"]}>
+              <div className={styles["step-number-wrap"]}>
+                <span className={styles["step-number"]}>3</span>
+                <div className={styles["step-line"]} />
+              </div>
+              <div className={styles["step-info"]}>
+                <h4>Meeting</h4>
+                <p>A brief alignment call to finalize topic & session flow.</p>
+              </div>
+            </div>
+            <div className={styles["step-item"]}>
+              <div className={styles["step-number-wrap"]}>
+                <span className={styles["step-number"]}>4</span>
+              </div>
+              <div className={styles["step-info"]}>
+                <h4>Confirmation</h4>
+                <p>Signed agreement & dates officially booked in Ashay&apos;s calendar.</p>
+              </div>
+            </div>
           </div>
         </div>
 

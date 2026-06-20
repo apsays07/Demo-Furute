@@ -50,7 +50,7 @@ export default function SiteFooter({ backTo = "#home" }: SiteFooterProps) {
     <footer className={styles.footer} id="contact-us">
       <div className={styles.main}>
         <div className={styles.brand}>
-          <Image src="/lion-logo.png" alt="Furute" width={190} height={94} loading="lazy" quality={75} sizes="190px" />
+          <Image src="/new-lion-logo.png" alt="Furute" width={190} height={94} loading="lazy" quality={75} sizes="190px" />
           <p>
             Practical business training, mentoring, and life coaching for
             people who want clearer direction and stronger execution.
@@ -87,7 +87,7 @@ export default function SiteFooter({ backTo = "#home" }: SiteFooterProps) {
           <a href="https://www.furute.in" target="_blank" rel="noopener noreferrer">
             www.furute.in
           </a>
-          <a href="mailto:info@furute.in">info@furute.in</a>
+          <a href="mailto:ashay@furute.in">ashay@furute.in</a>
           <a href="tel:+919822600521">9822600521</a>
 
           <div className={styles.highlights}>

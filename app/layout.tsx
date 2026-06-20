@@ -1,24 +1,9 @@
 import type { Metadata } from "next";
 import {
-  Geist,
-  Geist_Mono,
   Inter,
   Plus_Jakarta_Sans,
 } from "next/font/google";
 import "./globals.css";
-
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const inter = Inter({
   variable: "--font-inter",
@@ -89,7 +74,7 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    icon: "/favicon.ico",
+    icon: "/favicon-image.png",
   },
 };
 
@@ -102,9 +87,33 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${plusJakarta.variable} h-full antialiased`}
+      className={`${inter.variable} ${plusJakarta.variable} h-full antialiased`}
     >
       <body className="min-h-screen flex flex-col bg-white text-black">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "Furute",
+              "url": "https://furute.in",
+              "logo": "https://furute.in/lion-logo.png",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+91-9822600521",
+                "contactType": "customer service",
+                "areaServed": "IN",
+                "availableLanguage": ["en", "hi", "mr"],
+              },
+              "sameAs": [
+                "https://www.linkedin.com/company/furute-king-makers",
+                "https://www.youtube.com/ashayshah",
+                "https://www.facebook.com/furutein",
+              ],
+            }),
+          }}
+        />
         {children}
       </body>
     </html>

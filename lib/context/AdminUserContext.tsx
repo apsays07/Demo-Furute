@@ -7,6 +7,12 @@ export interface AdminUser {
   username: string;
   email: string;
   role: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  bio?: string;
+  jobTitle?: string;
+  photoUrl?: string;
 }
 
 interface AdminUserContextProps {

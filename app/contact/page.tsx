@@ -339,7 +339,7 @@ function ContactForm() {
         <div className={styles["quick-grid"]}>
           {/* Card: Email */}
           <motion.a 
-            href="mailto:info@furute.in" 
+            href="mailto:ashay@furute.in" 
             className={styles["quick-card"]}
             variants={fadeInUp}
           >
@@ -347,7 +347,7 @@ function ContactForm() {
               <MailIcon />
             </div>
             <h3>Email Us</h3>
-            <span className={styles["quick-value"]}>info@furute.in</span>
+            <span className={styles["quick-value"]}>ashay@furute.in</span>
             <p>Send an inquiry anytime; we reply within 24 hours.</p>
           </motion.a>
 
@@ -383,15 +383,80 @@ function ContactForm() {
         </div>
       </motion.section>
 
-      {/* Balanced Split Section: Form on Left, Maps/Social/Timings on Right */}
+      {/* Balanced Split Section: Info/Map on Left, Form on Right */}
       <section className={styles["content-section"]}>
-        {/* Left Column: Database-connected Glassmorphism Inquiry Form */}
+        {/* Left Column: Office Hours, Interactive Google Map & Social Links */}
+        <motion.div 
+          className={styles["interactive-column"]}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={slideInLeft}
+        >
+          {/* Card: Office Timings */}
+          <div className={styles["info-card"]} style={{ padding: "20px 24px" }}>
+            <div className={styles["info-icon-wrap"]} style={{ width: "44px", height: "44px" }} aria-hidden="true">
+              <ClockIcon />
+            </div>
+            <div className={styles["info-details"]}>
+              <h3 style={{ fontSize: "16px", marginBottom: "4px" }}>Office Timings</h3>
+              <p className={styles["info-value"]} style={{ fontSize: "15px", marginBottom: "2px" }}>Monday - Saturday</p>
+              <p className={styles["info-desc"]} style={{ fontSize: "13.5px", margin: 0 }}>10:00 AM - 7:00 PM IST (Sunday Closed)</p>
+            </div>
+          </div>
+
+          {/* Social Profiles Quick Connect */}
+          <div className={styles["social-card"]}>
+            <h3>Connect with Ashay Shah</h3>
+            <div className={styles["socials-grid"]} aria-label="Social connections">
+              <a href="https://www.linkedin.com/company/furute-king-makers" target="_blank" rel="noreferrer" className={styles["social-link"]} aria-label="LinkedIn">
+                <LinkedInIcon />
+                <span>LinkedIn</span>
+              </a>
+              <a href="https://www.youtube.com/ashayshah" target="_blank" rel="noreferrer" className={styles["social-link"]} aria-label="YouTube">
+                <YouTubeIcon />
+                <span>YouTube</span>
+              </a>
+              <a href="https://www.facebook.com/furutein" target="_blank" rel="noreferrer" className={styles["social-link"]} aria-label="Facebook">
+                <FacebookIcon />
+                <span>Facebook</span>
+              </a>
+              <a href="https://x.com/Furutekingmaker" target="_blank" rel="noreferrer" className={styles["social-link"]} aria-label="X">
+                <XIcon />
+                <span>Twitter / X</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Interactive Map Card */}
+          <div className={styles["map-container-card"]}>
+            <div className={styles["map-header"]}>
+              <MapPinIcon className={styles["map-header-icon"]} />
+              <div>
+                <h4>Interactive Office Map</h4>
+                <span>Mitra Mandal Colony, Parvati, Pune</span>
+              </div>
+            </div>
+            <div className={styles["map-wrapper"]}>
+              <iframe
+                title="Furute Office Location Swargate Pune"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3783.7438183863486!2d73.85040187588365!3d18.495280270034458!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c00fbf0c54c3%3A0xe54e6df060c5a2cd!2sMitra%20Mandal%20Colony%2C%20Parvati%20Paytha%2C%20Pune%2C%20Maharashtra%20411009!5e0!3m2!1sen!2sin!4v1716943802931!5m2!1sen!2sin"
+                allowFullScreen={true}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className={styles["map-frame"]}
+              />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Right Column: Database-connected Glassmorphism Inquiry Form */}
         <motion.div 
           className={styles["form-container"]}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          variants={slideInLeft}
+          variants={slideInRight}
         >
           <div className={styles["form-card"]}>
             {/* Glassmorphic Loading Overlay */}
@@ -615,71 +680,6 @@ function ContactForm() {
                 </button>
               </motion.div>
             )}
-          </div>
-        </motion.div>
-
-        {/* Right Column: Office Hours, Interactive Google Map & Social Links */}
-        <motion.div 
-          className={styles["interactive-column"]}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={slideInRight}
-        >
-          {/* Card: Office Timings */}
-          <div className={styles["info-card"]} style={{ padding: "20px 24px" }}>
-            <div className={styles["info-icon-wrap"]} style={{ width: "44px", height: "44px" }} aria-hidden="true">
-              <ClockIcon />
-            </div>
-            <div className={styles["info-details"]}>
-              <h3 style={{ fontSize: "16px", marginBottom: "4px" }}>Office Timings</h3>
-              <p className={styles["info-value"]} style={{ fontSize: "15px", marginBottom: "2px" }}>Monday - Saturday</p>
-              <p className={styles["info-desc"]} style={{ fontSize: "13.5px", margin: 0 }}>10:00 AM - 7:00 PM IST (Sunday Closed)</p>
-            </div>
-          </div>
-
-          {/* Social Profiles Quick Connect */}
-          <div className={styles["social-card"]}>
-            <h3>Connect with Ashay Shah</h3>
-            <div className={styles["socials-grid"]} aria-label="Social connections">
-              <a href="https://www.linkedin.com/company/furute-king-makers" target="_blank" rel="noreferrer" className={styles["social-link"]} aria-label="LinkedIn">
-                <LinkedInIcon />
-                <span>LinkedIn</span>
-              </a>
-              <a href="https://www.youtube.com/ashayshah" target="_blank" rel="noreferrer" className={styles["social-link"]} aria-label="YouTube">
-                <YouTubeIcon />
-                <span>YouTube</span>
-              </a>
-              <a href="https://www.facebook.com/furutein" target="_blank" rel="noreferrer" className={styles["social-link"]} aria-label="Facebook">
-                <FacebookIcon />
-                <span>Facebook</span>
-              </a>
-              <a href="https://x.com/Furutekingmaker" target="_blank" rel="noreferrer" className={styles["social-link"]} aria-label="X">
-                <XIcon />
-                <span>Twitter / X</span>
-              </a>
-            </div>
-          </div>
-
-          {/* Interactive Map Card */}
-          <div className={styles["map-container-card"]}>
-            <div className={styles["map-header"]}>
-              <MapPinIcon className={styles["map-header-icon"]} />
-              <div>
-                <h4>Interactive Office Map</h4>
-                <span>Mitra Mandal Colony, Parvati, Pune</span>
-              </div>
-            </div>
-            <div className={styles["map-wrapper"]}>
-              <iframe
-                title="Furute Office Location Swargate Pune"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3783.7438183863486!2d73.85040187588365!3d18.495280270034458!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c00fbf0c54c3%3A0xe54e6df060c5a2cd!2sMitra%20Mandal%20Colony%2C%20Parvati%20Paytha%2C%20Pune%2C%20Maharashtra%20411009!5e0!3m2!1sen!2sin!4v1716943802931!5m2!1sen!2sin"
-                allowFullScreen={true}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className={styles["map-frame"]}
-              />
-            </div>
           </div>
         </motion.div>
       </section>

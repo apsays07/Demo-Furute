@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
   // Remove the X-Powered-By header for security
   poweredByHeader: false,
 
+  experimental: {
+    workerThreads: false,
+    cpus: 1,
+  },
+
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [70, 75],

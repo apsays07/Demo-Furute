@@ -38,10 +38,13 @@ jest.mock("@/components/layout/SiteFooter", () => () => (
   <div>Footer</div>
 ));
 
+let mockEmailOnSuccess = true;
 // Email Modal
 jest.mock("@/components/shared/EmailLoginModal", () => ({ onSuccess }) => {
   React.useEffect(() => {
-    onSuccess("test-user@gmail.com");
+    if (mockEmailOnSuccess) {
+      onSuccess("test-user@gmail.com");
+    }
   }, [onSuccess]);
   return <div>Email Login Modal</div>;
 });
@@ -88,6 +91,7 @@ jest.mock("@/components/ui/Icons", () => ({
 describe("Contact Page", () => {
   beforeEach(() => {
     mockSubjectValue = null;
+    mockEmailOnSuccess = true;
     Storage.prototype.getItem = jest.fn(() => "student@gmail.com");
     global.fetch = jest.fn();
   });
@@ -284,8 +288,7 @@ describe("Contact Page", () => {
 
     // Since we mock EmailLoginModal to auto-authenticate in page.test.jsx line 42,
     // let's temporarily mock EmailLoginModal to NOT call onSuccess, so verifiedEmail remains falsy.
-    const EmailLoginModalMock = require("@/components/shared/EmailLoginModal");
-    jest.mock("@/components/shared/EmailLoginModal", () => () => <div>Mocked Login</div>);
+    mockEmailOnSuccess = false;
 
     fireEvent.change(screen.getByLabelText("Full Name"), { target: { value: "Ashay Shah" } });
     fireEvent.change(screen.getByLabelText("Phone Number"), { target: { value: "9822600521" } });

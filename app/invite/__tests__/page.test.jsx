@@ -36,10 +36,13 @@ jest.mock("@/components/shared/VideoModal", () => (props) => (
   </button>
 ));
 
+let mockEmailOnSuccess = true;
 // Mock Email Login Modal
 jest.mock("@/components/shared/EmailLoginModal", () => ({ onSuccess }) => {
   React.useEffect(() => {
-    onSuccess("test-user@gmail.com");
+    if (mockEmailOnSuccess) {
+      onSuccess("test-user@gmail.com");
+    }
   }, [onSuccess]);
   return <div>Email Login Modal</div>;
 });
@@ -80,6 +83,7 @@ jest.mock("@/components/ui/Icons", () => ({
 
 describe("Invite Speaker Page", () => {
   beforeEach(() => {
+    mockEmailOnSuccess = true;
     Storage.prototype.getItem = jest.fn(() => "student@gmail.com");
     global.fetch = jest.fn();
   });
@@ -164,7 +168,7 @@ describe("Invite Speaker Page", () => {
   test("renders contact information", () => {
     render(<InviteSpeakerPage />);
 
-    expect(screen.getByText(/info@furute.in/i)).toBeInTheDocument();
+    expect(screen.getByText(/ashay@furute.in/i)).toBeInTheDocument();
     expect(screen.getByText(/9822600521/i)).toBeInTheDocument();
   });
 
@@ -312,8 +316,7 @@ describe("Invite Speaker Page", () => {
 
     // Since we mock EmailLoginModal to auto-authenticate in page.test.jsx line 40,
     // let's temporarily mock EmailLoginModal to NOT call onSuccess, so verifiedEmail remains falsy.
-    const EmailLoginModalMock = require("@/components/shared/EmailLoginModal");
-    jest.mock("@/components/shared/EmailLoginModal", () => () => <div>Mocked Login</div>);
+    mockEmailOnSuccess = false;
 
     fireEvent.change(screen.getByLabelText("Event Name"), { target: { value: "Annual Conference" } });
     fireEvent.change(screen.getByLabelText("Event Date"), { target: { value: "2026-10-10" } });

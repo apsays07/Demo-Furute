@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Business Mentoring & Personal Coaching in Pune | Furute",
+  title: "Business Mentoring & Personal Coaching in Pune",
   description: "Strengthen your leadership skills, confidence, emotional intelligence, and business growth through one-on-one personal mentoring with Ashay Shah.",
   keywords: ["mentoring", "personal coaching", "leadership growth", "business mentor", "Ashay Shah", "Pune mentoring"],
 };

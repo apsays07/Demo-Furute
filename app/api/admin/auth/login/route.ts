@@ -26,18 +26,48 @@ export async function POST(request: Request) {
       console.log("No administrators found. Seeding default super admin account.");
       const hashedPassword = await hashPassword("admin123");
       await User.create({
-        username: "ankitgod",
-        email: "anniphapal@gmail.com",
+        username: "ashayshah",
+        email: "ashayshah@gmail.com",
         password: hashedPassword,
         role: "superadmin",
       });
-    } else {
-      // Auto-migrate ankitgod to superadmin if it exists and has a different role
-      const admin = await User.findOne({ username: "ankitgod" });
-      if (admin && admin.role !== "superadmin") {
-        admin.role = "superadmin";
-        await admin.save();
-        console.log("Auto-migrated ankitgod to superadmin role");
+      // Auto-migrate old admin account to ashayshah if it exists
+      const oldAdmin = await User.findOne({ username: "ankitgod" });
+      if (oldAdmin) {
+        const existingAshay = await User.findOne({
+          $or: [{ username: "ashayshah" }, { email: "ashayshah@gmail.com" }],
+        });
+        if (existingAshay) {
+          // Delete oldAdmin to prevent duplicates
+          await User.deleteOne({ _id: oldAdmin._id });
+          console.log("Deleted duplicate legacy admin ankitgod because ashayshah already exists");
+          // Ensure existing ashayshah has superadmin role and reset password to admin123
+          const hashedPassword = await hashPassword("admin123");
+          existingAshay.role = "superadmin";
+          existingAshay.password = hashedPassword;
+          await existingAshay.save();
+          console.log("Reset existing ashayshah password to admin123 and set role to superadmin");
+        } else {
+          oldAdmin.username = "ashayshah";
+          oldAdmin.email = "ashayshah@gmail.com";
+          oldAdmin.role = "superadmin";
+          const hashedPassword = await hashPassword("admin123");
+          oldAdmin.password = hashedPassword;
+          await oldAdmin.save();
+          console.log("Auto-migrated old admin ankitgod to ashayshah and reset password to admin123");
+        }
+      } else {
+        // Ensure ashayshah has superadmin role and reset password to admin123 if it exists
+        const admin = await User.findOne({
+          $or: [{ username: "ashayshah" }, { email: "ashayshah@gmail.com" }],
+        });
+        if (admin) {
+          const hashedPassword = await hashPassword("admin123");
+          admin.role = "superadmin";
+          admin.password = hashedPassword;
+          await admin.save();
+          console.log("Enforced superadmin role and reset password to admin123 for ashayshah");
+        }
       }
     }
 

@@ -34,7 +34,7 @@ export default function WebsitePreview({ path, label, hash = "" }: WebsitePrevie
       <div className="flex items-center gap-2">
         <button
           onClick={() => setOpen(true)}
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-teal/30 bg-teal/5 text-teal text-xs font-bold hover:bg-teal/10 transition-all cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-[#087f8c]/35 bg-[#087f8c]/5 text-[#087f8c] text-xs font-bold hover:bg-[#087f8c]/10 hover:scale-[1.02] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer shadow-sm"
         >
           <Eye className="w-3.5 h-3.5" />
           {label || "Preview on Website"}
@@ -43,7 +43,7 @@ export default function WebsitePreview({ path, label, hash = "" }: WebsitePrevie
           href={fullUrl}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-500 text-xs font-bold hover:bg-slate-50 hover:text-slate-700 transition-all"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-500 text-xs font-bold hover:bg-slate-50 hover:text-slate-700 hover:scale-[1.02] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 shadow-sm"
         >
           <ExternalLink className="w-3.5 h-3.5" />
           Open

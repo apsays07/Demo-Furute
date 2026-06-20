@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Testimonials | Furute",
+  title: "Testimonials",
   description: "Read success stories, client reviews, and testimonials from professionals who transformed their lives and businesses with Furute.",
 };
 

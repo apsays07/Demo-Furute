@@ -17,6 +17,7 @@ import {
   Menu,
   X,
   User,
+  UserCircle,
   Plus,
 } from "lucide-react";
 
@@ -110,6 +111,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
+  navLinks.push({ name: "Profile", href: "/admin/profile", icon: UserCircle });
   navLinks.push({ name: "Settings", href: "/admin/settings", icon: Settings });
 
   async function handleLogout() {
@@ -246,19 +248,29 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* User Card & Logout */}
       <div className="p-4 border-t border-slate-100 bg-white">
-        <div className="flex items-center gap-3 px-3 py-2 bg-slate-50 border border-slate-100 rounded-2xl mb-3 shadow-sm">
-          <div className="w-8.5 h-8.5 rounded-full bg-teal text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm shadow-teal/10">
-            {adminUser ? adminUser.username.slice(0, 2).toUpperCase() : "AD"}
+        <Link
+          href="/admin/profile"
+          onClick={() => setSidebarOpen(false)}
+          className="flex items-center gap-3 px-3 py-2 bg-slate-50 hover:bg-teal/5 border border-slate-100 hover:border-teal/20 rounded-2xl mb-3 shadow-sm transition-all group"
+        >
+          <div className="w-9 h-9 rounded-full bg-teal text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm shadow-teal/10 overflow-hidden">
+            {adminUser?.photoUrl ? (
+              <Image src={adminUser.photoUrl} alt="Profile" width={36} height={36} className="object-cover w-full h-full" />
+            ) : (
+              <span>{adminUser ? adminUser.username.slice(0, 2).toUpperCase() : "AD"}</span>
+            )}
           </div>
-          <div className="overflow-hidden">
-            <p className="text-xs font-semibold text-slate-800 truncate">
-              {adminUser ? adminUser.username : "Administrator"}
+          <div className="overflow-hidden flex-1 min-w-0">
+            <p className="text-xs font-semibold text-slate-800 truncate group-hover:text-teal transition-colors">
+              {adminUser?.firstName && adminUser?.lastName
+                ? `${adminUser.firstName} ${adminUser.lastName}`
+                : adminUser?.username ?? "Administrator"}
             </p>
             <p className="text-[10px] text-teal font-bold truncate capitalize">
               {adminUser ? (adminUser.role === "superadmin" ? "Super Admin" : adminUser.role) : ""}
             </p>
           </div>
-        </div>
+        </Link>
         <button
           onClick={handleLogout}
           className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100/70 text-red-600 hover:text-red-700 text-xs font-semibold rounded-xl transition-all duration-200 cursor-pointer border border-red-100/50"
@@ -327,14 +339,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 Connected
               </span>
               <div className="w-px h-6 bg-slate-200" />
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-slate-50 text-brand-red flex items-center justify-center border border-slate-100 shadow-sm shadow-slate-100">
-                  <User className="w-4 h-4" />
+              <Link
+                href="/admin/profile"
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              >
+                <div className="w-8 h-8 rounded-full bg-slate-50 text-brand-red flex items-center justify-center border border-slate-100 shadow-sm shadow-slate-100 overflow-hidden">
+                  {adminUser?.photoUrl ? (
+                    <Image src={adminUser.photoUrl} alt="Profile" width={32} height={32} className="object-cover w-full h-full" />
+                  ) : (
+                    <User className="w-4 h-4" />
+                  )}
                 </div>
                 <span className="text-xs font-bold text-slate-700 hidden sm:inline select-none">
-                  {adminUser ? adminUser.username : "Admin"}
+                  {adminUser?.firstName
+                    ? `${adminUser.firstName}${adminUser.lastName ? " " + adminUser.lastName : ""}`
+                    : adminUser?.username ?? "Admin"}
                 </span>
-              </div>
+              </Link>
             </div>
           </header>
 

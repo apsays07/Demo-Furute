@@ -8,18 +8,18 @@
   gap: 24px;
   padding: 32px;
   border: 1px solid rgba(16, 27, 53, 0.08);
-  border-radius: 12px;
+  border-radius: 20px;
   background: #ffffff;
   box-shadow: 0 12px 34px rgba(16, 27, 53, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   position: relative;
   overflow: hidden;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .testimonial-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(8, 127, 140, 0.2);
-  box-shadow: 0 20px 48px rgba(16, 27, 53, 0.08);
+  transform: translateY(-8px);
+  border-color: rgba(30, 64, 175, 0.15);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
 }
 
 .testimonial-card::before {

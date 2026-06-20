@@ -13,17 +13,17 @@ const impactStats = [
     icon: ChartIcon,
   },
   {
-    value: 23695,
+    value: 28974,
     label: "Counselling",
     icon: BasketIcon,
   },
   {
-    value: 14275,
+    value: 16749,
     label: "Lives Touched",
     icon: MapIcon,
   },
   {
-    value: 7624,
+    value: 7562,
     label: "Days MAD (Making A Difference)",
     icon: TagIcon,
   },

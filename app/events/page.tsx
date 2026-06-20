@@ -99,14 +99,6 @@ const staticEvents: EventItem[] = [
     timing: "For details call: 020-26131921 / 8378980521",
   },
   {
-    title: "Rajgad Trek",
-    category: "Outbound",
-    badgeClass: "badge-outbound",
-    description: "Outbound trek for entrepreneurs and leadership teams. Connect concepts of strategy and resilience with actual wilderness adventure.",
-    image: "/events/gap.webp",
-    link: "/events/rajgad-trek",
-  },
-  {
     title: "Be the Trainer",
     category: "Program",
     badgeClass: "badge-program",
@@ -205,34 +197,36 @@ export default function EventsPage() {
       {/* Unified Global Navbar */}
       <Navbar />
 
-      {/* Large Hero Section matching Homepage */}
-      <section className={styles["hero-section"]} aria-label="Furute events and workshops banner">
+      {/* Large Hero Banner Image */}
+      <section className={styles["hero-banner-image"]} aria-label="Furute events and workshops banner">
         <Image 
           src="/events/upcoming-events.jpg" 
           alt="Furute Events and Workshops background"
-          fill
-          sizes="100vw"
+          width={1920}
+          height={960}
           priority
-          className={styles.heroBgImage}
+          className={styles.heroBannerImg}
+          style={{ width: "100%", height: "auto" }}
         />
-        <div className={styles["hero-overlay-tint"]} />
+      </section>
 
+      {/* Page Header Content (below the image) */}
+      <section className={styles["page-header-section"]}>
         <motion.div 
-          className={styles["hero-overlay"]}
           initial="hidden"
           animate="visible"
           variants={fadeInUp}
         >
-          <Link href="/" className={styles["back-link-hero"]}>
+          <Link href="/" className={styles["back-link"]}>
             <ArrowLeftIcon />
             Back to home
           </Link>
 
-          <div className={styles.headerRowHero}>
-            <p className={styles.eyebrowHero}>Batches & Outbounds</p>
+          <div className={styles.headerRow}>
+            <p className={styles.eyebrow}>Batches & Outbounds</p>
           </div>
           <h1>Our Events & Workshops</h1>
-          <p className={styles.leadHero}>
+          <p className={styles.lead}>
             Take a look at our upcoming learning batches, award ceremonies, and outbound 
             experiential adventure programs built for holistic entrepreneur development.
           </p>
@@ -274,9 +268,11 @@ export default function EventsPage() {
                         <Image
                           src={event.image}
                           alt={event.title}
-                          fill
+                          width={800}
+                          height={450}
                           unoptimized
                           loading="lazy"
+                          style={{ width: "100%", height: "auto", display: "block" }}
                         />
                       ) : (
                         <div className={styles["db-event-no-image"]}>
@@ -340,9 +336,11 @@ export default function EventsPage() {
                         <Image
                           src={event.image}
                           alt={event.title}
-                          fill
+                          width={800}
+                          height={450}
                           unoptimized
                           loading="lazy"
+                          style={{ width: "100%", height: "auto", display: "block" }}
                         />
                       ) : (
                         <div className={styles["db-event-no-image"]}>
@@ -443,8 +441,9 @@ export default function EventsPage() {
                       <Image 
                         src={event.image} 
                         alt={event.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        width={800}
+                        height={500}
+                        style={{ width: "100%", height: "auto", display: "block" }}
                       />
                     </div>
 
@@ -482,8 +481,9 @@ export default function EventsPage() {
                       <Image 
                         src={event.image} 
                         alt={event.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        width={800}
+                        height={500}
+                        style={{ width: "100%", height: "auto", display: "block" }}
                       />
                     </div>
 
@@ -522,8 +522,9 @@ export default function EventsPage() {
                     <Image 
                       src={event.image} 
                       alt={event.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      width={800}
+                      height={500}
+                      style={{ width: "100%", height: "auto", display: "block" }}
                     />
                   </div>
 

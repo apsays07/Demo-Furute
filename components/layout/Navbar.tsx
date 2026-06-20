@@ -173,7 +173,7 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <Link className={styles.navbarLogo} href="/" aria-label="Furute home">
         <span className={styles.logoMark} aria-hidden="true">
-          <Image src="/new-lion-logo.png" alt="Furute Logo" width={320} height={160} priority quality={75} sizes="320px" />
+          <Image src="/favicon-image.png" alt="Furute Logo" width={320} height={160} priority quality={75} sizes="320px" />
         </span>
       </Link>
 

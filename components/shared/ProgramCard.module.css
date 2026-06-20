@@ -5,13 +5,13 @@
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
-  border: 1px solid rgba(16, 27, 53, 0.1);
-  border-radius: 8px;
+  border: 1px solid rgba(16, 27, 53, 0.08);
+  border-radius: 20px;
   background: #ffffff;
   box-shadow: 0 16px 36px rgba(16, 27, 53, 0.09);
   outline: none;
   isolation: isolate;
-  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .program-card::before {
@@ -96,9 +96,9 @@
 }
 
 .program-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px);
   border-color: var(--program-accent);
-  box-shadow: 0 24px 58px rgba(16, 27, 53, 0.16);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
 }
 
 .program-card:hover::after,
