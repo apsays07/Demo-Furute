@@ -29,14 +29,14 @@ export async function getTestimonials(): Promise<DBTestimonial[]> {
       .limit(6)
       .lean();
 
-    return testimonialsRaw.map((t: any) => ({
-      _id: t._id.toString(),
+    return testimonialsRaw.map((t) => ({
+      _id: String(t._id),
       name: t.name,
       designation: t.designation,
       company: t.company,
       review: t.review,
-      image: t.image || null,
-      rating: t.rating || 5,
+      image: t.image ?? null,
+      rating: t.rating ?? 5,
     }));
   } catch (error) {
     console.error("getTestimonials Server-Side Fetch Error:", error);
@@ -52,11 +52,11 @@ export async function getFeaturedVideos(): Promise<DBVideo[]> {
       .limit(4)
       .lean();
 
-    return videosRaw.map((v: any) => ({
-      _id: v._id.toString(),
+    return videosRaw.map((v) => ({
+      _id: String(v._id),
       title: v.title,
       youtubeUrl: v.youtubeUrl,
-      thumbnail: v.thumbnail || null,
+      thumbnail: v.thumbnail ?? null,
       featured: v.featured,
       visible: v.visible,
     }));

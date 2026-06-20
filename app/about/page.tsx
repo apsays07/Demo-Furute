@@ -419,7 +419,7 @@ export default function AboutUsPage() {
       <section className={styles.footerCtaSection}>
         <div className={styles.footerCtaGrid}>
           <div className={styles.orgInfo}>
-            <Image src="/furute-logo.webp" alt="Furute Logo" width={110} height={54} className={styles.orgLogo} />
+            <Image src="/lion-logo.png" alt="Furute Logo" width={110} height={54} className={styles.orgLogo} />
             <h3>Furute - Kingmakers</h3>
             <p>
               Founded in January 2013 under the leadership of Ashay Shah. Furute is a dedicated business training, branding, and life coaching partner committed to building stable, high-efficiency business operations.

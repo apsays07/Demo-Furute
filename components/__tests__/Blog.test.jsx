@@ -1,14 +1,13 @@
-
+/* eslint-disable @next/next/no-img-element */
 import { render, screen } from "@testing-library/react";
 import BlogPage from "@/app/blog/page";
 
 // Mock next/image since it needs special handling in tests
 jest.mock("next/image", () => ({
   __esModule: true,
-  default: (props) => {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} alt={props.alt} />;
-  },
+  default: ({ priority, fill, ...props }) => (
+    <img {...props} alt={props.alt || ""} />
+  ),
 }));
 
 describe("Blog Listing Page", () => {

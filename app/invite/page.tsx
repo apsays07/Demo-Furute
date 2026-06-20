@@ -113,7 +113,6 @@ export default function InviteSpeakerPage() {
     setMounted(true);
     const savedEmail = localStorage.getItem("guest_verified_email");
     if (savedEmail) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setVerifiedEmail(savedEmail);
       setFormData((prev) => ({ ...prev, email: savedEmail }));
     }
@@ -233,7 +232,7 @@ export default function InviteSpeakerPage() {
 
       <header className={styles.header}>
         <Link href="/" className={styles.logo} aria-label="Go to Furute home">
-          <Image src="/furute-logo.webp" alt="Furute" width={138} height={68} priority />
+          <Image src="/lion-logo.png" alt="Furute" width={138} height={68} priority />
         </Link>
 
         <nav className={styles.nav} aria-label="Invite page navigation">

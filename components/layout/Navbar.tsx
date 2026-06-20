@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./Navbar.module.css";
-import ShareButton from "@/components/shared/ShareButton";
+
 
 const menuItems: string[] = [
   "Home",
@@ -173,7 +173,7 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <Link className={styles.navbarLogo} href="/" aria-label="Furute home">
         <span className={styles.logoMark} aria-hidden="true">
-          <Image src="/furute-logo.webp" alt="Furute Logo" width={138} height={68} priority quality={75} sizes="138px" />
+          <Image src="/new-lion-logo.png" alt="Furute Logo" width={320} height={160} priority quality={75} sizes="320px" />
         </span>
       </Link>
 
@@ -335,8 +335,6 @@ export default function Navbar() {
           );
         })}
       </ul>
-
-      <ShareButton />
     </nav>
   );
 }

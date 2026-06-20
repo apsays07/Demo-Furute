@@ -154,7 +154,6 @@ function ContactForm() {
     setMounted(true);
     const savedEmail = localStorage.getItem("guest_verified_email");
     if (savedEmail) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setVerifiedEmail(savedEmail);
       setFormData((prev) => ({ ...prev, email: savedEmail }));
     }

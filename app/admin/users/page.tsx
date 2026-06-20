@@ -19,7 +19,16 @@ export default function UsersManagementPage() {
   const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [deletedLogs, setDeletedLogs] = useState<any[]>([]);
+  interface DeletedLog {
+    _id: string;
+    adminName: string;
+    adminRole: string;
+    module: string;
+    targetTitle: string;
+    createdAt: string;
+  }
+
+  const [deletedLogs, setDeletedLogs] = useState<DeletedLog[]>([]);
   const [loadingDeleted, setLoadingDeleted] = useState(false);
 
   // Modals state
@@ -544,7 +553,7 @@ export default function UsersManagementPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-sans">
-                {deletedLogs.map((log: any) => (
+                {deletedLogs.map((log: DeletedLog) => (
                   <tr key={log._id} className="hover:bg-slate-50/45 transition-all">
                     <td className="px-6 py-3.5 font-bold text-slate-800">{log.adminName}</td>
                     <td className="px-6 py-3.5">

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getPostBySlug } from "@/lib/blogData";
 import styles from "./blogPost.module.css";
+import ShareButton from "@/components/shared/ShareButton";
 
 type CommentType = {
   _id: string;
@@ -12,7 +13,9 @@ type CommentType = {
   email: string;
   website?: string;
   comment: string;
+  parentId?: string | null;
   createdAt: string;
+  replies: CommentType[];
 };
 
 export default function BlogPostPage({
@@ -30,6 +33,9 @@ export default function BlogPostPage({
   const [remember, setRemember] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [replySubmitting, setReplySubmitting] = useState(false);
 
   const fetchComments = useCallback(async () => {
     if (!post) return;
@@ -105,6 +111,47 @@ export default function BlogPostPage({
     }
   }
 
+  async function handleReplySubmit(parentId: string) {
+    if (!post || !replyText.trim() || !name.trim() || !email.trim()) return;
+
+    setReplySubmitting(true);
+
+    try {
+      const res = await fetch("/api/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          postSlug: post.slug,
+          name,
+          email,
+          website,
+          comment: replyText,
+          parentId,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setReplyText("");
+        setReplyingTo(null);
+
+        if (remember) {
+          localStorage.setItem(
+            "furute_commenter",
+            JSON.stringify({ name, email, website })
+          );
+        }
+
+        fetchComments();
+      }
+    } catch {
+      console.error("Failed to post reply");
+    } finally {
+      setReplySubmitting(false);
+    }
+  }
+
   if (!post) {
     return (
       <main className={styles.page}>
@@ -120,6 +167,11 @@ export default function BlogPostPage({
 
   const paragraphs = post.content.split("\n\n").filter(Boolean);
 
+  const totalCommentCount = comments.reduce(
+    (sum, c) => sum + 1 + (c.replies?.length || 0),
+    0
+  );
+
   return (
     <main className={styles.page}>
       <div className={styles.container}>
@@ -131,7 +183,10 @@ export default function BlogPostPage({
           <div className={styles.header}>
             <span className={styles.category}>{post.category}</span>
             <h1 className={styles.title}>{post.title}</h1>
-            <p className={styles.date}>{post.date}</p>
+            <div className={styles.headerMeta}>
+              <p className={styles.date}>{post.date}</p>
+              <ShareButton imageUrl={post.image} />
+            </div>
           </div>
 
           <div className={styles.imageWrapper}>
@@ -176,7 +231,9 @@ export default function BlogPostPage({
           </article>
 
           <div className={styles.author}>
-            <div className={styles.authorAvatar}>AS</div>
+            <div className={styles.authorAvatar}>
+              <Image src="/ashay-shah.webp" alt="Ashay Shah" width={56} height={56} className={styles.authorAvatarImg} />
+            </div>
             <div>
               <p className={styles.authorName}>Ashay Shah</p>
               <p className={styles.authorRole}>Business Trainer · Life Coach · Furute, Pune</p>
@@ -185,27 +242,103 @@ export default function BlogPostPage({
         </div>
 
         {/* Existing comments */}
-        {comments.length > 0 && (
+        {totalCommentCount > 0 && (
           <div className={styles.commentsList}>
             <h3 className={styles.commentsHeading}>
-              {comments.length} Comment{comments.length !== 1 ? "s" : ""}
+              {totalCommentCount} Comment{totalCommentCount !== 1 ? "s" : ""}
             </h3>
             {comments.map((c) => (
-              <div key={c._id} className={styles.commentItem}>
-                <div className={styles.commentAvatar}>
-                  {c.name.charAt(0).toUpperCase()}
+              <div key={c._id}>
+                {/* Top-level comment */}
+                <div className={styles.commentItem}>
+                  <div className={styles.commentAvatar}>
+                    {c.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className={styles.commentBody}>
+                    <p className={styles.commentName}>{c.name}</p>
+                    <p className={styles.commentDate}>
+                      {new Date(c.createdAt).toLocaleDateString("en-IN", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
+                    <p className={styles.commentText}>{c.comment}</p>
+                    <button
+                      className={styles.replyBtn}
+                      onClick={() =>
+                        setReplyingTo(replyingTo === c._id ? null : c._id)
+                      }
+                    >
+                      {replyingTo === c._id ? "Cancel" : "Reply"}
+                    </button>
+
+                    {/* Inline reply form */}
+                    {replyingTo === c._id && (
+                      <div className={styles.inlineReplyForm}>
+                        <textarea
+                          placeholder="Write your reply..."
+                          value={replyText}
+                          onChange={(e) => setReplyText(e.target.value)}
+                          className={styles.replyTextarea}
+                          rows={3}
+                          required
+                        />
+                        {!name && (
+                          <div className={styles.replyFormRow}>
+                            <input
+                              type="text"
+                              placeholder="Name *"
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              className={styles.replyInput}
+                              required
+                            />
+                            <input
+                              type="email"
+                              placeholder="Email *"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              className={styles.replyInput}
+                              required
+                            />
+                          </div>
+                        )}
+                        <button
+                          className={styles.replySubmitBtn}
+                          onClick={() => handleReplySubmit(c._id)}
+                          disabled={replySubmitting || !replyText.trim()}
+                        >
+                          {replySubmitting ? "Posting..." : "Post Reply"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className={styles.commentBody}>
-                  <p className={styles.commentName}>{c.name}</p>
-                  <p className={styles.commentDate}>
-                    {new Date(c.createdAt).toLocaleDateString("en-IN", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </p>
-                  <p className={styles.commentText}>{c.comment}</p>
-                </div>
+
+                {/* Replies */}
+                {c.replies && c.replies.length > 0 && (
+                  <div className={styles.repliesContainer}>
+                    {c.replies.map((reply) => (
+                      <div key={reply._id} className={styles.replyItem}>
+                        <div className={styles.commentAvatar}>
+                          {reply.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className={styles.commentBody}>
+                          <p className={styles.commentName}>{reply.name}</p>
+                          <p className={styles.commentDate}>
+                            {new Date(reply.createdAt).toLocaleDateString("en-IN", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
+                          </p>
+                          <p className={styles.commentText}>{reply.comment}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>

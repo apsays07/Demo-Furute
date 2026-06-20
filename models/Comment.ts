@@ -6,6 +6,7 @@ export interface IComment extends Document {
   email: string;
   website?: string;
   comment: string;
+  parentId?: mongoose.Types.ObjectId | null;
   createdAt: Date;
 }
 
@@ -16,6 +17,7 @@ const CommentSchema: Schema = new Schema(
     email: { type: String, required: true },
     website: { type: String },
     comment: { type: String, required: true },
+    parentId: { type: Schema.Types.ObjectId, ref: "Comment", default: null },
   },
   { timestamps: true }
 );

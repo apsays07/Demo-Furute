@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Navbar from "../layout/Navbar";
@@ -26,6 +27,10 @@ describe("Navbar Interaction Tests", () => {
       configurable: true,
       value: 1200,
     });
+  });
+
+  afterEach(() => {
+    window.history.pushState({}, "", "/");
   });
 
   test("renders logo", () => {
@@ -124,5 +129,137 @@ describe("Navbar Interaction Tests", () => {
     expect(screen.getByText("Mentoring")).toBeInTheDocument();
     expect(screen.getByText("Consultancy")).toBeInTheDocument();
     expect(screen.getByText("Digital Marketing")).toBeInTheDocument();
+  });
+
+  test("updates active item based on window.location.pathname on mount", () => {
+    const paths = [
+      { path: "/contact", expected: "Contact Us" },
+      { path: "/about", expected: "About Us" },
+      { path: "/programs/training", expected: "Programs" },
+      { path: "/services/branding", expected: "Services" },
+      { path: "/events/insights", expected: "Events" },
+      { path: "/testimonials", expected: "Testimonials" },
+      { path: "/blog/post-slug", expected: "Blog" }
+    ];
+
+    paths.forEach(({ path, expected }) => {
+      window.history.pushState({}, "", path);
+      
+      const { unmount } = render(<Navbar />);
+      
+      const activeLink = screen.getByText(expected);
+      expect(activeLink).toHaveClass("active");
+      
+      unmount();
+    });
+  });
+
+  test("updates active item based on window.location.hash on mount and hashchange event", () => {
+    window.history.pushState({}, "", "/#contact-us");
+    
+    const { unmount } = render(<Navbar />);
+    expect(screen.getByText("Contact Us")).toHaveClass("active");
+    unmount();
+
+    // Test hashchange listener
+    window.history.pushState({}, "", "/#about-us");
+    render(<Navbar />);
+    expect(screen.getByText("About Us")).toHaveClass("active");
+
+    window.location.hash = "#blog";
+    fireEvent(window, new Event("hashchange"));
+    expect(screen.getByText("Blog")).toHaveClass("active");
+  });
+
+  test("does not change active item on mount with invalid hash", () => {
+    window.history.pushState({}, "", "/#non-existent-hash");
+    render(<Navbar />);
+    expect(screen.getByText("Home")).toHaveClass("active");
+  });
+
+  test("handles mobile clicks on Programs and Services dropdown toggles", () => {
+    Object.defineProperty(window, "innerWidth", {
+      writable: true,
+      value: 500,
+    });
+
+    render(<Navbar />);
+
+    const programsTrigger = screen.getByRole("link", { name: "Programs" });
+    expect(programsTrigger).not.toHaveClass("expanded");
+
+    fireEvent.click(programsTrigger);
+    expect(programsTrigger).toHaveClass("expanded");
+
+    const servicesTrigger = screen.getByRole("link", { name: "Services" });
+    expect(servicesTrigger).not.toHaveClass("expanded");
+
+    fireEvent.click(servicesTrigger);
+    expect(servicesTrigger).toHaveClass("expanded");
+
+    const trainingSubcatTrigger = screen.getByText("Training Programs");
+    expect(trainingSubcatTrigger).not.toHaveClass("expanded");
+
+    fireEvent.click(trainingSubcatTrigger);
+    expect(trainingSubcatTrigger).toHaveClass("expanded");
+
+    fireEvent.click(trainingSubcatTrigger);
+    expect(trainingSubcatTrigger).not.toHaveClass("expanded");
+  });
+
+  test("clicking submenu links closes mobile menu", () => {
+    Object.defineProperty(window, "innerWidth", {
+      writable: true,
+      value: 500,
+    });
+
+    render(<Navbar />);
+
+    const hamburger = screen.getByLabelText("Toggle navigation menu");
+    fireEvent.click(hamburger);
+    expect(hamburger).toHaveAttribute("aria-expanded", "true");
+
+    const relTourismLink = screen.getByText("Relationship Tourism");
+    fireEvent.click(relTourismLink);
+    expect(hamburger).toHaveAttribute("aria-expanded", "false");
+
+    fireEvent.click(hamburger);
+    
+    const insightsLink = screen.getByText("Insights");
+    fireEvent.click(insightsLink);
+    expect(hamburger).toHaveAttribute("aria-expanded", "false");
+
+    fireEvent.click(hamburger);
+
+    const brandingLink = screen.getByText("Branding");
+    fireEvent.click(brandingLink);
+    expect(hamburger).toHaveAttribute("aria-expanded", "false");
+
+    fireEvent.click(hamburger);
+
+    const eventsLink = screen.getByRole("link", { name: "Events" });
+    fireEvent.click(eventsLink);
+    expect(hamburger).toHaveAttribute("aria-expanded", "false");
+  });
+
+  test("handles desktop clicks on Programs, Services, Testimonials, and Home links", () => {
+    // innerWidth defaults to 1200 in beforeEach (desktop view)
+    render(<Navbar />);
+
+    const programsTrigger = screen.getByRole("link", { name: "Programs" });
+    fireEvent.click(programsTrigger);
+    expect(programsTrigger).toHaveClass("active");
+
+    const servicesTrigger = screen.getByRole("link", { name: "Services" });
+    fireEvent.click(servicesTrigger);
+    expect(servicesTrigger).toHaveClass("active");
+
+    const testimonialsLink = screen.getByRole("link", { name: "Testimonials" });
+    fireEvent.click(testimonialsLink);
+    expect(testimonialsLink).toHaveClass("active");
+
+    const homeLink = screen.getByRole("link", { name: "Home" });
+    fireEvent.click(homeLink);
+    expect(homeLink).toHaveClass("active");
   });
 });

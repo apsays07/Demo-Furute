@@ -1,11 +1,15 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import ContactPage from "../page";
 
+let mockSubjectValue = null;
 // next/navigation
 jest.mock("next/navigation", () => ({
   useSearchParams: () => ({
-    get: () => null,
+    get: (key) => {
+      console.log("MOCK GET CALLED WITH KEY:", key, "AND CURRENT mockSubjectValue IS:", mockSubjectValue);
+      return mockSubjectValue;
+    },
   }),
 }));
 
@@ -35,25 +39,28 @@ jest.mock("@/components/layout/SiteFooter", () => () => (
 ));
 
 // Email Modal
-jest.mock("@/components/shared/EmailLoginModal", () => () => (
-  <div>Email Login Modal</div>
-));
+jest.mock("@/components/shared/EmailLoginModal", () => ({ onSuccess }) => {
+  React.useEffect(() => {
+    onSuccess("test-user@gmail.com");
+  }, [onSuccess]);
+  return <div>Email Login Modal</div>;
+});
 
 // FormInput
 jest.mock("@/components/ui/FormInput", () => (props) => (
-  <input aria-label={props.label} />
+  <input aria-label={props.label} name={props.name} value={props.value || ""} onChange={props.onChange} />
 ));
 
 // FormTextarea
 jest.mock("@/components/ui/FormTextarea", () => (props) => (
-  <textarea aria-label={props.label} />
+  <textarea aria-label={props.label} name={props.name} value={props.value || ""} onChange={props.onChange} />
 ));
 
 // FormSelect
 jest.mock("@/components/ui/FormSelect", () => (props) => (
-  <select aria-label={props.label}>
+  <select aria-label={props.label} name={props.name} value={props.value || ""} onChange={props.onChange}>
     {props.options.map((option) => (
-      <option key={option}>{option}</option>
+      <option key={option} value={option}>{option}</option>
     ))}
   </select>
 ));
@@ -80,7 +87,13 @@ jest.mock("@/components/ui/Icons", () => ({
 
 describe("Contact Page", () => {
   beforeEach(() => {
+    mockSubjectValue = null;
     Storage.prototype.getItem = jest.fn(() => "student@gmail.com");
+    global.fetch = jest.fn();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   test("renders hero heading", () => {
@@ -142,5 +155,183 @@ describe("Contact Page", () => {
     expect(
       screen.getByLabelText(/Your Message/i)
     ).toBeInTheDocument();
+  });
+
+  test("initializes subject from URL search params", () => {
+    mockSubjectValue = "Business Mentoring";
+    render(<ContactPage />);
+    expect(screen.getByLabelText("What are you looking for?").value).toBe("Business Mentoring");
+  });
+
+  test("initializes default subject on invalid URL param", () => {
+    mockSubjectValue = "Invalid Subject Name";
+    render(<ContactPage />);
+    expect(screen.getByLabelText("What are you looking for?").value).toBe("General Inquiry");
+  });
+
+  test("toggles FAQ accordion sections on click", () => {
+    render(<ContactPage />);
+    
+    const faqQuestion = screen.getByText("Who is Ashay Shah?");
+    const toggleBtn = faqQuestion.closest("button");
+    
+    // initially not active
+    expect(faqQuestion).toBeInTheDocument();
+    
+    // click to toggle open
+    fireEvent.click(toggleBtn);
+    
+    // click to toggle closed
+    fireEvent.click(toggleBtn);
+  });
+
+  test("submits form successfully and shows success screen", async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ success: true }),
+    });
+
+    render(<ContactPage />);
+
+    fireEvent.change(screen.getByLabelText("Full Name"), { target: { value: "Ashay Shah" } });
+    fireEvent.change(screen.getByLabelText("Phone Number"), { target: { value: "9822600521" } });
+    fireEvent.change(screen.getByLabelText("Your Message"), { target: { value: "Hello world message." } });
+
+    await act(async () => {
+      fireEvent.submit(screen.getByLabelText("Full Name").closest("form"));
+    });
+
+    expect(screen.getByText(/Message Submitted Successfully!/i)).toBeInTheDocument();
+    expect(screen.getAllByText("Ashay Shah").length).toBeGreaterThan(0);
+    
+    // test sending another message resets
+    fireEvent.click(screen.getByText("Send Another Message"));
+    expect(screen.getByLabelText("Full Name")).toBeInTheDocument();
+  });
+
+  test("shows submission error message when fetch fails", async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: "Inquiry rate limit exceeded." }),
+    });
+
+    render(<ContactPage />);
+
+    fireEvent.change(screen.getByLabelText("Full Name"), { target: { value: "Ashay Shah" } });
+    fireEvent.change(screen.getByLabelText("Phone Number"), { target: { value: "9822600521" } });
+    fireEvent.change(screen.getByLabelText("Your Message"), { target: { value: "Hello world message." } });
+
+    await act(async () => {
+      fireEvent.submit(screen.getByLabelText("Full Name").closest("form"));
+    });
+
+    expect(screen.getByText(/Inquiry rate limit exceeded./i)).toBeInTheDocument();
+  });
+
+  test("authenticates using EmailLoginModal when verifiedEmail is missing", () => {
+    Storage.prototype.getItem = jest.fn(() => null);
+    render(<ContactPage />);
+    expect(screen.getByText(/Send a Message/i)).toBeInTheDocument();
+  });
+
+  test("cycles through loading steps while submitting", async () => {
+    jest.useFakeTimers();
+    
+    let resolvePromise;
+    const fetchPromise = new Promise((resolve) => {
+      resolvePromise = resolve;
+    });
+    global.fetch.mockImplementationOnce(() => fetchPromise);
+
+    render(<ContactPage />);
+
+    fireEvent.change(screen.getByLabelText("Full Name"), { target: { value: "Ashay Shah" } });
+    fireEvent.change(screen.getByLabelText("Phone Number"), { target: { value: "9822600521" } });
+    fireEvent.change(screen.getByLabelText("Your Message"), { target: { value: "Hello world message." } });
+
+    await act(async () => {
+      fireEvent.submit(screen.getByLabelText("Full Name").closest("form"));
+    });
+
+    // Advance timers by 700ms to cycle the loading step
+    act(() => {
+      jest.advanceTimersByTime(700);
+    });
+
+    // Advance timers again to test the boundary (prev < loadingStepsList.length - 1)
+    act(() => {
+      jest.advanceTimersByTime(700 * 5);
+    });
+
+    await act(async () => {
+      resolvePromise({
+        ok: true,
+        json: async () => ({ success: true }),
+      });
+    });
+
+    jest.useRealTimers();
+  });
+
+  test("handles submission when verifiedEmail is missing and remains empty", async () => {
+    Storage.prototype.getItem = jest.fn(() => null);
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ success: true }),
+    });
+
+    render(<ContactPage />);
+
+    // Since we mock EmailLoginModal to auto-authenticate in page.test.jsx line 42,
+    // let's temporarily mock EmailLoginModal to NOT call onSuccess, so verifiedEmail remains falsy.
+    const EmailLoginModalMock = require("@/components/shared/EmailLoginModal");
+    jest.mock("@/components/shared/EmailLoginModal", () => () => <div>Mocked Login</div>);
+
+    fireEvent.change(screen.getByLabelText("Full Name"), { target: { value: "Ashay Shah" } });
+    fireEvent.change(screen.getByLabelText("Phone Number"), { target: { value: "9822600521" } });
+    fireEvent.change(screen.getByLabelText("Your Message"), { target: { value: "Hello world message." } });
+
+    await act(async () => {
+      fireEvent.submit(screen.getByLabelText("Full Name").closest("form"));
+    });
+
+    expect(screen.getByText(/Message Submitted Successfully!/i)).toBeInTheDocument();
+  });
+
+  test("handles submission error when thrown error is not an instance of Error", async () => {
+    global.fetch.mockImplementationOnce(() => {
+      throw "Some string error";
+    });
+
+    render(<ContactPage />);
+
+    fireEvent.change(screen.getByLabelText("Full Name"), { target: { value: "Ashay Shah" } });
+    fireEvent.change(screen.getByLabelText("Phone Number"), { target: { value: "9822600521" } });
+    fireEvent.change(screen.getByLabelText("Your Message"), { target: { value: "Hello world message." } });
+
+    await act(async () => {
+      fireEvent.submit(screen.getByLabelText("Full Name").closest("form"));
+    });
+
+    expect(screen.getByText("Something went wrong. Please check your connection and try again.")).toBeInTheDocument();
+  });
+
+  test("shows default submission error when fetch fails without error message", async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({}),
+    });
+
+    render(<ContactPage />);
+
+    fireEvent.change(screen.getByLabelText("Full Name"), { target: { value: "Ashay Shah" } });
+    fireEvent.change(screen.getByLabelText("Phone Number"), { target: { value: "9822600521" } });
+    fireEvent.change(screen.getByLabelText("Your Message"), { target: { value: "Hello world message." } });
+
+    await act(async () => {
+      fireEvent.submit(screen.getByLabelText("Full Name").closest("form"));
+    });
+
+    expect(screen.getByText("Failed to submit inquiry.")).toBeInTheDocument();
   });
 });

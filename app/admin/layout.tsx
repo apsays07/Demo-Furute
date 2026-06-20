@@ -139,7 +139,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="pt-8 pb-5 flex items-center justify-center px-5 border-b border-slate-100 bg-white">
         <Link href="/" className="transition-all hover:scale-[1.02] flex items-center justify-center w-full">
           <Image
-            src="/furute-logo.webp"
+            src="/lion-logo.png"
             alt="Furute Logo"
             width={138}
             height={68}

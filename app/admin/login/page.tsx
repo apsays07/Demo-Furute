@@ -77,7 +77,7 @@ export default function AdminLoginPage() {
           {/* Logo container with micro hover scaling */}
           <div className="flex justify-center mb-5 transition-transform duration-300 hover:scale-105">
             <Image
-              src="/furute-logo.webp"
+              src="/lion-logo.png"
               alt="Furute Logo"
               width={138}
               height={58}

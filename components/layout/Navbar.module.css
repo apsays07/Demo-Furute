@@ -32,10 +32,11 @@
 
 .logoMark img {
   width: auto;
-  height: 68px;
-  max-width: 138px;
+  height: 88px;
+  max-width: 180px;
   display: block;
   object-fit: contain;
+  margin-bottom: -8px;
 }
 
 .hamburger {
@@ -108,8 +109,8 @@
 @media (max-width: 1180px) {
   .logoMark img {
     width: auto;
-    height: 60px;
-    max-width: 124px;
+    height: 78px;
+    max-width: 160px;
   }
 
   .navbarMenu a {
@@ -236,8 +237,8 @@
 
   .logoMark img {
     width: auto;
-    height: 48px;
-    max-width: 100px;
+    height: 62px;
+    max-width: 128px;
   }
 
   .navbarMenu {

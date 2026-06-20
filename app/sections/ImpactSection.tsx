@@ -8,22 +8,22 @@ import styles from "./ImpactSection.module.css";
 
 const impactStats = [
   {
-    value: 8264,
+    value: 11285,
     label: "Leaders Trained",
     icon: ChartIcon,
   },
   {
-    value: 19852,
+    value: 23695,
     label: "Counselling",
     icon: BasketIcon,
   },
   {
-    value: 11852,
+    value: 14275,
     label: "Lives Touched",
     icon: MapIcon,
   },
   {
-    value: 5537,
+    value: 7624,
     label: "Days MAD (Making A Difference)",
     icon: TagIcon,
   },
