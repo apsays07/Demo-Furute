@@ -118,7 +118,7 @@ export default function EmailLoginModal({ onSuccess }: EmailLoginModalProps) {
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-[5px] select-none font-sans animate-fade-in">
-      <div className="bg-white border border-slate-200 rounded-[8px] px-10 py-9 shadow-2xl max-w-[450px] w-full text-center relative overflow-hidden animate-slide-up">
+      <div className="bg-white border border-slate-200 rounded-[8px] px-6 py-7 sm:px-10 sm:py-9 shadow-2xl max-w-[450px] w-full text-center relative overflow-hidden animate-slide-up">
         {/* Google Icon Logo */}
         <svg className="w-12 h-12 mx-auto mb-4" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>

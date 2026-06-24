@@ -204,7 +204,7 @@
 
 @media (max-width: 900px) {
   .blogHeader {
-    padding-top: 110px; /* Accounts for fixed mobile navbar */
+    padding-top: 40px; /* Normal top padding since navbar is sticky */
   }
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -221,7 +221,7 @@
   }
 
   .blogHeader {
-    padding: 110px 16px 20px;
+    padding: 32px 16px 20px;
   }
 
   .blogHeader h1 {

@@ -947,4 +947,49 @@
   .galleryCard {
     flex-basis: 78vw;
   }
+
+  .ctaButtons {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .btnPrimary,
+  .btnSecondary {
+    width: 100%;
+    min-height: 50px;
+  }
+
+  .pillarCard,
+  .valueCard,
+  .quoteCard {
+    padding: 20px 16px;
+  }
+
+  .verticalTimeline {
+    padding-left: 24px;
+  }
+
+  .timelineNode {
+    position: static;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nodeDot {
+    position: absolute;
+    left: -31px;
+    top: 10px;
+  }
+
+  .footerCtaGrid {
+    padding: 24px 20px;
+  }
+
+  .statsBar {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
 }

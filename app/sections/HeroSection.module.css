@@ -64,7 +64,7 @@
     height: auto !important;
     aspect-ratio: 2/1 !important;
     transform: none !important;
-    margin-top: 80px !important;
+    margin-top: 0 !important;
   }
 
   .hero-overlay {
@@ -83,6 +83,6 @@
 
 @media (max-width: 540px) {
   .hero-bg-img {
-    margin-top: 72px !important;
+    margin-top: 0 !important;
   }
 }

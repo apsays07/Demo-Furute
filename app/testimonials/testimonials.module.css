@@ -200,7 +200,7 @@
 
 @media (max-width: 980px) {
   .page {
-    padding-top: 90px; /* Accounts for fixed mobile navbar */
+    padding-top: 32px; /* Normal top padding since navbar is sticky */
   }
   .testimonials-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -209,7 +209,7 @@
 
 @media (max-width: 640px) {
   .page {
-    padding-top: 90px;
+    padding-top: 32px;
   }
   
   .testimonials-section {
