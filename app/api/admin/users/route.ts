@@ -4,6 +4,7 @@ import User from "@/models/User";
 import { hashPassword } from "@/lib/auth/bcrypt";
 import { verifyAuth } from "@/lib/auth/verifyAuth";
 import { logActivity } from "@/lib/auth/logActivity";
+import { validatePassword } from "@/lib/auth/passwordPolicy";
 
 // GET /api/admin/users - List all admin/editor users (Super Admin only)
 export async function GET() {
@@ -37,6 +38,14 @@ export async function POST(request: Request) {
     if (!username || !email || !password || !role) {
       return NextResponse.json(
         { success: false, error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const policyCheck = validatePassword(password);
+    if (!policyCheck.isValid) {
+      return NextResponse.json(
+        { success: false, error: policyCheck.error },
         { status: 400 }
       );
     }

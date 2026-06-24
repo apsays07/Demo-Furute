@@ -113,13 +113,22 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
 
       {/* Global Confirm/Alert Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-[4px] animate-fade-in select-none">
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-2xl max-w-md w-full relative overflow-hidden animate-slide-up font-sans">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/30 backdrop-blur-sm animate-fade-in select-none">
+          <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_24px_50px_rgba(16,27,53,0.12)] max-w-[380px] w-full relative overflow-hidden animate-scale-up font-sans">
             {/* Top decorative color stripe */}
-            <div className={`h-[4px] w-full absolute top-0 left-0 ${modalType === "confirm" ? "bg-brand-red" : "bg-teal"}`} />
+            <div className={`h-[3px] w-full absolute top-0 left-0 ${
+              modalType === "confirm"
+                ? "bg-gradient-to-r from-red-500 via-brand-red to-orange-500"
+                : "bg-gradient-to-r from-teal via-mint to-teal-dark"
+            }`} />
             
-            <div className="flex items-start gap-4 mt-2">
-              <div className={`p-3 rounded-2xl shrink-0 ${modalType === "confirm" ? "bg-brand-red-light text-brand-red" : "bg-teal-light text-teal"}`}>
+            <div className="flex flex-col items-center text-center mt-2">
+              {/* Animated Icon Circle */}
+              <div className={`p-3 rounded-full shrink-0 mb-4 border ${
+                modalType === "confirm"
+                  ? "bg-rose-50 border-rose-100 text-brand-red"
+                  : "bg-teal-light border-teal/10 text-teal"
+              }`}>
                 {modalType === "confirm" ? (
                   <HelpCircle className="w-6 h-6 animate-pulse" />
                 ) : (
@@ -127,31 +136,31 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
                 )}
               </div>
               
-              <div className="space-y-1.5 flex-1 min-w-0">
-                <h4 className="text-base font-extrabold text-slate-800 tracking-tight leading-none pt-1">
+              <div className="space-y-2 w-full">
+                <h4 className="text-base font-extrabold text-slate-800 tracking-tight leading-tight">
                   {modalTitle}
                 </h4>
-                <p className="text-xs text-slate-500 font-semibold leading-relaxed mt-2 whitespace-pre-line">
+                <p className="text-xs text-slate-500 font-semibold leading-relaxed whitespace-pre-line px-2">
                   {modalMessage}
                 </p>
               </div>
             </div>
             
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-6 flex gap-2.5 w-full">
               {modalType === "confirm" && (
                 <button
                   onClick={handleCancel}
-                  className="px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-500 font-bold rounded-xl text-xs transition-all border border-slate-100 cursor-pointer"
+                  className="flex-1 py-2.5 bg-slate-50 hover:bg-slate-100 active:bg-slate-200/70 text-slate-600 hover:text-slate-800 font-bold rounded-xl text-xs transition-all duration-200 border border-slate-200/60 cursor-pointer text-center"
                 >
                   {cancelText}
                 </button>
               )}
               <button
                 onClick={handleConfirm}
-                className={`px-4 py-2 text-white font-bold rounded-xl text-xs transition-all shadow-md cursor-pointer border-none ${
+                className={`flex-1 py-2.5 text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-sm cursor-pointer border-none text-center ${
                   modalType === "confirm"
-                    ? "bg-brand-red hover:bg-brand-red-dark shadow-brand-red/10"
-                    : "bg-teal hover:bg-teal-dark shadow-teal/10"
+                    ? "bg-brand-red hover:bg-brand-red-dark shadow-brand-red/10 hover:shadow-md"
+                    : "bg-teal hover:bg-teal-dark shadow-teal/10 hover:shadow-md"
                 }`}
               >
                 {confirmText}

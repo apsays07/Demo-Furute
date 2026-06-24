@@ -4,6 +4,7 @@ import User from "@/models/User";
 import { hashPassword } from "@/lib/auth/bcrypt";
 import { verifyAuth } from "@/lib/auth/verifyAuth";
 import { logActivity } from "@/lib/auth/logActivity";
+import { validatePassword } from "@/lib/auth/passwordPolicy";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -27,6 +28,13 @@ export async function PUT(request: Request, { params }: RouteParams) {
     }
 
     if (password) {
+      const policyCheck = validatePassword(password);
+      if (!policyCheck.isValid) {
+        return NextResponse.json(
+          { success: false, error: policyCheck.error },
+          { status: 400 }
+        );
+      }
       updateData.password = await hashPassword(password);
     }
 

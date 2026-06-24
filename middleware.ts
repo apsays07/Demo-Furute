@@ -1,90 +1,86 @@
+import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-/**
- * Decodes the base64url-encoded JWT payload without verifying its signature.
- * Edge-compatible function.
- */
-interface DecodedPayload {
-  exp?: number;
-  id?: string;
-  username?: string;
-  email?: string;
-  role?: string;
-}
+export default withAuth(
+  function middleware(req) {
+    const token = req.nextauth.token;
+    const { pathname } = req.nextUrl;
 
-function decodeJWTPayload(token: string): DecodedPayload | null {
-  try {
-    const parts = token.split(".");
-    if (parts.length !== 3) return null;
+    // 1. Handle API routes under /api/admin
+    if (pathname.startsWith("/api/admin")) {
+      // Allow verify-login-otp to pass through if they have a credentials session (but not yet 2FA verified)
+      if (pathname.startsWith("/api/admin/auth/2fa/verify-login-otp")) {
+        if (!token) {
+          return NextResponse.json(
+            { success: false, error: "Not authenticated" },
+            { status: 401 }
+          );
+        }
+        return NextResponse.next();
+      }
 
-    const base64Url = parts[1] || "";
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    
-    // Polyfill or native browser base64 decode (atob is globally available in Next Edge middleware)
-    const rawData = atob(base64);
-    const utf8Data = rawData
-      .split("")
-      .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-      .join("");
-      
-    return JSON.parse(decodeURIComponent(utf8Data));
-  } catch (error) {
-    console.error("Error decoding JWT payload in middleware:", error);
-    return null;
-  }
-}
+      // For all other /api/admin routes, require session + 2FA verified
+      if (!token) {
+        return NextResponse.json(
+          { success: false, error: "Not authenticated" },
+          { status: 401 }
+        );
+      }
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+      if (token.requires2FA && !token.is2FAVerified) {
+        return NextResponse.json(
+          { success: false, error: "2FA verification required" },
+          { status: 403 }
+        );
+      }
 
-  // Let public routes, api/admin/auth/login, static files pass through
-  if (
-    pathname.startsWith("/admin/login") ||
-    pathname.startsWith("/api/admin/auth/login") ||
-    pathname.startsWith("/_next") ||
-    pathname === "/favicon.ico"
-  ) {
+      return NextResponse.next();
+    }
+
+    // 2. Handle page routes under /admin
+    // If user is trying to access the login page
+    if (pathname.startsWith("/admin/login")) {
+      // If already authenticated and 2FA is verified (or not required), redirect to dashboard
+      if (token && (!token.requires2FA || token.is2FAVerified)) {
+        return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+      }
+      return NextResponse.next();
+    }
+
+    // If 2FA is active but not yet verified, redirect to OTP verify page
+    if (token?.requires2FA && !token?.is2FAVerified && !pathname.startsWith("/admin/verify-otp")) {
+      return NextResponse.redirect(new URL("/admin/verify-otp", req.url));
+    }
+
+    // If 2FA is verified (or not required), and trying to access verify-otp, redirect to dashboard
+    if (token && (!token.requires2FA || token.is2FAVerified) && pathname.startsWith("/admin/verify-otp")) {
+      return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+    }
+
     return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ req, token }) => {
+        const { pathname } = req.nextUrl;
+        
+        // For API routes, let the middleware function itself handle returning JSON responses.
+        if (pathname.startsWith("/api/admin")) {
+          return true;
+        }
+
+        // Always allow access to the login page itself
+        if (pathname.startsWith("/admin/login")) {
+          return true;
+        }
+        
+        // Protect all other admin page routes
+        return !!token;
+      },
+    },
   }
+);
 
-  // Access the token from cookies
-  const token = request.cookies.get("admin_token")?.value;
-
-  if (!token) {
-    // If requesting admin route without token, redirect to login
-    if (pathname.startsWith("/admin")) {
-      return NextResponse.redirect(new URL("/admin/login", request.url));
-    }
-  } else {
-    // Parse token payload
-    const payload = decodeJWTPayload(token);
-
-    if (!payload) {
-      // Invalid format, clear token and redirect
-      const response = NextResponse.redirect(new URL("/admin/login", request.url));
-      response.cookies.delete("admin_token");
-      return response;
-    }
-
-    // Check expiration (exp is in seconds, Date.now() in milliseconds)
-    const isExpired = payload.exp && payload.exp * 1000 < Date.now();
-    if (isExpired) {
-      const response = NextResponse.redirect(new URL("/admin/login", request.url));
-      response.cookies.delete("admin_token");
-      return response;
-    }
-
-    // User is authenticated. If they try to hit /admin/login directly, redirect to dashboard
-    if (pathname === "/admin" || pathname === "/admin/") {
-      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
-    }
-  }
-
-  return NextResponse.next();
-}
-
-// Map the paths that this middleware intercepts
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*"],
 };

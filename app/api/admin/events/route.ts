@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Event from "@/models/Event";
 import { logActivity } from "@/lib/auth/logActivity";
+import { verifyAuth } from "@/lib/auth/verifyAuth";
 
 // GET /api/admin/events - Fetch all events with optional status filter & pagination
 export async function GET(request: Request) {
@@ -57,6 +58,9 @@ export async function GET(request: Request) {
 // POST /api/admin/events - Create a new event
 export async function POST(request: Request) {
   try {
+    const auth = await verifyAuth(["superadmin", "admin", "editor"]);
+    if (!auth.success) return auth.response!;
+
     await connectToDatabase();
     const body = await request.json();
 

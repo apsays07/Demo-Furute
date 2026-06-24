@@ -1,27 +1,22 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/auth/jwt";
+import { verifyAuth } from "@/lib/auth/verifyAuth";
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/User";
 
 // GET — full profile
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("admin_token")?.value;
-    if (!token) return NextResponse.json({ success: false, error: "Not authenticated" }, { status: 401 });
-
-    const payload = verifyToken(token);
-    if (!payload) return NextResponse.json({ success: false, error: "Invalid token" }, { status: 401 });
+    const auth = await verifyAuth(["superadmin", "admin", "editor"]);
+    if (!auth.success) return auth.response!;
 
     await connectToDatabase();
-    const user = await User.findById(payload.id).lean() as Record<string, unknown> | null;
+    const user = await User.findById(auth.user.id).lean() as Record<string, unknown> | null;
     if (!user) return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
 
     return NextResponse.json({
       success: true,
       profile: {
-        id: payload.id,
+        id: auth.user.id,
         username: user.username as string,
         email: user.email as string,
         role: user.role as string,
@@ -42,15 +37,11 @@ export async function GET() {
 // PUT — update profile fields
 export async function PUT(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("admin_token")?.value;
-    if (!token) return NextResponse.json({ success: false, error: "Not authenticated" }, { status: 401 });
-
-    const payload = verifyToken(token);
-    if (!payload) return NextResponse.json({ success: false, error: "Invalid token" }, { status: 401 });
+    const auth = await verifyAuth(["superadmin", "admin", "editor"]);
+    if (!auth.success) return auth.response!;
 
     await connectToDatabase();
-    const user = await User.findById(payload.id);
+    const user = await User.findById(auth.user.id);
     if (!user) return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
 
     const body = await request.json();

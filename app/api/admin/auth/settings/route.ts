@@ -1,42 +1,43 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/User";
-import { verifyToken } from "@/lib/auth/jwt";
 import { hashPassword, comparePassword } from "@/lib/auth/bcrypt";
+import { logSecurityEvent } from "@/lib/auth/auditLog";
+import { validatePassword } from "@/lib/auth/passwordPolicy";
 
 export async function PUT(request: Request) {
   try {
-    await connectToDatabase();
-
-    const cookieStore = await cookies();
-    const token = cookieStore.get("admin_token")?.value;
-
-    if (!token) {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
       return NextResponse.json(
         { success: false, error: "Not authenticated" },
         { status: 401 }
       );
     }
 
-    const payload = verifyToken(token);
-    if (!payload) {
+    if (session.user.requires2FA && !session.user.is2FAVerified) {
       return NextResponse.json(
-        { success: false, error: "Invalid or expired token" },
-        { status: 401 }
+        { success: false, error: "2FA verification required" },
+        { status: 403 }
       );
     }
+
+    await connectToDatabase();
 
     const body = await request.json();
     const { username, email, currentPassword, newPassword } = body;
 
-    const user = await User.findById(payload.id);
+    const user = await User.findById(session.user.id);
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Admin user not found" },
         { status: 404 }
       );
     }
+
+    let passwordChanged = false;
 
     // 1. Password update flow
     if (currentPassword && newPassword) {
@@ -55,14 +56,16 @@ export async function PUT(request: Request) {
         );
       }
 
-      if (newPassword.length < 6) {
+      const policyCheck = validatePassword(newPassword);
+      if (!policyCheck.isValid) {
         return NextResponse.json(
-          { success: false, error: "New password must be at least 6 characters long" },
+          { success: false, error: policyCheck.error },
           { status: 400 }
         );
       }
 
       user.password = await hashPassword(newPassword);
+      passwordChanged = true;
     }
 
     // 2. Profile details update
@@ -74,6 +77,10 @@ export async function PUT(request: Request) {
     }
 
     await user.save();
+
+    if (passwordChanged) {
+      await logSecurityEvent(user.email, request, "Password Changed");
+    }
 
     return NextResponse.json({
       success: true,

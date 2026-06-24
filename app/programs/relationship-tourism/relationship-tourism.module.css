@@ -982,6 +982,10 @@
     padding-top: 0;
   }
 
+  .heroKicker {
+    margin-top: 18px;
+  }
+
   .investGrid,
   .questionsGrid {
     grid-template-columns: 1fr;

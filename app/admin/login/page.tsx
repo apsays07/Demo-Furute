@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
-import { KeyRound, User, AlertCircle, Loader2, Check, ShieldCheck } from "lucide-react";
+import { KeyRound, User, AlertCircle, Loader2, Check } from "lucide-react";
+import { signIn } from "next-auth/react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -30,32 +31,41 @@ export default function AdminLoginPage() {
     password?: string;
   }
 
-  async function onSubmit(data: LoginFormData) {
+  // Handle credentials submission via NextAuth signIn
+  async function onSubmitCredentials(data: LoginFormData) {
     setLoading(true);
     setErrorMsg(null);
 
     try {
-      const res = await fetch("/api/admin/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+      const res = await signIn("credentials", {
+        username: data.username,
+        password: data.password,
+        redirect: false,
       });
 
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.error || "Login failed. Please try again.");
+      if (res?.error) {
+        throw new Error(res.error || "Login failed. Please check your credentials.");
       }
 
-      // Successful login
-      setLoggedInUser(result.user);
-      setIsSuccess(true);
-      setTimeout(() => {
-        router.push("/admin/dashboard");
-        router.refresh();
-      }, 2000);
+      // Fetch the authenticated session details
+      const sessionRes = await fetch("/api/auth/session");
+      const session = await sessionRes.json();
+
+      if (session?.user?.requires2FA && !session?.user?.is2FAVerified) {
+        // Redirect to dedicated 2FA verification page
+        router.push("/admin/verify-otp");
+      } else {
+        // Normal password-only login successful
+        setLoggedInUser({ username: session?.user?.name || "Admin" });
+        setIsSuccess(true);
+        setTimeout(() => {
+          router.push("/admin/dashboard");
+          router.refresh();
+        }, 2000);
+      }
     } catch (err: unknown) {
-      console.error(err);
+      // Use console.warn to prevent Next.js development overlay from popping up for expected credential errors
+      console.warn("Login client error:", err);
       setErrorMsg(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
@@ -107,7 +117,7 @@ export default function AdminLoginPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmitCredentials)} className="space-y-5">
           {/* Username Field */}
           <div>
             <label className="block text-[clamp(10px,0.6vw,12px)] font-extrabold text-slate-500 uppercase tracking-wider mb-2">
@@ -162,11 +172,11 @@ export default function AdminLoginPage() {
             )}
           </div>
 
-          {/* Submit Button with Hover scale and shadow shift */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-[clamp(12px,1.4vh,16px)] px-4 bg-teal hover:bg-teal-dark text-white font-extrabold rounded-xl shadow-md shadow-teal/10 hover:shadow-lg hover:shadow-teal/20 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-xs uppercase tracking-wider "
+            className="w-full py-[clamp(12px,1.4vh,16px)] px-4 bg-teal hover:bg-teal-dark text-white font-extrabold rounded-xl shadow-md shadow-teal/10 hover:shadow-lg hover:shadow-teal/20 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-xs uppercase tracking-wider border-none"
           >
             {loading ? (
               <>
@@ -189,10 +199,8 @@ export default function AdminLoginPage() {
       {isSuccess && (
         <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in">
           <div className="bg-white border border-slate-100 rounded-2xl p-10 max-w-sm w-full text-center shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] flex flex-col items-center justify-center space-y-6 animate-scale-up relative">
-            {/* Top decorative success-colored indicator bar */}
             <div className="absolute top-0 inset-x-0 h-1 bg-emerald-500 rounded-t-2xl" />
             
-            {/* Green Tick Animation Circle */}
             <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500 mb-1 relative">
               <span className="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping opacity-75" />
               <Check className="w-8 h-8 relative z-10 stroke-[2.5] animate-check-pop" />
@@ -207,7 +215,6 @@ export default function AdminLoginPage() {
               </p>
             </div>
             
-            {/* Clean Progress indicator */}
             <div className="w-full space-y-3">
               <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden relative">
                 <div className="absolute top-0 left-0 bottom-0 bg-emerald-500 rounded-full animate-progress-fill" />

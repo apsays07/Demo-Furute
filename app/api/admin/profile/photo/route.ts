@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/auth/jwt";
+import { verifyAuth } from "@/lib/auth/verifyAuth";
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/User";
 import { writeFile, mkdir } from "fs/promises";
@@ -8,12 +7,8 @@ import path from "path";
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("admin_token")?.value;
-    if (!token) return NextResponse.json({ success: false, error: "Not authenticated" }, { status: 401 });
-
-    const payload = verifyToken(token);
-    if (!payload) return NextResponse.json({ success: false, error: "Invalid token" }, { status: 401 });
+    const auth = await verifyAuth(["superadmin", "admin", "editor"]);
+    if (!auth.success) return auth.response!;
 
     const formData = await request.formData();
     const file = formData.get("photo") as File | null;
@@ -45,7 +40,7 @@ export async function POST(request: Request) {
 
     // Generate unique filename using userId + timestamp
     const ext = file.name.split(".").pop() ?? "jpg";
-    const filename = `admin-${payload.id}-${Date.now()}.${ext}`;
+    const filename = `admin-${auth.user.id}-${Date.now()}.${ext}`;
     const filePath = path.join(uploadDir, filename);
 
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -55,7 +50,7 @@ export async function POST(request: Request) {
 
     // Save photoUrl to DB
     await connectToDatabase();
-    await User.findByIdAndUpdate(payload.id, { photoUrl });
+    await User.findByIdAndUpdate(auth.user.id, { photoUrl });
 
     return NextResponse.json({ success: true, photoUrl });
   } catch (err) {

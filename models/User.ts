@@ -13,6 +13,12 @@ export interface IUser extends Document {
   photoUrl?: string;
   otpCode?: string;
   otpExpires?: Date;
+  twoFactorEnabled: boolean;
+  twoFactorSecret?: string | null;
+  tempTwoFactorSecret?: string | null;
+  backupCodes: string[];
+  loginAttempts: number;
+  lockUntil?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -53,6 +59,31 @@ const UserSchema: Schema = new Schema(
     },
     otpExpires: {
       type: Date,
+    },
+    twoFactorEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    twoFactorSecret: {
+      type: String,
+      default: null,
+    },
+    tempTwoFactorSecret: {
+      type: String,
+      default: null,
+    },
+    backupCodes: {
+      type: [String],
+      default: [],
+    },
+    loginAttempts: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    lockUntil: {
+      type: Date,
+      default: null,
     },
   },
   {

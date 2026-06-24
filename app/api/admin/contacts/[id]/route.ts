@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Contact from "@/models/Contact";
 import { logActivity } from "@/lib/auth/logActivity";
+import { verifyAuth } from "@/lib/auth/verifyAuth";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -10,6 +11,9 @@ type RouteParams = {
 // PUT /api/admin/contacts/[id] - Update contact status (replied / pending)
 export async function PUT(request: Request, { params }: RouteParams) {
   try {
+    const auth = await verifyAuth(["superadmin", "admin", "editor"]);
+    if (!auth.success) return auth.response!;
+
     await connectToDatabase();
     const { id } = await params;
     const body = await request.json();
@@ -52,6 +56,9 @@ export async function PUT(request: Request, { params }: RouteParams) {
 // DELETE /api/admin/contacts/[id] - Delete contact submission
 export async function DELETE(request: Request, { params }: RouteParams) {
   try {
+    const auth = await verifyAuth(["superadmin", "admin"]);
+    if (!auth.success) return auth.response!;
+
     await connectToDatabase();
     const { id } = await params;
 

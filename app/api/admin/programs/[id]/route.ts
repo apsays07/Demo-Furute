@@ -35,6 +35,9 @@ export async function GET(request: Request, { params }: RouteParams) {
 // PUT /api/admin/programs/[id] - Update program
 export async function PUT(request: Request, { params }: RouteParams) {
   try {
+    const auth = await verifyAuth(["superadmin", "admin", "editor"]);
+    if (!auth.success) return auth.response!;
+
     await connectToDatabase();
     const { id } = await params;
     const body = await request.json();

@@ -21,43 +21,55 @@ import {
   Plus,
 } from "lucide-react";
 
+import { SessionProvider, useSession, signOut } from "next-auth/react";
 import { AdminUser, AdminUserContext } from "@/lib/context/AdminUserContext";
-import { ConfirmProvider } from "@/lib/context/ConfirmContext";
+import { ConfirmProvider, useConfirm } from "@/lib/context/ConfirmContext";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <SessionProvider>
+      <ConfirmProvider>
+        <AdminLayoutContent>{children}</AdminLayoutContent>
+      </ConfirmProvider>
+    </SessionProvider>
+  );
+}
+
+function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [quickMenuOpen, setQuickMenuOpen] = useState(false);
+  const [sidebarUserOpen, setSidebarUserOpen] = useState(false);
+  const [headerUserOpen, setHeaderUserOpen] = useState(false);
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const pathname = usePathname();
   const router = useRouter();
 
-  // Fetch admin user data on mount
-  const fetchUser = useCallback(async () => {
-    try {
-      const res = await fetch("/api/admin/auth/me");
-      if (res.ok) {
-        const data = await res.json();
-        setAdminUser(data.user);
-      } else {
-        router.push("/admin/login");
-      }
-    } catch (err) {
-      console.error("Failed to load user info:", err);
-    }
-  }, [router]);
+  // NextAuth Session
+  const { data: session, status, update } = useSession();
+  const { confirm } = useConfirm();
 
+  // Map NextAuth session user to the legacy custom AdminUserContext context
   useEffect(() => {
-    // Only verify if we are not on the login page
-    if (pathname !== "/admin/login") {
-      const timer = setTimeout(() => {
-        fetchUser();
-      }, 0);
-      return () => clearTimeout(timer);
+    if (pathname === "/admin/login" || pathname === "/admin/verify-otp") {
+      return;
     }
-  }, [pathname, fetchUser]);
 
-  // Client-side route protection based on role
+    if (status === "unauthenticated") {
+      router.push("/admin/login");
+    } else if (status === "authenticated" && session?.user) {
+      // Fetch details from session
+      setAdminUser({
+        id: session.user.id,
+        username: session.user.name || "",
+        email: session.user.email || "",
+        role: session.user.role,
+      });
+    }
+  }, [session, status, pathname, router]);
+
+  // Client-side route protection based on role (carried over from previous layout)
   useEffect(() => {
+    if (pathname === "/admin/login" || pathname === "/admin/verify-otp") return;
     if (!adminUser) return;
 
     const role = adminUser.role;
@@ -82,8 +94,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   }, [pathname, adminUser, router]);
 
-  // If we are on the login page, just render the child login container
-  if (pathname === "/admin/login") {
+  const fetchUser = useCallback(async () => {
+    // In NextAuth, session refresh is triggered by update()
+    await update();
+  }, [update]);
+
+  // If we are on the login page or verify-otp page, just render the child container directly
+  if (pathname === "/admin/login" || pathname === "/admin/verify-otp") {
     return <>{children}</>;
   }
 
@@ -111,23 +128,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  navLinks.push({ name: "Profile", href: "/admin/profile", icon: UserCircle });
-  navLinks.push({ name: "Settings", href: "/admin/settings", icon: Settings });
+  // Profile and Settings are now accessed via the admin profile card dropdown menu
 
   async function handleLogout() {
-    const firstConfirm = window.confirm("Are you sure you want to log out?");
-    if (!firstConfirm) return;
-
-    const secondConfirm = window.confirm("Are you absolutely sure you want to sign out? You will need to enter your password and email OTP to log in again.");
-    if (!secondConfirm) return;
+    const isConfirmed = await confirm(
+      session?.user?.requires2FA
+        ? "Are you sure you want to log out? You will need to enter your credentials and OTP to log in again."
+        : "Are you sure you want to log out?",
+      {
+        title: "Confirm Sign Out",
+        confirmText: "Sign Out",
+        cancelText: "Cancel",
+      }
+    );
+    if (!isConfirmed) return;
 
     try {
-      const res = await fetch("/api/admin/auth/logout", { method: "POST" });
-      if (res.ok) {
-        router.push("/admin/login");
-      }
+      await signOut({ callbackUrl: "/admin/login" });
     } catch (err) {
-      console.error("Logout failed:", err);
+      console.warn("Logout failed:", err);
     }
   }
 
@@ -179,10 +198,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     setSidebarOpen(false);
                     setQuickMenuOpen(false);
                   }}
-                  className="flex items-center gap-2 px-4 py-2 text-xs font-semibold hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  className="block px-4 py-2 text-xs hover:bg-slate-50 hover:text-teal font-medium transition-all"
                 >
-                  <Plus className="w-3 h-3 text-slate-400" />
-                  Add Testimonial
+                  + Add Testimonial
+                </Link>
+                <Link
+                  href="/admin/videos?openAdd=true"
+                  onClick={() => {
+                    setSidebarOpen(false);
+                    setQuickMenuOpen(false);
+                  }}
+                  className="block px-4 py-2 text-xs hover:bg-slate-50 hover:text-teal font-medium transition-all"
+                >
+                  + Add Video
                 </Link>
                 <Link
                   href="/admin/events?openAdd=true"
@@ -190,32 +218,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     setSidebarOpen(false);
                     setQuickMenuOpen(false);
                   }}
-                  className="flex items-center gap-2 px-4 py-2 text-xs font-semibold hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  className="block px-4 py-2 text-xs hover:bg-slate-50 hover:text-teal font-medium transition-all"
                 >
-                  <Plus className="w-3 h-3 text-slate-400" />
-                  Schedule Event
-                </Link>
-                <Link
-                  href="/admin/gallery"
-                  onClick={() => {
-                    setSidebarOpen(false);
-                    setQuickMenuOpen(false);
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 text-xs font-semibold hover:bg-slate-50 hover:text-slate-900 transition-colors"
-                >
-                  <Plus className="w-3 h-3 text-slate-400" />
-                  Upload Gallery
-                </Link>
-                <Link
-                  href="/admin/contacts"
-                  onClick={() => {
-                    setSidebarOpen(false);
-                    setQuickMenuOpen(false);
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 text-xs font-semibold hover:bg-slate-50 hover:text-slate-900 transition-colors"
-                >
-                  <Mail className="w-3 h-3 text-slate-400" />
-                  View Submissions
+                  + Add Event
                 </Link>
               </div>
             </>
@@ -223,69 +228,99 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </div>
 
-      {/* Navigation Links */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto bg-white scrollbar-thin">
+      {/* Navigation menu list */}
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-thin select-none">
         {navLinks.map((link) => {
           const Icon = link.icon;
-          const isActive = pathname === link.href;
+          const isActive = pathname === link.href || (link.href !== "/admin/dashboard" && pathname.startsWith(link.href));
           return (
             <Link
               key={link.name}
               href={link.href}
               onClick={() => setSidebarOpen(false)}
-              className={`group flex items-center gap-3 px-4 py-2.5 rounded-r-xl text-sm font-semibold tracking-wide ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium ${
                 isActive ? activeLinkStyle : inactiveLinkStyle
               }`}
             >
-              <Icon className={`w-4.5 h-4.5 transition-colors ${
-                isActive ? "text-teal" : "text-slate-400 group-hover:text-slate-600"
-              }`} />
+              <Icon className={`w-4 h-4 ${isActive ? "text-teal" : "text-slate-400 group-hover:text-slate-650"}`} />
               {link.name}
             </Link>
           );
         })}
       </nav>
 
-      {/* User Card & Logout */}
-      <div className="p-4 border-t border-slate-100 bg-white">
-        <Link
-          href="/admin/profile"
-          onClick={() => setSidebarOpen(false)}
-          className="flex items-center gap-3 px-3 py-2 bg-slate-50 hover:bg-teal/5 border border-slate-100 hover:border-teal/20 rounded-2xl mb-3 shadow-sm transition-all group"
+      {/* Sidebar Footer detailing the current active Administrator */}
+      <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex flex-col gap-3 relative">
+        {sidebarUserOpen && (
+          <>
+            {/* Backdrop */}
+            <div 
+              className="fixed inset-0 z-35" 
+              onClick={() => setSidebarUserOpen(false)} 
+            />
+            <div className="absolute bottom-[calc(100%-8px)] left-4 right-4 bg-white border border-slate-200/80 rounded-2xl shadow-[0_-10px_30px_rgba(16,27,53,0.08)] py-2 z-40 animate-scale-up text-slate-700">
+              <Link
+                href="/admin/profile"
+                onClick={() => setSidebarUserOpen(false)}
+                className="flex items-center gap-2.5 px-4 py-2.5 text-xs hover:bg-slate-50 hover:text-teal font-bold transition-all"
+              >
+                <UserCircle className="w-4 h-4 text-slate-400" />
+                My Profile
+              </Link>
+              <Link
+                href="/admin/settings"
+                onClick={() => setSidebarUserOpen(false)}
+                className="flex items-center gap-2.5 px-4 py-2.5 text-xs hover:bg-slate-50 hover:text-teal font-bold transition-all"
+              >
+                <Settings className="w-4 h-4 text-slate-400" />
+                Account Settings
+              </Link>
+              <div className="h-px bg-slate-100 my-1.5" />
+              <button
+                onClick={() => {
+                  setSidebarUserOpen(false);
+                  handleLogout();
+                }}
+                className="w-[calc(100%-16px)] mx-2 flex items-center gap-2.5 px-3 py-2 text-red-650 hover:bg-red-50 rounded-xl text-xs font-bold transition-all cursor-pointer border-none text-left"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </button>
+            </div>
+          </>
+        )}
+
+        <button
+          onClick={() => setSidebarUserOpen(!sidebarUserOpen)}
+          className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-100/50 transition-colors w-full text-left bg-transparent border-none cursor-pointer"
         >
-          <div className="w-9 h-9 rounded-full bg-teal text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm shadow-teal/10 overflow-hidden">
+          <div className="w-10 h-10 rounded-full bg-slate-50 text-brand-red flex items-center justify-center border border-slate-100 shadow-sm shadow-slate-100 overflow-hidden shrink-0">
             {adminUser?.photoUrl ? (
-              <Image src={adminUser.photoUrl} alt="Profile" width={36} height={36} className="object-cover w-full h-full" />
+              <Image src={adminUser.photoUrl} alt="Profile" width={40} height={40} className="object-cover w-full h-full" />
             ) : (
-              <span>{adminUser ? adminUser.username.slice(0, 2).toUpperCase() : "AD"}</span>
+              <User className="w-5 h-5 text-teal" />
             )}
           </div>
-          <div className="overflow-hidden flex-1 min-w-0">
-            <p className="text-xs font-semibold text-slate-800 truncate group-hover:text-teal transition-colors">
-              {adminUser?.firstName && adminUser?.lastName
-                ? `${adminUser.firstName} ${adminUser.lastName}`
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold text-slate-800 truncate select-none">
+              {adminUser?.firstName
+                ? `${adminUser.firstName} ${adminUser.lastName || ""}`
                 : adminUser?.username ?? "Administrator"}
             </p>
-            <p className="text-[10px] text-teal font-bold truncate capitalize">
+            <p className="text-[10px] font-extrabold text-slate-455 uppercase tracking-widest truncate select-none mt-0.5">
               {adminUser ? (adminUser.role === "superadmin" ? "Super Admin" : adminUser.role) : ""}
             </p>
           </div>
-        </Link>
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100/70 text-red-600 hover:text-red-700 text-xs font-semibold rounded-xl transition-all duration-200 cursor-pointer border border-red-100/50"
-        >
-          <LogOut className="w-3.5 h-3.5" />
-          Logout
         </button>
       </div>
     </div>
   );
 
+  const contextLoading = status === "loading" || (!adminUser && pathname !== "/admin/login");
+
   return (
-    <ConfirmProvider>
-      <AdminUserContext.Provider value={{ adminUser, loading: !adminUser, refreshUser: fetchUser }}>
-        <div className="min-h-screen bg-[#f8fafc] flex text-slate-800 font-sans relative pt-[3px]">
+    <AdminUserContext.Provider value={{ adminUser, loading: contextLoading, refreshUser: fetchUser }}>
+      <div className="min-h-screen bg-[#f8fafc] flex text-slate-800 font-sans relative pt-[3px]">
         {/* Premium top brand bar running across the viewport */}
         <div className="h-[3px] bg-gradient-to-r from-teal via-mint to-brand-red w-full absolute top-0 left-0 z-50 shadow-sm" />
 
@@ -339,23 +374,71 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 Connected
               </span>
               <div className="w-px h-6 bg-slate-200" />
-              <Link
-                href="/admin/profile"
-                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-              >
-                <div className="w-8 h-8 rounded-full bg-slate-50 text-brand-red flex items-center justify-center border border-slate-100 shadow-sm shadow-slate-100 overflow-hidden">
-                  {adminUser?.photoUrl ? (
-                    <Image src={adminUser.photoUrl} alt="Profile" width={32} height={32} className="object-cover w-full h-full" />
-                  ) : (
-                    <User className="w-4 h-4" />
-                  )}
-                </div>
-                <span className="text-xs font-bold text-slate-700 hidden sm:inline select-none">
-                  {adminUser?.firstName
-                    ? `${adminUser.firstName}${adminUser.lastName ? " " + adminUser.lastName : ""}`
-                    : adminUser?.username ?? "Admin"}
-                </span>
-              </Link>
+              <div className="relative">
+                <button
+                  onClick={() => setHeaderUserOpen(!headerUserOpen)}
+                  className="flex items-center gap-2 hover:opacity-80 transition-opacity bg-transparent border-none cursor-pointer"
+                >
+                  <div className="w-8 h-8 rounded-full bg-slate-50 text-brand-red flex items-center justify-center border border-slate-100 shadow-sm shadow-slate-100 overflow-hidden">
+                    {adminUser?.photoUrl ? (
+                      <Image src={adminUser.photoUrl} alt="Profile" width={32} height={32} className="object-cover w-full h-full" />
+                    ) : (
+                      <User className="w-4 h-4" />
+                    )}
+                  </div>
+                  <span className="text-xs font-bold text-slate-700 hidden sm:inline select-none">
+                    {adminUser?.firstName
+                      ? `${adminUser.firstName}${adminUser.lastName ? " " + adminUser.lastName : ""}`
+                      : adminUser?.username ?? "Admin"}
+                  </span>
+                </button>
+
+                {headerUserOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-35" 
+                      onClick={() => setHeaderUserOpen(false)} 
+                    />
+                    <div className="absolute right-0 top-11 bg-white border border-slate-200/80 rounded-2xl shadow-[0_10px_30px_rgba(16,27,53,0.08)] py-2 w-48 z-40 animate-scale-up text-slate-700">
+                      <div className="px-4 py-2 border-b border-slate-100">
+                        <p className="text-xs font-bold text-slate-800 truncate">
+                          {adminUser?.firstName ? `${adminUser.firstName} ${adminUser.lastName || ""}` : adminUser?.username ?? "Admin"}
+                        </p>
+                        <p className="text-[10px] text-slate-450 uppercase tracking-wider mt-0.5 truncate">
+                          {adminUser?.role || "Administrator"}
+                        </p>
+                      </div>
+                      <Link
+                        href="/admin/profile"
+                        onClick={() => setHeaderUserOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-xs hover:bg-slate-50 hover:text-teal font-bold transition-all mt-1"
+                      >
+                        <UserCircle className="w-4 h-4 text-slate-400" />
+                        My Profile
+                      </Link>
+                      <Link
+                        href="/admin/settings"
+                        onClick={() => setHeaderUserOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-xs hover:bg-slate-50 hover:text-teal font-bold transition-all"
+                      >
+                        <Settings className="w-4 h-4 text-slate-400" />
+                        Account Settings
+                      </Link>
+                      <div className="h-px bg-slate-100 my-1.5" />
+                      <button
+                        onClick={() => {
+                          setHeaderUserOpen(false);
+                          handleLogout();
+                        }}
+                        className="w-[calc(100%-16px)] mx-2 flex items-center gap-2.5 px-3 py-2 text-red-650 hover:bg-red-50 rounded-xl text-xs font-bold transition-all cursor-pointer border-none text-left"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </header>
 
@@ -365,7 +448,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </main>
         </div>
       </div>
-      </AdminUserContext.Provider>
-    </ConfirmProvider>
+    </AdminUserContext.Provider>
   );
 }

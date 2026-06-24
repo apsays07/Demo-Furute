@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Video from "@/models/Video";
 import { logActivity } from "@/lib/auth/logActivity";
+import { verifyAuth } from "@/lib/auth/verifyAuth";
 
 // GET /api/admin/videos - Fetch all videos with search, category & pagination
 export async function GET(request: Request) {
@@ -56,6 +57,9 @@ export async function GET(request: Request) {
 // POST /api/admin/videos - Create a new video
 export async function POST(request: Request) {
   try {
+    const auth = await verifyAuth(["superadmin", "admin", "editor"]);
+    if (!auth.success) return auth.response!;
+
     await connectToDatabase();
     const body = await request.json();
 

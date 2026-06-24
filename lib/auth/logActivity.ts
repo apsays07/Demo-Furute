@@ -1,21 +1,17 @@
-import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/auth/jwt";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ActivityLog from "@/models/ActivityLog";
 import { connectToDatabase } from "@/lib/mongodb";
 
 export async function logActivity(action: string, module: string, targetTitle: string) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("admin_token")?.value;
-    if (!token) return;
-
-    const payload = verifyToken(token);
-    if (!payload) return;
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) return;
 
     await connectToDatabase();
     await ActivityLog.create({
-      adminName: payload.username,
-      adminRole: payload.role,
+      adminName: session.user.name || session.user.email || "Unknown Admin",
+      adminRole: session.user.role,
       action,
       module,
       targetTitle,

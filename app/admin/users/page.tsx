@@ -92,6 +92,19 @@ export default function UsersManagementPage() {
     setActionSaving(true);
     setActionError(null);
     setSuccessMsg(null);
+
+    if (addForm.password.length < 8) {
+      setActionError("Password must be at least 8 characters long.");
+      setActionSaving(false);
+      return;
+    }
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!regex.test(addForm.password)) {
+      setActionError("Password must contain at least one uppercase, one lowercase, one number, and one special character (@$!%*?&).");
+      setActionSaving(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/admin/users", {
         method: "POST",
@@ -153,6 +166,19 @@ export default function UsersManagementPage() {
     setActionSaving(true);
     setActionError(null);
     setSuccessMsg(null);
+
+    if (resetPasswordVal.length < 8) {
+      setActionError("Password must be at least 8 characters long.");
+      setActionSaving(false);
+      return;
+    }
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!regex.test(resetPasswordVal)) {
+      setActionError("Password must contain at least one uppercase, one lowercase, one number, and one special character (@$!%*?&).");
+      setActionSaving(false);
+      return;
+    }
+
     try {
       const res = await fetch(`/api/admin/users/${selectedUser._id}`, {
         method: "PUT",
@@ -405,7 +431,7 @@ export default function UsersManagementPage() {
                     required
                     value={addForm.password}
                     onChange={(e) => setAddForm({ ...addForm, password: e.target.value })}
-                    placeholder="Minimum 6 characters"
+                    placeholder="Min 8 chars, strong password"
                     className="w-full pl-10 pr-4 py-2 bg-slate-50/50 border border-slate-200 focus:border-teal focus:bg-white rounded-xl text-sm outline-none transition-all"
                   />
                 </div>
@@ -512,7 +538,7 @@ export default function UsersManagementPage() {
                   required
                   value={resetPasswordVal}
                   onChange={(e) => setResetPasswordVal(e.target.value)}
-                  placeholder="Enter new password"
+                  placeholder="Min 8 chars, strong password"
                   className="w-full px-4 py-2 border border-slate-200 focus:border-teal rounded-xl text-sm outline-none transition-all"
                 />
               </div>

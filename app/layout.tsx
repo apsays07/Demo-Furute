@@ -4,6 +4,7 @@ import {
   Plus_Jakarta_Sans,
 } from "next/font/google";
 import "./globals.css";
+import BackspaceNavigation from "@/components/shared/BackspaceNavigation";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -90,6 +91,7 @@ export default function RootLayout({
       className={`${inter.variable} ${plusJakarta.variable} h-full antialiased`}
     >
       <body className="min-h-screen flex flex-col bg-white text-black">
+        <BackspaceNavigation />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
