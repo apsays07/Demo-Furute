@@ -91,8 +91,4 @@ const UserSchema: Schema = new Schema(
   }
 );
 
-// Add indexes for efficient searching
-UserSchema.index({ username: 1 });
-UserSchema.index({ email: 1 });
-
 export default (mongoose.models.User as mongoose.Model<IUser>) || mongoose.model<IUser>("User", UserSchema);

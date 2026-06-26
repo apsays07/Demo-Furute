@@ -309,31 +309,31 @@ function EventsContent() {
           <p className="text-gray-400 text-sm font-semibold">Loading scheduled events...</p>
         </div>
       ) : events.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {events.map((item) => (
             <div
               key={item._id}
-              className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(16,27,53,0.015)] hover:shadow-[0_20px_40px_rgba(16,27,53,0.04)] hover:-translate-y-1.5 flex flex-col justify-between transition-all duration-300 relative"
+              className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(16,27,53,0.005)] hover:shadow-[0_8px_20px_rgba(16,27,53,0.015)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative"
             >
               {/* Premium Gradient Top Line */}
-              <div className="h-[3px] w-full absolute top-0 left-0 bg-gradient-to-r from-teal to-mint z-10" />
+              <div className="h-[2px] w-full absolute top-0 left-0 bg-gradient-to-r from-teal to-mint z-10" />
               <div>
                 {/* Event Cover Image */}
-                <div className="aspect-video bg-gray-100 relative overflow-hidden border-b border-gray-100">
+                <div className="aspect-video bg-slate-50 relative overflow-hidden border-b border-slate-100">
                   {item.image ? (
                     <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-150">
-                      <Calendar className="w-8 h-8" />
+                    <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-100">
+                      <Calendar className="w-5 h-5" />
                     </div>
                   )}
                   <span
-                    className={`absolute top-3 right-3 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider text-white ${
+                    className={`absolute top-2 right-2 text-[7px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider text-white select-none ${
                       item.status === "upcoming"
                         ? "bg-teal"
                         : item.status === "active"
                         ? "bg-green-500"
-                        : "bg-gray-500"
+                        : "bg-slate-500"
                     }`}
                   >
                     {item.status}
@@ -341,69 +341,68 @@ function EventsContent() {
                 </div>
 
                 {/* Content */}
-                <div className="p-6 space-y-3">
-                  <h4 className="font-extrabold text-gray-900 leading-snug line-clamp-2">
+                <div className="p-3 space-y-1">
+                  <h4 className="font-bold text-slate-800 text-xs leading-snug line-clamp-1">
                     {item.title}
                   </h4>
 
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <Calendar className="w-4 h-4 shrink-0 text-teal" />
-                    <span>{new Date(item.date).toLocaleDateString(undefined, {
+                  <div className="flex items-center gap-1 text-[10px] text-slate-500">
+                    <Calendar className="w-3 h-3 shrink-0 text-teal" />
+                    <span className="truncate">{new Date(item.date).toLocaleDateString(undefined, {
                       weekday: "short",
-                      year: "numeric",
-                      month: "long",
+                      month: "short",
                       day: "numeric",
                     })}</span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <MapPin className="w-4 h-4 shrink-0 text-red-500" />
+                  <div className="flex items-center gap-1 text-[10px] text-slate-500">
+                    <MapPin className="w-3 h-3 shrink-0 text-red-500" />
                     <span className="truncate">{item.location}</span>
                   </div>
 
-                  <p className="text-sm text-gray-500 mt-2 line-clamp-3 leading-relaxed">
+                  <p className="text-[10px] text-slate-400 line-clamp-1 leading-relaxed">
                     {item.description}
                   </p>
                 </div>
               </div>
 
               {/* Actions Toolbar */}
-              <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4 bg-gray-50/30">
+              <div className="flex items-center justify-between border-t border-slate-100 px-3 py-2 bg-slate-50/20">
                 <button
                   onClick={() => handleToggleFeatured(item)}
-                  className={`px-2.5 py-1 text-xs font-bold rounded-lg border transition-all cursor-pointer ${
+                  className={`px-1.5 py-0.5 text-[8px] font-bold rounded border transition-all cursor-pointer ${
                     item.featured
                       ? "bg-teal-light text-teal border-teal/20"
-                      : "bg-white text-gray-500 border-gray-200"
+                      : "bg-white text-slate-500 border-slate-200"
                   }`}
                 >
                   Featured
                 </button>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   {item.registrationLink && (
                     <a
                       href={item.registrationLink}
                       target="_blank"
                       rel="noreferrer"
-                      className="p-1.5 bg-white hover:bg-teal-light text-teal border border-teal/20 rounded-lg cursor-pointer"
+                      className="p-0.5 bg-white hover:bg-teal-light text-teal border border-teal/20 rounded cursor-pointer"
                       title="Registration Link"
                     >
-                      <LinkIcon className="w-4 h-4" />
+                      <LinkIcon className="w-3 h-3" />
                     </a>
                   )}
                   <button
                     onClick={() => openEditModal(item)}
-                    className="p-1.5 bg-white hover:bg-teal-light text-gray-600 border border-gray-200 hover:border-teal/20 rounded-lg cursor-pointer"
+                    className="p-0.5 bg-white hover:bg-teal-light text-slate-500 hover:text-teal border border-slate-200 hover:border-teal/20 rounded cursor-pointer"
                   >
-                    <Edit2 className="w-4 h-4" />
+                    <Edit2 className="w-3 h-3" />
                   </button>
                   {adminUser?.role !== "editor" && (
                     <button
                       onClick={() => handleDelete(item._id)}
-                      className="p-1.5 bg-white hover:bg-red-50 text-gray-600 border border-gray-200 hover:border-red-200 rounded-lg cursor-pointer"
+                      className="p-0.5 bg-white hover:bg-red-50 text-slate-500 hover:text-red-600 border border-slate-200 hover:border-red-200 rounded cursor-pointer"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3 h-3" />
                     </button>
                   )}
                 </div>

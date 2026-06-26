@@ -34,7 +34,10 @@ export default function TestimonialCard({
         &quot;
       </span>
 
-      <p className={styles["testimonial-review"]}>{review}</p>
+      <div
+        className={`${styles["testimonial-review"]} prose prose-sm`}
+        dangerouslySetInnerHTML={{ __html: review.replace(/\n/g, "<br />") }}
+      />
 
       <div className={styles["testimonial-author"]}>
         {/* Avatar: photo if available, else initials */}

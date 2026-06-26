@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Search,
   FileText,
@@ -46,11 +47,13 @@ interface Pagination {
 
 function SpeakerRequestsContent() {
   const { confirm, toast } = useConfirm();
+  const searchParams = useSearchParams();
+  const initialStatus = searchParams.get("status") || "";
   // 1. STATE FOR LISTING & PAGINATION
   const [requests, setRequests] = useState<SpeakerRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState(initialStatus);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState<Pagination | null>(null);
 

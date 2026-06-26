@@ -3,9 +3,11 @@
 
 import React, { useState, useEffect, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import WebsitePreview from "@/components/admin/WebsitePreview";
 import SaveSuccessBanner from "@/components/admin/SaveSuccessBanner";
+import RichTextEditor from "@/components/admin/RichTextEditor";
+import BulkActionBar from "@/components/admin/BulkActionBar";
 import { useAdminUser } from "@/lib/context/AdminUserContext";
 import { useConfirm } from "@/lib/context/ConfirmContext";
 import {
@@ -64,6 +66,62 @@ function TestimonialsContent() {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState<Pagination | null>(null);
 
+  // 1b. STATE FOR BULK SELECTION
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  async function handleBulkDelete() {
+    const isConfirmed = await confirm(`Are you sure you want to delete ${selectedIds.length} selected testimonials?`);
+    if (!isConfirmed) return;
+
+    try {
+      await Promise.all(
+        selectedIds.map((id) => fetch(`/api/admin/testimonials/${id}`, { method: "DELETE" }))
+      );
+      setTestimonials((prev) => prev.filter((t) => !selectedIds.includes(t._id)));
+      setSelectedIds([]);
+      toast("Testimonials deleted successfully", "success");
+    } catch (err) {
+      console.error(err);
+      toast("Failed to delete some testimonials", "error");
+    }
+  }
+
+  async function handleBulkToggleVisibility() {
+    try {
+      const itemsToUpdate = testimonials.filter((t) => selectedIds.includes(t._id));
+      await Promise.all(
+        itemsToUpdate.map((item) =>
+          fetch(`/api/admin/testimonials/${item._id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ visible: !item.visible }),
+          })
+        )
+      );
+
+      setTestimonials((prev) =>
+        prev.map((t) => (selectedIds.includes(t._id) ? { ...t, visible: !t.visible } : t))
+      );
+      setSelectedIds([]);
+      toast("Visibility toggled successfully", "success");
+    } catch (err) {
+      console.error(err);
+      toast("Failed to toggle visibility", "error");
+    }
+  }
+
+  function handleBulkExport() {
+    const selectedData = testimonials.filter((t) => selectedIds.includes(t._id));
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(selectedData, null, 2));
+    const downloadAnchor = document.createElement("a");
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `testimonials_export_${new Date().toISOString().split("T")[0]}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    toast("Data exported successfully", "success");
+  }
+
   // 2. STATE FOR MODAL FORMS
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Testimonial | null>(null);
@@ -76,6 +134,7 @@ function TestimonialsContent() {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<TestimonialFormData>();
 
@@ -289,6 +348,20 @@ function TestimonialsContent() {
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap justify-end">
+          {testimonials.length > 0 && (
+            <button
+              onClick={() => {
+                if (selectedIds.length === testimonials.length) {
+                  setSelectedIds([]);
+                } else {
+                  setSelectedIds(testimonials.map((t) => t._id));
+                }
+              }}
+              className="px-3.5 py-2.5 border border-slate-200 bg-white rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-50 transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
+            >
+              {selectedIds.length === testimonials.length ? "Deselect All" : "Select All"}
+            </button>
+          )}
           <WebsitePreview path="/testimonials" label="Preview Testimonials" />
           <button
             onClick={openAddModal}
@@ -322,6 +395,22 @@ function TestimonialsContent() {
                 item.visible ? "border-gray-200" : "border-gray-200 bg-gray-50/50 opacity-70"
               }`}
             >
+              {/* Checkbox for Bulk Actions */}
+              <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.includes(item._id)}
+                  onChange={() => {
+                    setSelectedIds((prev) =>
+                      prev.includes(item._id)
+                        ? prev.filter((id) => id !== item._id)
+                        : [...prev, item._id]
+                    );
+                  }}
+                  className="w-4 h-4 rounded text-teal focus:ring-teal cursor-pointer"
+                />
+              </div>
+
               <div>
                 {/* Profile Header */}
                 <div className="flex items-center gap-4 mb-4">
@@ -515,11 +604,18 @@ function TestimonialsContent() {
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">
                   Review Text
                 </label>
-                <textarea
-                  rows={4}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none resize-none"
-                  placeholder="Paste review message here..."
-                  {...register("review", { required: "Review text is required" })}
+                <Controller
+                  name="review"
+                  control={control}
+                  rules={{ required: "Review text is required" }}
+                  render={({ field }) => (
+                    <RichTextEditor
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      placeholder="Paste review message here..."
+                      rows={4}
+                    />
+                  )}
                 />
                 {errors.review && (
                   <span className="text-[10px] text-red-500">{errors.review.message as string}</span>
@@ -602,6 +698,15 @@ function TestimonialsContent() {
           </div>
         </div>
       )}
+      {/* Bulk Action Bar */}
+      <BulkActionBar
+        selectedCount={selectedIds.length}
+        onClear={() => setSelectedIds([])}
+        onDelete={handleBulkDelete}
+        onToggleVisibility={handleBulkToggleVisibility}
+        onExport={handleBulkExport}
+        hasVisibility
+      />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Video from "@/models/Video";
 
 // Retrieve the MongoDB connection string from the environment variables.
 // In Next.js, process.env holds variables defined in .env.local.
@@ -51,8 +52,59 @@ export async function connectToDatabase() {
     };
 
     // Initialize the mongoose connection promise
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongooseInstance) => {
+    cached.promise = mongoose.connect(MONGODB_URI!, opts).then(async (mongooseInstance) => {
       console.log("Successfully connected to MongoDB via Mongoose.");
+      
+      // Auto-seed the 3 default homepage videos if collection is empty
+      try {
+        const count = await Video.countDocuments();
+        if (count === 0) {
+          console.log("Seeding default videos...");
+          const defaultVideos = [
+            {
+              title: "Featured Talk",
+              description: "Watch the featured talk and key highlights.",
+              youtubeUrl: "https://www.youtube.com/watch?v=i-Qe4F17hKc",
+              thumbnail: "https://img.youtube.com/vi/i-Qe4F17hKc/mqdefault.jpg",
+              category: "General",
+              featured: true,
+              visible: true,
+            },
+            {
+              title: "Business Learning Session",
+              description: "Key business learning sessions and insights.",
+              youtubeUrl: "https://www.youtube.com/watch?v=Dp65MGhze3I",
+              thumbnail: "https://img.youtube.com/vi/Dp65MGhze3I/mqdefault.jpg",
+              category: "General",
+              featured: true,
+              visible: true,
+            },
+            {
+              title: "Growth Insight",
+              description: "Growth insights and strategic directions.",
+              youtubeUrl: "https://www.youtube.com/watch?v=2ofM34EwKJo",
+              thumbnail: "https://img.youtube.com/vi/2ofM34EwKJo/mqdefault.jpg",
+              category: "General",
+              featured: true,
+              visible: true,
+            },
+            {
+              title: "Mentoring Moment",
+              description: "Mentoring moments and valuable life lessons.",
+              youtubeUrl: "https://www.youtube.com/watch?v=S9fjt9HVf6Q",
+              thumbnail: "https://img.youtube.com/vi/S9fjt9HVf6Q/mqdefault.jpg",
+              category: "Mentoring",
+              featured: true,
+              visible: true,
+            },
+          ];
+          await Video.insertMany(defaultVideos);
+          console.log("Successfully seeded 4 default videos.");
+        }
+      } catch (err) {
+        console.error("Failed to seed default videos:", err);
+      }
+
       return mongooseInstance;
     });
   }

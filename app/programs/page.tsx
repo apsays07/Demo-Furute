@@ -236,7 +236,10 @@ export default function ProgramsPage() {
                     </span>
                   </div>
                   <h3>{prog.title}</h3>
-                  <p>{prog.description}</p>
+                  <div
+                    className="text-slate-655 text-sm mt-2 mb-4 leading-relaxed prose prose-sm"
+                    dangerouslySetInnerHTML={{ __html: prog.description.replace(/\n/g, "<br />") }}
+                  />
                   <Link
                     href={`/contact?subject=Program Inquiry - ${encodeURIComponent(prog.title)}`}
                     className={styles.dbProgramCta}

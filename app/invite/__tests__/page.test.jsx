@@ -83,6 +83,8 @@ jest.mock("@/components/ui/Icons", () => ({
 
 describe("Invite Speaker Page", () => {
   beforeEach(() => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(console, "log").mockImplementation(() => {});
     mockEmailOnSuccess = true;
     Storage.prototype.getItem = jest.fn(() => "student@gmail.com");
     global.fetch = jest.fn();

@@ -16,7 +16,10 @@ export default function VerifyOtpPage() {
   const [isSuccess, setIsSuccess] = useState(false);
 
   // If session is already verified or 2FA not required, redirect to dashboard
+  // Skip redirect when isSuccess is true — let the success popup show first
   useEffect(() => {
+    if (isSuccess) return;
+
     if (status === "authenticated" && session?.user) {
       if (!session.user.requires2FA || session.user.is2FAVerified) {
         router.push("/admin/dashboard");
@@ -24,7 +27,7 @@ export default function VerifyOtpPage() {
     } else if (status === "unauthenticated") {
       router.push("/admin/login");
     }
-  }, [session, status, router]);
+  }, [session, status, router, isSuccess]);
 
   async function handleVerify(e: React.FormEvent) {
     e.preventDefault();
@@ -70,13 +73,13 @@ export default function VerifyOtpPage() {
     await signOut({ callbackUrl: "/admin/login" });
   }
 
-  if (status === "loading" || isSuccess) {
+  if (status === "loading" && !isSuccess) {
     return (
       <main className="min-h-screen bg-gradient-to-tr from-[#f3f8fc] via-white to-[#fffbfa] flex items-center justify-center p-4 relative overflow-hidden font-sans">
         <div className="text-center space-y-4">
           <Loader2 className="w-10 h-10 animate-spin text-teal mx-auto" />
           <p className="text-sm font-bold text-slate-700">
-            {isSuccess ? "Initializing Session..." : "Verifying Authentication Context..."}
+            Verifying Authentication Context...
           </p>
         </div>
       </main>
@@ -181,9 +184,22 @@ export default function VerifyOtpPage() {
                 type="text"
                 disabled={loading}
                 value={otp}
-                onChange={(e) => setOtp(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 6);
+                  setOtp(val);
+                  if (val.length === 6) {
+                    // Auto-submit after 6 digits entered
+                    setTimeout(() => {
+                      const form = e.target.closest("form");
+                      if (form) form.requestSubmit();
+                    }, 150);
+                  }
+                }}
+                maxLength={6}
+                inputMode="numeric"
+                pattern="[0-9]*"
                 className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 focus:bg-white focus:border-teal focus:ring-1 focus:ring-teal text-slate-900 rounded-xl text-sm transition-all outline-none font-mono tracking-widest text-center text-lg font-bold"
-                placeholder="123456 or XXXX-XXXX"
+                placeholder="123456"
                 autoFocus
               />
             </div>
@@ -215,6 +231,39 @@ export default function VerifyOtpPage() {
           </button>
         </form>
       </div>
+
+      {isSuccess && (
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white border border-slate-100 rounded-2xl p-10 max-w-sm w-full text-center shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] flex flex-col items-center justify-center space-y-6 animate-scale-up relative">
+            <div className="absolute top-0 inset-x-0 h-1 bg-emerald-500 rounded-t-2xl" />
+            
+            <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500 mb-1 relative">
+              <span className="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping opacity-75" />
+              <Check className="w-8 h-8 relative z-10 stroke-[2.5] animate-check-pop" />
+            </div>
+            
+            <div className="space-y-1.5">
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+                Authentication Successful
+              </h2>
+              <p className="text-xs text-slate-500 leading-relaxed px-2">
+                Session established for <span className="font-semibold text-slate-800 capitalize">{session?.user?.name || "Admin"}</span>. Initializing secure channel.
+              </p>
+            </div>
+            
+            <div className="w-full space-y-3">
+              <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden relative">
+                <div className="absolute top-0 left-0 bottom-0 bg-emerald-500 rounded-full animate-progress-fill" />
+              </div>
+              
+              <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-slate-450 uppercase tracking-widest">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-500" />
+                <span>Redirecting to Console...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

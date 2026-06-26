@@ -17,6 +17,7 @@ import {
   QrCode,
   Check,
   Trash2,
+  Search,
 } from "lucide-react";
 import { useConfirm } from "@/lib/context/ConfirmContext";
 
@@ -45,6 +46,9 @@ export default function AdminSettingsPage() {
   const [copiedCodes, setCopiedCodes] = useState(false);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [logsLoading, setLogsLoading] = useState(false);
+  const [logSearch, setLogSearch] = useState("");
+  const [logActionFilter, setLogActionFilter] = useState("");
+  const [backingUp, setBackingUp] = useState(false);
 
   interface SettingsFormData {
     username: string;
@@ -80,10 +84,14 @@ export default function AdminSettingsPage() {
     }
   }, [session, setValue]);
 
-  async function loadAuditLogs() {
+  async function loadAuditLogs(searchVal = logSearch, actionVal = logActionFilter) {
     setLogsLoading(true);
     try {
-      const res = await fetch("/api/admin/auth/audit-logs");
+      const params = new URLSearchParams();
+      if (searchVal) params.set("search", searchVal);
+      if (actionVal) params.set("action", actionVal);
+
+      const res = await fetch(`/api/admin/auth/audit-logs?${params.toString()}`);
       const result = await res.json();
       if (res.ok) {
         setAuditLogs(result.logs || []);
@@ -96,6 +104,11 @@ export default function AdminSettingsPage() {
       setLogsLoading(false);
     }
   }
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    loadAuditLogs(logSearch, logActionFilter);
+  };
 
   const [clearingLogs, setClearingLogs] = useState(false);
 
@@ -127,6 +140,19 @@ export default function AdminSettingsPage() {
       toast("An error occurred while clearing history", "error");
     } finally {
       setClearingLogs(false);
+    }
+  }
+
+  async function handleDownloadBackup() {
+    setBackingUp(true);
+    try {
+      window.location.href = "/api/admin/backup";
+      toast("Downloading database backup snapshot...", "success");
+    } catch (err) {
+      console.error(err);
+      toast("Failed to download backup", "error");
+    } finally {
+      setBackingUp(false);
     }
   }
 
@@ -840,6 +866,57 @@ export default function AdminSettingsPage() {
                       </button>
                     )}
                   </div>
+
+                  {/* Search and Filters */}
+                  <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3 mb-6">
+                    <div className="flex-1 relative">
+                      <input
+                        type="text"
+                        value={logSearch}
+                        onChange={(e) => setLogSearch(e.target.value)}
+                        placeholder="Search logs by email, IP, or action..."
+                        className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 focus:bg-white focus:border-teal focus:ring-1 focus:ring-teal text-xs rounded-xl outline-none transition-all"
+                      />
+                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    </div>
+
+                    <select
+                      value={logActionFilter}
+                      onChange={(e) => {
+                        setLogActionFilter(e.target.value);
+                        loadAuditLogs(logSearch, e.target.value);
+                      }}
+                      className="px-3 py-2 bg-slate-50 border border-slate-200 focus:border-teal focus:ring-1 focus:ring-teal text-xs font-bold text-slate-700 rounded-xl outline-none transition-all cursor-pointer"
+                    >
+                      <option value="">All Actions</option>
+                      <option value="Login Success">Login Success</option>
+                      <option value="Login Failed">Login Failed</option>
+                      <option value="Account Locked">Account Locked</option>
+                      <option value="2FA Enabled">2FA Enabled</option>
+                      <option value="2FA Disabled">2FA Disabled</option>
+                      <option value="Password Changed">Password Changed</option>
+                    </select>
+
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-teal hover:bg-teal-dark text-white font-extrabold text-xs uppercase tracking-wider rounded-xl cursor-pointer border-none shadow-sm transition-all"
+                    >
+                      Search
+                    </button>
+                    {(logSearch || logActionFilter) && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setLogSearch("");
+                          setLogActionFilter("");
+                          loadAuditLogs("", "");
+                        }}
+                        className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl cursor-pointer border border-slate-200 transition-all"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </form>
                   
                   {logsLoading ? (
                     <div className="flex justify-center py-6">
@@ -873,6 +950,28 @@ export default function AdminSettingsPage() {
                     </div>
                   )}
                 </div>
+
+                {/* Backup & Database Maintenance Section (Superadmin Only) */}
+                {session?.user?.role === "superadmin" && (
+                  <div className="border-t border-slate-100 pt-8 mt-8">
+                    <h4 className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-3">
+                      <Download className="w-4 h-4 text-teal" />
+                      System Maintenance & Backups
+                    </h4>
+                    <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                      As a Super Administrator, you can download a full backup snapshot of the database collections (including all contacts, speaker requests, and testimonials) in a structured JSON format.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleDownloadBackup}
+                      disabled={backingUp}
+                      className="px-4 py-2.5 bg-teal hover:bg-teal-dark text-white font-extrabold text-xs uppercase tracking-wider rounded-xl cursor-pointer shadow-md shadow-teal/10 hover:shadow-teal/20 transition-all border-none flex items-center gap-2 disabled:opacity-50"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download Database Snapshot
+                    </button>
+                  </div>
+                )}
                 
               </div>
             )}

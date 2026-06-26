@@ -7,6 +7,7 @@ import Program from "@/models/Program";
 import Contact, { IContact } from "@/models/Contact";
 import SpeakerRequest, { ISpeakerRequest } from "@/models/SpeakerRequest";
 import ActivityLog from "@/models/ActivityLog";
+import Newsletter from "@/models/Newsletter";
 import { verifyAuth } from "@/lib/auth/verifyAuth";
 
 export async function GET() {
@@ -21,6 +22,10 @@ export async function GET() {
       programsCount,
       contactsCount,
       speakerRequestsCount,
+      pendingTestimonialsCount,
+      pendingContactsCount,
+      pendingSpeakerRequestsCount,
+      draftProgramsCount,
     ] = await Promise.all([
       Testimonial.countDocuments(),
       Video.countDocuments(),
@@ -28,6 +33,10 @@ export async function GET() {
       Program.countDocuments(),
       Contact.countDocuments(),
       SpeakerRequest.countDocuments(),
+      Testimonial.countDocuments({ visible: false }),
+      Contact.countDocuments({ status: "pending" }),
+      SpeakerRequest.countDocuments({ status: "pending" }),
+      Program.countDocuments({ visible: false }),
     ]);
 
     // Fetch recent submissions in parallel
@@ -77,6 +86,58 @@ export async function GET() {
       .limit(10)
       .lean();
 
+    // ─── CHARTS AGGREGATION (LAST 6 MONTHS) ───
+    const now = new Date();
+    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+
+    const [allContacts, allSpeakerRequests, allNewsletters] = await Promise.all([
+      Contact.find({ createdAt: { $gte: sixMonthsAgo } }, "createdAt").lean(),
+      SpeakerRequest.find({ createdAt: { $gte: sixMonthsAgo } }, "createdAt").lean(),
+      Newsletter.find({ createdAt: { $gte: sixMonthsAgo } }, "createdAt").lean(),
+    ]);
+
+    const chartData: Array<{
+      key: string;
+      label: string;
+      contacts: number;
+      speakerRequests: number;
+      newsletters: number;
+    }> = [];
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const year = d.getFullYear();
+      const monthIndex = d.getMonth();
+      const key = `${year}-${String(monthIndex + 1).padStart(2, "0")}`;
+      const label = `${monthNames[monthIndex]} ${year}`;
+      chartData.push({ key, label, contacts: 0, speakerRequests: 0, newsletters: 0 });
+    }
+
+    const getMonthKey = (date: Date): string => {
+      const d = new Date(date);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    };
+
+    allContacts.forEach((c: any) => {
+      const key = getMonthKey(c.createdAt);
+      const m = chartData.find((x) => x.key === key);
+      if (m) m.contacts++;
+    });
+
+    allSpeakerRequests.forEach((sr: any) => {
+      const key = getMonthKey(sr.createdAt);
+      const m = chartData.find((x) => x.key === key);
+      if (m) m.speakerRequests++;
+    });
+
+    allNewsletters.forEach((n: any) => {
+      const key = getMonthKey(n.createdAt);
+      const m = chartData.find((x) => x.key === key);
+      if (m) m.newsletters++;
+    });
+
     return NextResponse.json({
       success: true,
       counts: {
@@ -86,9 +147,14 @@ export async function GET() {
         programs: programsCount,
         contacts: contactsCount,
         speakerRequests: speakerRequestsCount,
+        pendingTestimonials: pendingTestimonialsCount,
+        pendingContacts: pendingContactsCount,
+        pendingSpeakerRequests: pendingSpeakerRequestsCount,
+        draftPrograms: draftProgramsCount,
       },
       recentActivity: activityLogs.slice(0, 8),
       adminActivities: recentAdminActivities,
+      chartData,
     });
   } catch (error: unknown) {
     console.error("Stats API Error:", error);

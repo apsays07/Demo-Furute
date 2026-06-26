@@ -329,19 +329,19 @@ function VideosContent() {
           <p className="text-gray-400 text-sm font-semibold">Loading videos catalog...</p>
         </div>
       ) : videos.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {videos.map((item) => {
             const ytId = getYouTubeId(item.youtubeUrl);
             return (
               <div
                 key={item._id}
-                className={`bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(16,27,53,0.015)] hover:shadow-[0_20px_40px_rgba(16,27,53,0.04)] hover:-translate-y-1.5 flex flex-col justify-between transition-all duration-300 relative ${
-                  item.visible ? "border-gray-200" : "border-gray-200 bg-gray-50/50 opacity-70"
+                className={`bg-white border border-slate-100 rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(16,27,53,0.005)] hover:shadow-[0_8px_20px_rgba(16,27,53,0.015)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative ${
+                  item.visible ? "border-slate-200" : "border-slate-200 bg-slate-50/50 opacity-70"
                 }`}
               >
                 <div>
                   {/* YouTube Thumbnail Preview */}
-                  <div className="aspect-video bg-gray-100 relative overflow-hidden group border-b border-gray-100">
+                  <div className="aspect-video bg-slate-50 relative overflow-hidden group border-b border-slate-100">
                     {ytId ? (
                       <img
                         src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`}
@@ -349,73 +349,73 @@ function VideosContent() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-150 text-gray-400">
-                        <Video className="w-8 h-8" />
+                      <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
+                        <Video className="w-5 h-5" />
                       </div>
                     )}
-                    <span className="absolute top-3 right-3 text-[10px] font-bold px-2 py-0.5 bg-black/60 backdrop-blur-md text-white rounded-md uppercase tracking-wider">
+                    <span className="absolute top-2 right-2 text-[7px] font-bold px-1.5 py-0.5 bg-black/60 backdrop-blur-md text-white rounded uppercase tracking-wider select-none">
                       {item.category}
                     </span>
                   </div>
 
                   {/* Copy content */}
-                  <div className="p-6">
-                    <h4 className="font-extrabold text-gray-900 leading-snug line-clamp-2">
+                  <div className="p-3">
+                    <h4 className="font-bold text-slate-800 text-xs leading-snug line-clamp-1">
                       {item.title}
                     </h4>
-                    <p className="text-sm text-gray-500 mt-2 line-clamp-3 leading-relaxed">
+                    <p className="text-[10px] text-slate-400 mt-0.5 line-clamp-1 leading-relaxed">
                       {item.description || "No description provided."}
                     </p>
                     <a
                       href={item.youtubeUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs text-teal hover:text-teal-dark font-bold mt-4"
+                      className="inline-flex items-center gap-1 text-[8px] text-teal hover:text-teal-dark font-bold uppercase tracking-wider mt-2.5"
                     >
                       Watch on YouTube
-                      <ExternalLink className="w-3.5 h-3.5" />
+                      <ExternalLink className="w-2.5 h-2.5" />
                     </a>
                   </div>
                 </div>
 
                 {/* Toolbar */}
-                <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4 bg-gray-50/30">
-                  <div className="flex gap-3 text-xs font-bold">
+                <div className="flex items-center justify-between border-t border-slate-100 px-3 py-2 bg-slate-50/20">
+                  <div className="flex gap-1.5 text-[8px] font-bold">
                     <button
                       onClick={() => handleToggleFeatured(item)}
-                      className={`px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
+                      className={`px-1.5 py-0.5 rounded text-[8px] border transition-all cursor-pointer ${
                         item.featured
                           ? "bg-teal-light text-teal border-teal/20"
-                          : "bg-white text-gray-500 border-gray-200"
+                          : "bg-white text-slate-500 border-slate-200"
                       }`}
                     >
                       Featured
                     </button>
                     <button
                       onClick={() => handleToggleVisible(item)}
-                      className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                      className={`p-0.5 rounded border transition-all cursor-pointer ${
                         item.visible
                           ? "bg-teal-light text-teal border-teal/20 hover:bg-teal-light/80"
-                          : "bg-white text-gray-400 border-gray-200 hover:bg-gray-100"
+                          : "bg-white text-slate-400 border-slate-200 hover:bg-slate-150"
                       }`}
                     >
-                      {item.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                      {item.visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
                     </button>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     <button
                       onClick={() => openEditModal(item)}
-                      className="p-1.5 bg-white hover:bg-teal-light text-gray-600 hover:text-teal border border-gray-200 hover:border-teal/20 rounded-lg cursor-pointer"
+                      className="p-0.5 bg-white hover:bg-teal-light text-slate-500 hover:text-teal border border-slate-200 hover:border-teal/20 rounded cursor-pointer"
                     >
-                      <Edit2 className="w-4 h-4" />
+                      <Edit2 className="w-3 h-3" />
                     </button>
                     {adminUser?.role !== "editor" && (
                       <button
                         onClick={() => handleDelete(item._id)}
-                        className="p-1.5 bg-white hover:bg-red-50 text-gray-600 hover:text-red-650 border border-gray-200 hover:border-red-200 rounded-lg cursor-pointer"
+                        className="p-0.5 bg-white hover:bg-red-50 text-slate-500 hover:text-red-600 border border-slate-200 hover:border-red-200 rounded cursor-pointer"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3 h-3" />
                       </button>
                     )}
                   </div>

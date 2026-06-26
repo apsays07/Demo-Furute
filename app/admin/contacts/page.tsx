@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Search,
   Mail,
@@ -17,6 +18,7 @@ import {
   Building,
 } from "lucide-react";
 import { useConfirm } from "@/lib/context/ConfirmContext";
+import BulkActionBar from "@/components/admin/BulkActionBar";
 
 interface Contact {
   _id: string;
@@ -39,16 +41,50 @@ interface Pagination {
 
 function ContactsContent() {
   const { confirm, toast } = useConfirm();
+  const searchParams = useSearchParams();
+  const initialStatus = searchParams.get("status") || "";
   // 1. STATE FOR LISTING & PAGINATION
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState(initialStatus);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState<Pagination | null>(null);
 
   // 2. STATE FOR DETAILS MODAL
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+
+  // 2b. STATE FOR BULK SELECTION
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  async function handleBulkDelete() {
+    const isConfirmed = await confirm(`Are you sure you want to delete ${selectedIds.length} contact inquiries?`);
+    if (!isConfirmed) return;
+
+    try {
+      await Promise.all(
+        selectedIds.map((id) => fetch(`/api/admin/contacts/${id}`, { method: "DELETE" }))
+      );
+      setContacts((prev) => prev.filter((c) => !selectedIds.includes(c._id)));
+      setSelectedIds([]);
+      toast("Inquiries deleted successfully", "success");
+    } catch (err) {
+      console.error(err);
+      toast("Failed to delete some inquiries", "error");
+    }
+  }
+
+  function handleBulkExport() {
+    const selectedData = contacts.filter((c) => selectedIds.includes(c._id));
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(selectedData, null, 2));
+    const downloadAnchor = document.createElement("a");
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `contacts_export_${new Date().toISOString().split("T")[0]}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    toast("Data exported successfully", "success");
+  }
 
   // Load contacts
   useEffect(() => {
@@ -226,6 +262,20 @@ function ContactsContent() {
             <table className="w-full border-collapse text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/70 text-xs font-bold uppercase tracking-wider text-gray-400">
+                  <th className="w-12 px-6 py-4">
+                    <input
+                      type="checkbox"
+                      checked={contacts.length > 0 && selectedIds.length === contacts.length}
+                      onChange={() => {
+                        if (selectedIds.length === contacts.length) {
+                          setSelectedIds([]);
+                        } else {
+                          setSelectedIds(contacts.map((c) => c._id));
+                        }
+                      }}
+                      className="w-4 h-4 rounded text-teal focus:ring-teal cursor-pointer"
+                    />
+                  </th>
                   <th className="px-6 py-4">Sender Details</th>
                   <th className="px-6 py-4">Inquiry Subject</th>
                   <th className="px-6 py-4">Status</th>
@@ -236,6 +286,20 @@ function ContactsContent() {
               <tbody className="divide-y divide-gray-100 font-sans">
                 {contacts.map((item) => (
                   <tr key={item._id} className="hover:bg-gray-50/40 transition-all">
+                    <td className="w-12 px-6 py-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(item._id)}
+                        onChange={() => {
+                          setSelectedIds((prev) =>
+                            prev.includes(item._id)
+                              ? prev.filter((id) => id !== item._id)
+                              : [...prev, item._id]
+                          );
+                        }}
+                        className="w-4 h-4 rounded text-teal focus:ring-teal cursor-pointer"
+                      />
+                    </td>
                     <td className="px-6 py-4">
                       <div className="min-w-0">
                         <p className="font-bold text-gray-900 truncate">{item.name}</p>
@@ -441,6 +505,13 @@ function ContactsContent() {
           </div>
         </div>
       )}
+      {/* Bulk Action Bar */}
+      <BulkActionBar
+        selectedCount={selectedIds.length}
+        onClear={() => setSelectedIds([])}
+        onDelete={handleBulkDelete}
+        onExport={handleBulkExport}
+      />
     </div>
   );
 }

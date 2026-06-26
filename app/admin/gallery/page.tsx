@@ -5,6 +5,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { useAdminUser } from "@/lib/context/AdminUserContext";
 import { useConfirm } from "@/lib/context/ConfirmContext";
+import BulkActionBar from "@/components/admin/BulkActionBar";
 import {
   Plus,
   Trash2,
@@ -36,6 +37,38 @@ function GalleryContent() {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState("");
+
+  // 1b. STATE FOR BULK SELECTION
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  async function handleBulkDelete() {
+    const isConfirmed = await confirm(`Are you sure you want to delete ${selectedIds.length} selected images from the gallery?`);
+    if (!isConfirmed) return;
+
+    try {
+      await Promise.all(
+        selectedIds.map((id) => fetch(`/api/admin/gallery/${id}`, { method: "DELETE" }))
+      );
+      setImages((prev) => prev.filter((img) => !selectedIds.includes(img._id)));
+      setSelectedIds([]);
+      toast("Images deleted successfully", "success");
+    } catch (err) {
+      console.error(err);
+      toast("Failed to delete some images", "error");
+    }
+  }
+
+  function handleBulkExport() {
+    const selectedData = images.filter((img) => selectedIds.includes(img._id));
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(selectedData, null, 2));
+    const downloadAnchor = document.createElement("a");
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `gallery_export_${new Date().toISOString().split("T")[0]}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    toast("Data exported successfully", "success");
+  }
 
   // 2. STATE FOR MODAL FORMS
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -178,13 +211,29 @@ function GalleryContent() {
           ))}
         </select>
 
-        <button
-          onClick={openAddModal}
-          className="w-full sm:w-auto px-4 py-2.5 bg-teal hover:bg-teal-dark text-white text-xs font-extrabold uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-teal/10 "
-        >
-          <Plus className="w-4 h-4" />
-          Upload Image
-        </button>
+        <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap justify-end">
+          {images.length > 0 && (
+            <button
+              onClick={() => {
+                if (selectedIds.length === images.length) {
+                  setSelectedIds([]);
+                } else {
+                  setSelectedIds(images.map((img) => img._id));
+                }
+              }}
+              className="px-3.5 py-2.5 border border-slate-200 bg-white rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-50 transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
+            >
+              {selectedIds.length === images.length ? "Deselect All" : "Select All"}
+            </button>
+          )}
+          <button
+            onClick={openAddModal}
+            className="w-full sm:w-auto px-4 py-2.5 bg-teal hover:bg-teal-dark text-white text-xs font-extrabold uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-teal/10 "
+          >
+            <Plus className="w-4 h-4" />
+            Upload Image
+          </button>
+        </div>
       </div>
 
       {/* Grid gallery */}
@@ -200,6 +249,22 @@ function GalleryContent() {
               key={item._id}
               className="bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-sm group relative aspect-square flex flex-col justify-between"
             >
+              {/* Checkbox for Bulk Actions */}
+              <div className="absolute top-3 left-3 z-20">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.includes(item._id)}
+                  onChange={() => {
+                    setSelectedIds((prev) =>
+                      prev.includes(item._id)
+                        ? prev.filter((id) => id !== item._id)
+                        : [...prev, item._id]
+                    );
+                  }}
+                  className="w-4 h-4 rounded text-teal focus:ring-teal cursor-pointer bg-white/80 border-slate-300"
+                />
+              </div>
+
               <img src={item.imageUrl} alt="Gallery item" className="w-full h-full object-cover" />
 
               {/* Hover Overlay */}
@@ -354,6 +419,13 @@ function GalleryContent() {
           </div>
         </div>
       )}
+      {/* Bulk Action Bar */}
+      <BulkActionBar
+        selectedCount={selectedIds.length}
+        onClear={() => setSelectedIds([])}
+        onDelete={handleBulkDelete}
+        onExport={handleBulkExport}
+      />
     </div>
   );
 }

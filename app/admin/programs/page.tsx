@@ -1,8 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
-import { useForm } from "react-hook-form";
+import React, { useState, useEffect, Suspense, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
+import { useForm, Controller } from "react-hook-form";
+import RichTextEditor from "@/components/admin/RichTextEditor";
+import WebsitePreview from "@/components/admin/WebsitePreview";
 import { useAdminUser } from "@/lib/context/AdminUserContext";
 import { useConfirm } from "@/lib/context/ConfirmContext";
 import {
@@ -52,6 +55,7 @@ interface ProgramFormData {
 
 function ProgramsContent() {
   const { adminUser } = useAdminUser();
+  const searchParams = useSearchParams();
   const { confirm, toast } = useConfirm();
   // 1. STATE FOR LISTING & PAGINATION
   const [programs, setPrograms] = useState<Program[]>([]);
@@ -74,6 +78,7 @@ function ProgramsContent() {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<ProgramFormData>();
 
@@ -105,7 +110,7 @@ function ProgramsContent() {
     loadData();
   }, [search, categoryFilter, page]);
 
-  function openAddModal() {
+  const openAddModal = useCallback(() => {
     setEditingItem(null);
     setImageBase64("");
     setPdfBase64("");
@@ -119,7 +124,15 @@ function ProgramsContent() {
       visible: true,
     });
     setIsModalOpen(true);
-  }
+  }, [reset]);
+
+  // Open Add modal if url contains parameter (e.g. from dashboard quick action)
+  useEffect(() => {
+    if (searchParams.get("openAdd") === "true") {
+      const timer = setTimeout(() => openAddModal(), 0);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, openAddModal]);
 
   function openEditModal(item: Program) {
     setEditingItem(item);
@@ -292,15 +305,7 @@ function ProgramsContent() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-          <a
-            href="/programs"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full md:w-auto px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
-          >
-            <ExternalLink className="w-4 h-4 text-slate-500" />
-            Open Website
-          </a>
+          <WebsitePreview path="/programs" label="Preview Programs" />
           <button
             onClick={openAddModal}
             className="w-full md:w-auto px-4 py-2.5 bg-teal hover:bg-teal-dark text-white text-xs font-extrabold uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-teal/10 "
@@ -318,91 +323,91 @@ function ProgramsContent() {
           <p className="text-gray-400 text-sm font-semibold">Loading programs catalog...</p>
         </div>
       ) : programs.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {programs.map((item) => (
             <div
               key={item._id}
-              className={`bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(16,27,53,0.015)] hover:shadow-[0_20px_40px_rgba(16,27,53,0.04)] hover:-translate-y-1.5 flex flex-col justify-between transition-all duration-300 relative ${
-                item.visible ? "border-gray-200" : "border-gray-200 bg-gray-50/50 opacity-70"
+              className={`bg-white border border-slate-100 rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(16,27,53,0.005)] hover:shadow-[0_8px_20px_rgba(16,27,53,0.015)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative ${
+                item.visible ? "border-slate-200" : "border-slate-200 bg-slate-50/50 opacity-70"
               }`}
             >
               <div>
                 {/* Program image preview */}
-                <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden border-b border-gray-100">
+                <div className="aspect-[4/3] bg-slate-50 relative overflow-hidden border-b border-slate-100">
                   {item.image ? (
                     <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-150">
-                      <Award className="w-10 h-10" />
+                    <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-100">
+                      <Award className="w-5 h-5" />
                     </div>
                   )}
-                  <span className="absolute top-3 right-3 text-[10px] font-bold px-2 py-0.5 bg-black/60 backdrop-blur-md text-white rounded-md uppercase tracking-wider">
+                  <span className="absolute top-2 right-2 text-[7px] font-bold px-1.5 py-0.5 bg-black/60 backdrop-blur-md text-white rounded uppercase tracking-wider select-none">
                     {item.category}
                   </span>
                 </div>
 
                 {/* Content */}
-                <div className="p-6 space-y-3">
-                  <h4 className="font-extrabold text-gray-900 leading-snug line-clamp-2">
+                <div className="p-3 space-y-1.5">
+                  <h4 className="font-bold text-slate-800 text-xs leading-snug line-clamp-1">
                     {item.title}
                   </h4>
-                  <p className="text-xs font-bold text-teal uppercase tracking-wider bg-teal-light px-2.5 py-1 rounded-md inline-block">
+                  <p className="text-[8px] font-bold text-teal uppercase tracking-wider bg-teal-light px-1.5 py-0.5 rounded inline-block">
                     Duration: {item.duration}
                   </p>
-                  <p className="text-sm text-gray-500 mt-2 line-clamp-4 leading-relaxed">
+                  <p className="text-[10px] text-slate-400 line-clamp-1 leading-relaxed">
                     {item.description}
                   </p>
                 </div>
               </div>
 
               {/* Action bar */}
-              <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4 bg-gray-50/30">
-                <div className="flex gap-3 text-xs font-bold">
+              <div className="flex items-center justify-between border-t border-slate-100 px-3 py-2 bg-slate-50/20">
+                <div className="flex gap-1.5 text-[8px] font-bold">
                   {item.pdf && (
                     <a
                       href={item.pdf}
                       download={`${item.title.replace(/\s+/g, "_")}_Syllabus.pdf`}
-                      className="px-2.5 py-1 rounded-lg border bg-white border-gray-200 text-gray-600 hover:bg-gray-50 flex items-center gap-1"
+                      className="px-1.5 py-0.5 rounded border bg-white border-slate-200 text-slate-500 hover:bg-slate-50 flex items-center gap-0.5 text-[8px]"
                       title="Download PDF brochure"
                     >
-                      <FileText className="w-3.5 h-3.5" />
+                      <FileText className="w-2.5 h-2.5" />
                       PDF
                     </a>
                   )}
                   <button
                     onClick={() => handleToggleVisible(item)}
-                    className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                    className={`p-0.5 rounded border transition-all cursor-pointer ${
                       item.visible
                         ? "bg-teal-light text-teal border-teal/20 hover:bg-teal-light/80"
-                        : "bg-white text-gray-400 border-gray-200 hover:bg-gray-100"
+                        : "bg-white text-slate-400 border-slate-200 hover:bg-slate-150"
                     }`}
                   >
-                    {item.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    {item.visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
                   </button>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-1">
                   <a
                     href="/programs#admin-programs"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-1.5 bg-white hover:bg-teal-light text-gray-650 border border-gray-200 hover:border-teal/20 rounded-lg cursor-pointer flex items-center justify-center"
+                    className="p-0.5 bg-white hover:bg-teal-light text-slate-500 border border-slate-200 hover:border-teal/20 rounded cursor-pointer flex items-center justify-center"
                     title="View live on website"
                   >
-                    <ExternalLink className="w-4 h-4" />
+                    <ExternalLink className="w-3 h-3" />
                   </a>
                   <button
                     onClick={() => openEditModal(item)}
-                    className="p-1.5 bg-white hover:bg-teal-light text-gray-600 border border-gray-200 hover:border-teal/20 rounded-lg cursor-pointer"
+                    className="p-0.5 bg-white hover:bg-teal-light text-slate-500 hover:text-teal border border-slate-200 hover:border-teal/20 rounded cursor-pointer"
                   >
-                    <Edit2 className="w-4 h-4" />
+                    <Edit2 className="w-3 h-3" />
                   </button>
                    {adminUser?.role !== "editor" && (
                     <button
                       onClick={() => handleDelete(item._id)}
-                      className="p-1.5 bg-white hover:bg-red-50 text-gray-600 border border-gray-200 hover:border-red-200 rounded-lg cursor-pointer"
+                      className="p-0.5 bg-white hover:bg-red-50 text-slate-500 hover:text-red-600 border border-slate-200 hover:border-red-200 rounded cursor-pointer"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3 h-3" />
                     </button>
                   )}
                 </div>
@@ -527,14 +532,18 @@ function ProgramsContent() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">
-                  Description
-                </label>
-                <textarea
-                  rows={4}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none resize-none"
-                  placeholder="Summarize course goals, modules, target audience..."
-                  {...register("description", { required: "Description is required" })}
+                <Controller
+                  name="description"
+                  control={control}
+                  rules={{ required: "Description is required" }}
+                  render={({ field }) => (
+                    <RichTextEditor
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      placeholder="Summarize course goals, modules, target audience..."
+                      rows={4}
+                    />
+                  )}
                 />
                 {errors.description && (
                   <span className="text-[10px] text-red-500">{errors.description.message as string}</span>

@@ -4,7 +4,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectToDatabase } from "@/lib/mongodb";
 import AuditLog from "@/models/AuditLog";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -24,12 +24,42 @@ export async function GET() {
 
     await connectToDatabase();
 
-    // Fetch the 10 most recent security events for the current user's email
-    const logs = await AuditLog.find({
-      email: session.user.email?.toLowerCase().trim() || ""
-    })
+    const { searchParams } = new URL(request.url);
+    const search = searchParams.get("search") || "";
+    const action = searchParams.get("action") || "";
+    const filterEmail = searchParams.get("email") || "";
+    const filterIp = searchParams.get("ip") || "";
+
+    const userEmail = session.user.email?.toLowerCase().trim() || "";
+    const isAdmin = session.user.role === "superadmin" || session.user.role === "admin";
+
+    const query: any = {};
+
+    if (!isAdmin) {
+      query.email = userEmail;
+    } else if (filterEmail) {
+      query.email = filterEmail.toLowerCase().trim();
+    }
+
+    if (filterIp) {
+      query.ip = filterIp.trim();
+    }
+
+    if (action) {
+      query.action = action;
+    }
+
+    if (search) {
+      query.$or = [
+        { email: { $regex: search, $options: "i" } },
+        { ip: { $regex: search, $options: "i" } },
+        { action: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const logs = await AuditLog.find(query)
       .sort({ timestamp: -1 })
-      .limit(10)
+      .limit(50)
       .lean();
 
     return NextResponse.json({

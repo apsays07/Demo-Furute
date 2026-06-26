@@ -18,7 +18,17 @@ import {
   RefreshCw,
   Trash2,
   History,
+  LayoutGrid,
+  ChevronDown,
+  Mic,
+  FileEdit,
+  Star,
+  Sparkles,
+  Activity,
+  Shield,
+  TrendingUp,
 } from "lucide-react";
+import DashboardChart from "@/components/admin/DashboardChart";
 
 interface DashboardActivity {
   id: string;
@@ -47,9 +57,14 @@ interface DashboardStats {
     programs: number;
     contacts: number;
     speakerRequests: number;
+    pendingTestimonials?: number;
+    pendingContacts?: number;
+    pendingSpeakerRequests?: number;
+    draftPrograms?: number;
   };
   recentActivity: DashboardActivity[];
   adminActivities?: AdminActivity[];
+  chartData?: any[];
 }
 
 // Styling helpers for admin activity actions
@@ -102,6 +117,22 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [clearing, setClearing] = useState(false);
+  const [showTotals, setShowTotals] = useState(false);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 17) return "Good Afternoon";
+    return "Good Evening";
+  };
+
+  const handleScrollToAnalytics = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const chartElement = document.getElementById("analytics-chart");
+    if (chartElement) {
+      chartElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   async function handleClearHistory() {
     const isConfirmed = await confirm("Are you sure you want to clear the entire admin audit logs history? This action cannot be undone.");
@@ -198,18 +229,23 @@ export default function AdminDashboard() {
         <div className="absolute -top-12 -right-12 w-64 h-64 bg-teal/5 rounded-full blur-[80px] pointer-events-none" />
         <div className="absolute -bottom-12 -left-12 w-64 h-64 bg-mint/5 rounded-full blur-[80px] pointer-events-none" />
         
-        <div className="relative z-10">
-          <h2 className="text-2xl font-extrabold text-white">
-            Welcome back, {adminUser?.username ? adminUser.username.charAt(0).toUpperCase() + adminUser.username.slice(1) : "Admin"}!
-          </h2>
-          <p className="text-slate-300 mt-1.5 text-xs md:text-sm">
-            Here is a consolidated overview of what has been happening on the Furute platform.
-          </p>
+        <div className="relative z-10 flex items-center gap-4 shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-teal shadow-inner">
+            <Sparkles className="w-5 h-5 text-teal" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+              {getGreeting()}, {adminUser?.username ? adminUser.username.charAt(0).toUpperCase() + adminUser.username.slice(1) : "Admin"}
+            </h2>
+            <p className="text-slate-300 mt-1 text-xs md:text-sm font-medium">
+              Welcome back. Here is a consolidated summary of what requires your attention today.
+            </p>
+          </div>
         </div>
         <div className="flex gap-3 shrink-0 relative z-10">
           <Link
             href="/admin/settings"
-            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-bold rounded-xl text-xs transition-all cursor-pointer border border-white/10"
+            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-semibold rounded-xl text-xs transition-all cursor-pointer border border-white/10"
           >
             Manage Settings
           </Link>
@@ -224,42 +260,226 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Grid statistics with responsive clamp font size and card hover lifts */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {statCards.map((card) => {
-          const Icon = card.icon;
-          return (
-            <div
-              key={card.title}
-              className="group bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_4px_20px_rgba(16,27,53,0.01)] hover:-translate-y-1 hover:border-teal/20 hover:shadow-[0_12px_30px_rgba(8,127,140,0.04)] transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
-            >
-              <div className="flex items-start justify-between mt-1">
-                <div>
-                  <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
-                    {card.title}
-                  </p>
-                  <h3 className="text-3xl font-extrabold text-slate-800 mt-1.5 leading-none">
+      {/* Personalized Row: Today's Overview (Grid of 4) & Quick Actions (Grid of 4) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Today's Overview Card Column (2/3 width on large screens) */}
+        <div className="lg:col-span-2 bg-white border border-slate-100 rounded-3xl p-6 md:p-8 shadow-[0_4px_20px_rgba(16,27,53,0.015)] flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-0.5">
+              <Sparkles className="w-4 h-4 text-teal" />
+              <h3 className="text-sm font-bold text-slate-800 tracking-tight">Today's Overview</h3>
+            </div>
+            <p className="text-[10px] text-slate-400 font-medium mb-6">Action items and pending reviews waiting for your response</p>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Contact Requests */}
+              <Link
+                href="/admin/contacts?status=pending"
+                className="group p-5 bg-white border border-slate-100 hover:border-teal/20 rounded-2xl flex items-center justify-between transition-all duration-300 shadow-sm hover:shadow-[0_8px_25px_rgba(8,127,140,0.02)]"
+              >
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-teal-light border border-teal/10 flex items-center justify-center text-teal shadow-inner group-hover:scale-105 transition-transform duration-300 shrink-0">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">New Contact Requests</h4>
+                    </div>
+                    <div className="flex items-baseline gap-3 mt-1">
+                      <p className="text-2xl font-bold text-slate-800 leading-none">
+                        {stats?.counts?.pendingContacts || 0}
+                      </p>
+                      <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-teal-light text-teal border border-teal/10 uppercase tracking-wider shrink-0 select-none">Review pending</span>
+                    </div>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-teal group-hover:translate-x-0.5 transition-all" />
+              </Link>
+
+              {/* Speaker Invitations */}
+              <Link
+                href="/admin/speaker-requests?status=pending"
+                className="group p-5 bg-white border border-slate-100 hover:border-amber-500/20 rounded-2xl flex items-center justify-between transition-all duration-300 shadow-sm hover:shadow-[0_8px_25px_rgba(245,158,11,0.02)]"
+              >
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100/50 flex items-center justify-center text-amber-500 shadow-inner group-hover:scale-105 transition-transform duration-300 shrink-0">
+                    <Mic className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">Speaker Invitations</h4>
+                    </div>
+                    <div className="flex items-baseline gap-3 mt-1">
+                      <p className="text-2xl font-bold text-slate-800 leading-none">
+                        {stats?.counts?.pendingSpeakerRequests || 0}
+                      </p>
+                      <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 border border-amber-200/30 uppercase tracking-wider shrink-0 select-none">Action needed</span>
+                    </div>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+              </Link>
+
+              {/* Draft Blogs */}
+              <Link
+                href="/admin/programs"
+                className="group p-5 bg-white border border-slate-100 hover:border-indigo-500/20 rounded-2xl flex items-center justify-between transition-all duration-300 shadow-sm hover:shadow-[0_8px_25px_rgba(99,102,241,0.02)]"
+              >
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100/50 flex items-center justify-center text-indigo-500 shadow-inner group-hover:scale-105 transition-transform duration-300 shrink-0">
+                    <FileEdit className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">Draft Blogs</h4>
+                    </div>
+                    <div className="flex items-baseline gap-3 mt-1">
+                      <p className="text-2xl font-bold text-slate-800 leading-none">3</p>
+                      <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 border border-indigo-200/30 uppercase tracking-wider shrink-0 select-none">Static Drafts</span>
+                    </div>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all" />
+              </Link>
+
+              {/* New Testimonials */}
+              <Link
+                href="/admin/testimonials"
+                className="group p-5 bg-white border border-slate-100 hover:border-violet-500/20 rounded-2xl flex items-center justify-between transition-all duration-300 shadow-sm hover:shadow-[0_8px_25px_rgba(111,88,201,0.02)]"
+              >
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-violet-50/50 border border-violet-100/50 flex items-center justify-center text-violet shadow-inner group-hover:scale-105 transition-transform duration-300 shrink-0">
+                    <Star className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">New Testimonials</h4>
+                    </div>
+                    <div className="flex items-baseline gap-3 mt-1">
+                      <p className="text-2xl font-bold text-slate-800 leading-none">
+                        {stats?.counts?.pendingTestimonials || 0}
+                      </p>
+                      <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-violet-50 text-violet border border-violet-200/30 uppercase tracking-wider shrink-0 select-none">Awaiting Appr.</span>
+                    </div>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-violet group-hover:translate-x-0.5 transition-all" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions Card Column (1/3 width on large screens) */}
+        <div className="bg-white border border-slate-100 rounded-3xl p-6 md:p-8 shadow-[0_4px_20px_rgba(16,27,53,0.015)] flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-0.5">
+              <Activity className="w-4 h-4 text-teal" />
+              <h3 className="text-sm font-bold text-slate-800 tracking-tight">Quick Actions</h3>
+            </div>
+            <p className="text-[10px] text-slate-400 font-medium mb-6">Create new entries and navigate platform modules smoothly</p>
+            
+            <div className="flex flex-col gap-3">
+              <Link
+                href="/admin/programs?openAdd=true"
+                className="p-3 bg-slate-50/50 hover:bg-teal-light border border-slate-100/70 hover:border-teal/20 rounded-2xl flex items-center justify-between transition-all duration-300 group shadow-sm"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-teal group-hover:scale-105 transition-transform duration-300 shrink-0">
+                    <Plus className="w-4 h-4 text-teal" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-slate-800 tracking-tight">Add Program</h4>
+                    <p className="text-[10px] text-slate-400 font-medium">Create a training program</p>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-teal group-hover:translate-x-0.5 transition-all" />
+              </Link>
+
+              <Link
+                href="/admin/events?openAdd=true"
+                className="p-3 bg-slate-50/50 hover:bg-teal-light border border-slate-100/70 hover:border-teal/20 rounded-2xl flex items-center justify-between transition-all duration-300 group shadow-sm"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-teal group-hover:scale-105 transition-transform duration-300 shrink-0">
+                    <Plus className="w-4 h-4 text-teal" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-slate-800 tracking-tight">Add Event</h4>
+                    <p className="text-[10px] text-slate-400 font-medium">Schedule a calendar event</p>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-teal group-hover:translate-x-0.5 transition-all" />
+              </Link>
+
+              <Link
+                href="/admin/testimonials?openAdd=true"
+                className="p-3 bg-slate-50/50 hover:bg-teal-light border border-slate-100/70 hover:border-teal/20 rounded-2xl flex items-center justify-between transition-all duration-300 group shadow-sm"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-teal group-hover:scale-105 transition-transform duration-300 shrink-0">
+                    <Plus className="w-4 h-4 text-teal" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-slate-800 tracking-tight">Add Testimonial</h4>
+                    <p className="text-[10px] text-slate-400 font-medium">Submit client testimonial</p>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-teal group-hover:translate-x-0.5 transition-all" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Collapsible totals section replacing details tag */}
+      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_4px_20px_rgba(16,27,53,0.015)] transition-all duration-300">
+        <button
+          onClick={() => setShowTotals(!showTotals)}
+          className="w-full flex items-center justify-between font-bold text-xs text-slate-500 uppercase tracking-widest cursor-pointer outline-none hover:text-slate-800 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <LayoutGrid className="w-4 h-4 text-slate-400" />
+            <span>Platform Volume Summary</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-[10px] font-bold text-teal">
+            <span>{showTotals ? "Hide Details" : "Show All Totals"}</span>
+            <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showTotals ? "rotate-180" : ""}`} />
+          </div>
+        </button>
+        
+        {showTotals && (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-6 pt-6 border-t border-slate-50 animate-fade-in">
+            {statCards.map((card) => {
+              const Icon = card.icon;
+              return (
+                <Link
+                  key={card.title}
+                  href={card.href}
+                  className="group bg-slate-50/50 hover:bg-white border border-slate-100/60 hover:border-teal/20 rounded-2xl p-4 shadow-sm hover:shadow-[0_10px_25px_rgba(8,127,140,0.03)] transition-all duration-300 flex flex-col justify-between"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] font-bold text-slate-455 uppercase tracking-widest truncate group-hover:text-slate-500 transition-colors">
+                      {card.title}
+                    </span>
+                    <Icon className="w-3.5 h-3.5 text-slate-400 group-hover:text-teal transition-colors" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 mt-3 leading-none">
                     {card.count}
                   </h3>
-                </div>
-                <div className="p-3 rounded-2xl transition-all duration-300 bg-slate-50 border border-slate-100 text-slate-500 group-hover:scale-110 group-hover:bg-teal-light group-hover:text-teal group-hover:border-teal/20">
-                  <Icon className="w-5 h-5" />
-                </div>
-              </div>
-              
-              <div className="border-t border-slate-50 mt-5 pt-4">
-                <Link
-                  href={card.href}
-                  className="flex items-center justify-between text-xs font-semibold text-slate-500 group-hover:text-teal transition-colors hover:opacity-85"
-                >
-                  Configure Module
-                  <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Link>
-              </div>
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+        )}
       </div>
+
+      {stats?.chartData && stats.chartData.length > 0 && (
+        <div id="analytics-chart" className="animate-fade-in">
+          <DashboardChart data={stats.chartData} />
+        </div>
+      )}
+
+
 
       {/* Bottom section: Two column layout on lg screen, one column on smaller screens */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -463,6 +683,7 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+
     </div>
   );
 }

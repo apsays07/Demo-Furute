@@ -1,0 +1,56 @@
+[33mcommit 6a0cee509bdd849f0a8d04cdb884e97bf2239033[m
+Author: Sid Shah <siddhant997@gmail.com>
+Date:   Thu Jun 25 00:56:27 2026 +0530
+
+    Google Authenticator
+
+ app/admin/layout.tsx                               | 300 [32m++++[m[31m---[m
+ app/admin/login/page.tsx                           |  55 [32m+[m[31m-[m
+ app/admin/settings/page.tsx                        | 923 [32m+++++++++++++++++[m[31m----[m
+ app/admin/users/page.tsx                           |  30 [32m+[m[31m-[m
+ app/admin/verify-otp/page.tsx                      | 220 [32m+++++[m
+ app/api/admin/auth/2fa/disable/route.ts            | 108 [32m+++[m
+ app/api/admin/auth/2fa/generate/route.ts           |  64 [32m++[m
+ app/api/admin/auth/2fa/verify-login-otp/route.ts   | 108 [32m+++[m
+ app/api/admin/auth/2fa/verify/route.ts             | 102 [32m+++[m
+ app/api/admin/auth/audit-logs/route.ts             |  91 [32m++[m
+ app/api/admin/auth/login/route.ts                  | 142 [31m----[m
+ app/api/admin/auth/logout/route.ts                 |  25 [31m-[m
+ app/api/admin/auth/me/route.ts                     |  73 [31m--[m
+ app/api/admin/auth/settings/route.ts               |  37 [32m+[m[31m-[m
+ app/api/admin/contacts/[id]/route.ts               |   7 [32m+[m
+ app/api/admin/events/[id]/route.ts                 |   3 [32m+[m
+ app/api/admin/events/route.ts                      |   4 [32m+[m
+ app/api/admin/gallery/route.ts                     |   4 [32m+[m
+ app/api/admin/profile/photo/route.ts               |  15 [32m+[m[31m-[m
+ app/api/admin/profile/route.ts                     |  25 [32m+[m[31m-[m
+ app/api/admin/programs/[id]/route.ts               |   3 [32m+[m
+ app/api/admin/programs/route.ts                    |   4 [32m+[m
+ app/api/admin/speaker-requests/[id]/route.ts       |   7 [32m+[m
+ app/api/admin/testimonials/[id]/route.ts           |   3 [32m+[m
+ app/api/admin/testimonials/route.ts                |   4 [32m+[m
+ app/api/admin/users/[id]/route.ts                  |   8 [32m+[m
+ app/api/admin/users/route.ts                       |   9 [32m+[m
+ app/api/admin/videos/[id]/route.ts                 |   3 [32m+[m
+ app/api/admin/videos/route.ts                      |   4 [32m+[m
+ app/api/auth/[...nextauth]/route.ts                | 142 [32m++++[m
+ app/globals.css                                    |   8 [32m+[m[31m-[m
+ app/layout.tsx                                     |   2 [32m+[m
+ .../relationship-tourism.module.css                |   4 [32m+[m
+ components/shared/BackspaceNavigation.tsx          |  45 [32m+[m
+ components/shared/ProgramPageLayout.module.css     |   7 [32m+[m
+ lib/auth/auditLog.ts                               |  49 [32m++[m
+ lib/auth/email.ts                                  | 100 [32m+++[m
+ lib/auth/logActivity.ts                            |  16 [32m+[m[31m-[m
+ lib/auth/passwordPolicy.ts                         |  25 [32m+[m
+ lib/auth/rateLimiter.ts                            |  26 [32m+[m
+ lib/auth/verifyAuth.ts                             |  68 [32m+[m[31m-[m
+ lib/context/ConfirmContext.tsx                     |  35 [32m+[m[31m-[m
+ middleware.ts                                      | 142 [32m++[m[31m--[m
+ models/AuditLog.ts                                 |  41 [32m+[m
+ models/User.ts                                     |  31 [32m+[m
+ next.config.ts                                     |   4 [32m+[m
+ package-lock.json                                  | 271 [32m++++[m[31m--[m
+ package.json                                       |   4 [32m+[m
+ types/next-auth.d.ts                               |  31 [32m+[m
+ 49 files changed, 2647 insertions(+), 785 deletions(-)

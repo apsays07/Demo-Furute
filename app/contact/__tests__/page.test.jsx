@@ -7,7 +7,6 @@ let mockSubjectValue = null;
 jest.mock("next/navigation", () => ({
   useSearchParams: () => ({
     get: (key) => {
-      console.log("MOCK GET CALLED WITH KEY:", key, "AND CURRENT mockSubjectValue IS:", mockSubjectValue);
       return mockSubjectValue;
     },
   }),
@@ -90,6 +89,8 @@ jest.mock("@/components/ui/Icons", () => ({
 
 describe("Contact Page", () => {
   beforeEach(() => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(console, "log").mockImplementation(() => {});
     mockSubjectValue = null;
     mockEmailOnSuccess = true;
     Storage.prototype.getItem = jest.fn(() => "student@gmail.com");

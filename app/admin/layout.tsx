@@ -355,7 +355,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         {/* Main Workspace */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
           {/* Top Navbar matching website header shadow/border */}
-          <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-6 md:px-8 shrink-0 z-10 shadow-[0_4px_20px_rgba(16,27,53,0.01)]">
+          <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-6 md:px-8 shrink-0 z-30 shadow-[0_4px_20px_rgba(16,27,53,0.01)]">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setSidebarOpen(true)}
