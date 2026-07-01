@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-import SpeakerInvite from "@/models/SpeakerInvite";
+import SpeakerRequest from "@/models/SpeakerRequest";
 
 /**
  * POST /api/speaker
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     }
 
     // 5. Save the invitation into MongoDB Atlas
-    const newInvite = await SpeakerInvite.create({
+    const newInvite = await SpeakerRequest.create({
       name: inviteName.trim(),
       email: email.trim().toLowerCase(),
       organization: organization.trim(),

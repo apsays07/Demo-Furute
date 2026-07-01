@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-import ContactInquiry from "@/models/ContactInquiry";
+import Contact from "@/models/Contact";
 
 /**
  * POST /api/contact
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     }
 
     // 5. Save the inquiry into MongoDB Atlas
-    const newInquiry = await ContactInquiry.create({
+    const newInquiry = await Contact.create({
       name: inquiryName.trim(),
       email: email.trim().toLowerCase(),
       phone: phone.trim(),
